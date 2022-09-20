@@ -1,4 +1,4 @@
-package ru.odo24.odo24_mobile
+package ru.odo24.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

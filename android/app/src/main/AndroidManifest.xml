@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.odo24.odo24_mobile">
+    package="ru.odo24.mobile">
    <application
         android:label="odo24_mobile"
         android:icon="@mipmap/ic_launcher">
