@@ -5,6 +5,6 @@ import 'package:odo24_mobile/presentatin/splash_screen/splash_screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   '/': (context) => const SplashScreen(),
-  '/login': (context) => const LoginScreen(),
-  '/home': (context) => HomeScreen(),
+  '/login': (context) => LoginScreen(),
+  '/home': (context) => const HomeScreen(),
 };
