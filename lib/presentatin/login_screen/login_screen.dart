@@ -102,7 +102,7 @@ class LoginScreenState extends State<LoginScreen> {
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Ошибка авторизации'),
+                          content: Text('Ошибка регистрации'),
                         ),
                       );
                     }

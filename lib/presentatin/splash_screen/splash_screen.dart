@@ -12,8 +12,8 @@ class SplashScreen extends StatelessWidget {
       initialData: null,
       stream: FirebaseAuth.instance.userChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.active && snapshot.hasData) {
-          if (snapshot.data != null) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
             return HomeScreen();
           }
           return LoginScreen();
