@@ -13,4 +13,9 @@ class UserModel {
         uid: user.user!.uid,
         email: user.user!.email,
       );
+
+  factory UserModel.fromUser(User user) => UserModel(
+        uid: user.uid,
+        email: user.email,
+      );
 }
