@@ -31,6 +31,7 @@ dependencies:
   firebase_analytics: ^9.1.10
   firebase_messaging: ^11.4.2
   firebase_database: ^9.1.4
+  cloud_firestore: ^3.4.9
 
 
 dev_dependencies:

@@ -25,9 +25,11 @@ class Odo24App extends StatelessWidget {
         errorColor: Colors.red,
       ),
       builder: (context, w) => Navigator(
-        onGenerateRoute: (_) => MaterialPageRoute(
-          builder: (ctx) => const SplashScreen(),
-        ),
+        onGenerateRoute: (RouteSettings rs) {
+          return MaterialPageRoute(
+            builder: (ctx) => const SplashScreen(),
+          );
+        },
       ),
     );
   }

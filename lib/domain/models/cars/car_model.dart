@@ -1,4 +1,6 @@
-class CarModel {
+import 'package:odo24_mobile/core/model_core.dart';
+
+class CarModel implements ModelCore {
   String name;
   int odo;
   bool withAvatar;
@@ -10,4 +12,11 @@ class CarModel {
         json['odo'] ?? 0,
         withAvatar: json['withAvatar'] ?? false,
       );
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'odo': odo,
+        'withAvatar': withAvatar,
+      };
 }
