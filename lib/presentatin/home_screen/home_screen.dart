@@ -5,7 +5,7 @@ import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 import 'package:odo24_mobile/domain/services/cars_service.dart';
 import 'package:odo24_mobile/presentatin/cars/car_item_screen.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car_create_widget.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/car_create_widget.dart';
 import 'package:odo24_mobile/presentatin/home_screen/home_cubit.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
@@ -102,11 +102,15 @@ class HomeScreen extends StatelessWidget {
             title: Text(car.get('name')),
             subtitle: Text('Пробег ${car.get('odo')}'),
             onTap: () {
-              Navigator.of(context).push(
+              /*Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => CarItemScreen(car),
                 ),
-              );
+              );*/
+
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+                return CarItemScreen(car);
+              }));
             },
           ),
         ],
