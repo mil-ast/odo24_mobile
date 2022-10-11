@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/app_state_core.dart';
+import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 import 'package:odo24_mobile/domain/models/groups/group_model.dart';
 import 'package:odo24_mobile/domain/services/groups_service.dart';
 import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/group_create_widget.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/services_widget.dart';
 
 class GroupsWidget extends StatelessWidget {
-  GroupsWidget({Key? key}) : super(key: key);
+  final QueryDocumentSnapshot<CarModel> carDoc;
+  GroupsWidget(this.carDoc, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class GroupsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
+              height: 80,
               color: Odo24App.secondColor,
               child: Padding(
                 padding: EdgeInsets.only(top: 10, right: 0, bottom: 10, left: 20),
@@ -58,15 +60,11 @@ class GroupsWidget extends StatelessWidget {
                 ),
               ),
             ),
-            SingleChildScrollView(
-              child: Column(
-                children: snap.data!.docs.map((QueryDocumentSnapshot<GroupModel> car) => _buildGroup(context, car)).toList(),
-              ),
+            Column(
+              children: snap.data!.docs.map((group) => _buildGroup(context, group)).toList(),
             ),
           ],
         );
-
-        //
       },
     );
   }
@@ -76,21 +74,12 @@ class GroupsWidget extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.folder_copy_outlined),
+            leading: const Icon(Icons.folder_open),
             title: Text(group.get('name')),
             onTap: () {
-              final services = group.reference.collection('services').get();
-              services.then((v) {
-                var d = v.docs;
-                var data = d.first.data();
-                print(v.size);
-              });
-              print(group);
-              /*Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CarItemScreen(car),
-                ),
-              );*/
+              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                return ServicesWidget(carDoc, group);
+              }));
             },
           ),
         ],

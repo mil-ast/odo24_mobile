@@ -11,7 +11,10 @@ class CarItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -27,7 +30,7 @@ class CarItemScreen extends StatelessWidget {
           IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
         ],
       ),
-      body: GroupsWidget(),
+      body: GroupsWidget(carDoc),
     );
   }
 }

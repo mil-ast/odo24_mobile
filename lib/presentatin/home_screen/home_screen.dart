@@ -102,13 +102,7 @@ class HomeScreen extends StatelessWidget {
             title: Text(car.get('name')),
             subtitle: Text('Пробег ${car.get('odo')}'),
             onTap: () {
-              /*Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CarItemScreen(car),
-                ),
-              );*/
-
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
                 return CarItemScreen(car);
               }));
             },

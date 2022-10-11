@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/presentatin/splash_screen/splash_screen.dart';
+import 'package:odo24_mobile/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,13 +46,8 @@ class Odo24App extends StatelessWidget {
         ),
         errorColor: Colors.red,
       ),
-      builder: (context, w) => Navigator(
-        onGenerateRoute: (RouteSettings rs) {
-          return MaterialPageRoute(
-            builder: (ctx) => const SplashScreen(),
-          );
-        },
-      ),
+      initialRoute: '/',
+      routes: routes,
     );
   }
 }
