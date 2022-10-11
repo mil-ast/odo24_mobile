@@ -4,7 +4,7 @@ import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 import 'package:odo24_mobile/domain/models/groups/group_model.dart';
 import 'package:odo24_mobile/domain/models/services/service_model.dart';
 import 'package:odo24_mobile/domain/services/groups_service.dart';
-import 'package:odo24_mobile/domain/services/services_service.dart';
+import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class ServicesWidget extends StatelessWidget {
   final QueryDocumentSnapshot<CarModel> carDoc;
@@ -37,7 +37,23 @@ class ServicesWidget extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(group.get('name')),
+            TitleToolBarWidget(
+              title: group.get('name'),
+              actionButton: IconButton(
+                color: Colors.white,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                      contentPadding: EdgeInsets.all(20),
+                      title: Text('Message'),
+                      children: [],
+                    ),
+                  );
+                },
+                icon: Icon(Icons.add),
+              ),
+            ),
             StreamBuilder(
                 stream: GroupsService().getServicesByCar(carDoc, group),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<ServiceModel>> snap) {
@@ -50,15 +66,51 @@ class ServicesWidget extends StatelessWidget {
                   }
 
                   return Column(
-                    children: snap.data!.docs.map((QueryDocumentSnapshot<ServiceModel> service) {
-                      return Text(service.get('comment'));
-                    }).toList(),
+                    children:
+                        snap.data!.docs.map((QueryDocumentSnapshot<ServiceModel> service) => _buildService(service)).toList(),
                   );
                 }),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildService(QueryDocumentSnapshot<ServiceModel> service) {
+    return Card(
+      elevation: 6,
+      shadowColor: Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    Text('Пробег'),
+                    Text(service.get('odo').toString()),
+                  ],
+                ),
+                Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    Text('Дата'),
+                    Text(service.data().formatDt()),
+                  ],
+                ),
+              ],
+            ),
+            Text(service.get('comment')),
+          ],
+        ),
+      ),
+    );
+    return Text(service.get('comment'));
   }
 
   /*return SingleChildScrollView(

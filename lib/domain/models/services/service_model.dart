@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:odo24_mobile/core/model_core.dart';
+import 'package:intl/intl.dart';
 
 class ServiceModel implements ModelCore {
-  final String carRef;
+  final DocumentReference carRef;
   final int? odo;
-  final int? dt;
+  final Timestamp? dt;
   final String? comment;
 
   ServiceModel({
@@ -12,6 +14,15 @@ class ServiceModel implements ModelCore {
     this.dt,
     this.comment,
   });
+
+  String formatDt() {
+    if (dt == null) {
+      return '';
+    }
+    final date = dt!.toDate();
+    final DateFormat formatter = DateFormat('dd.MM.yyyy');
+    return formatter.format(date);
+  }
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) => ServiceModel(
         carRef: json['car_ref'],

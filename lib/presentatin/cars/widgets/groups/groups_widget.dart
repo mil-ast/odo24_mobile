@@ -6,6 +6,7 @@ import 'package:odo24_mobile/domain/services/groups_service.dart';
 import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/group_create_widget.dart';
 import 'package:odo24_mobile/presentatin/cars/widgets/services/services_widget.dart';
+import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class GroupsWidget extends StatelessWidget {
   final QueryDocumentSnapshot<CarModel> carDoc;
@@ -27,37 +28,23 @@ class GroupsWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              height: 80,
-              color: Odo24App.secondColor,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10, right: 0, bottom: 10, left: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: const Text(
-                        'Группы',
-                        style: TextStyle(color: Colors.white),
-                      ),
+            TitleToolBarWidget(
+              title: 'Группы',
+              actionButton: IconButton(
+                color: Colors.white,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                      contentPadding: EdgeInsets.all(20),
+                      title: Text('Message'),
+                      children: [
+                        GroupCreateWidget(),
+                      ],
                     ),
-                    IconButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => SimpleDialog(
-                            contentPadding: EdgeInsets.all(20),
-                            title: Text('Message'),
-                            children: [
-                              GroupCreateWidget(),
-                            ],
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.add),
-                    )
-                  ],
-                ),
+                  );
+                },
+                icon: Icon(Icons.add),
               ),
             ),
             Column(
