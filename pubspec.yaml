@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_secure_storage: ^5.0.2
   flutter_bloc: ^8.1.1
   cupertino_icons: ^1.0.5

@@ -4,6 +4,8 @@ import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 import 'package:odo24_mobile/domain/models/groups/group_model.dart';
 import 'package:odo24_mobile/domain/models/services/service_model.dart';
 import 'package:odo24_mobile/domain/services/groups_service.dart';
+import 'package:odo24_mobile/main.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/service_create_dialog.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class ServicesWidget extends StatelessWidget {
@@ -40,14 +42,16 @@ class ServicesWidget extends StatelessWidget {
             TitleToolBarWidget(
               title: group.get('name'),
               actionButton: IconButton(
-                color: Colors.white,
+                color: Odo24App.actionsColor,
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (context) => SimpleDialog(
                       contentPadding: EdgeInsets.all(20),
-                      title: Text('Message'),
-                      children: [],
+                      title: Text('Добавить сервисное обслуживание'),
+                      children: [
+                        ServiceCreateWidget(carDoc),
+                      ],
                     ),
                   );
                 },
@@ -77,6 +81,8 @@ class ServicesWidget extends StatelessWidget {
   }
 
   Widget _buildService(QueryDocumentSnapshot<ServiceModel> service) {
+    final model = service.data();
+
     return Card(
       elevation: 6,
       shadowColor: Colors.black,
@@ -89,28 +95,65 @@ class ServicesWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Wrap(
-                  direction: Axis.vertical,
-                  children: [
-                    Text('Пробег'),
-                    Text(service.get('odo').toString()),
-                  ],
+                Expanded(
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    children: [
+                      Text('Пробег'),
+                      Text(model.odo.toString()),
+                    ],
+                  ),
                 ),
-                Wrap(
-                  direction: Axis.vertical,
-                  children: [
-                    Text('Дата'),
-                    Text(service.data().formatDt()),
-                  ],
-                ),
+                Row(children: [
+                  Wrap(
+                    direction: Axis.vertical,
+                    children: [
+                      Text('Дата'),
+                      Text(model.formatDt()),
+                    ],
+                  ),
+                  PopupMenuButton(
+                    elevation: 10,
+                    shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12, width: 1)),
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Wrap(
+                          spacing: 10,
+                          children: [
+                            Icon(Icons.edit),
+                            Text('Изменить'),
+                          ],
+                        ),
+                        onTap: () {
+                          print(1);
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Wrap(
+                          spacing: 10,
+                          children: [
+                            Icon(Icons.delete, color: Colors.red),
+                            Text(
+                              'Удалить',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          print(1);
+                        },
+                      )
+                    ],
+                  ),
+                ]),
               ],
             ),
-            Text(service.get('comment')),
+            Text(model.comment ?? ''),
           ],
         ),
       ),
     );
-    return Text(service.get('comment'));
   }
 
   /*return SingleChildScrollView(

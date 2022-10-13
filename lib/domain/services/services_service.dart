@@ -25,25 +25,9 @@ class ServicesService extends ServicesCore {
     return _query.snapshots();
   }
 
-  /*Future<List<QueryDocumentSnapshot<ServiceModel>>> getAllServicesByCar(DocumentReference<CarModel> carRef) async {
-    final result = await _query.where('car_ref', isEqualTo: carRef).get();
-    if (result.docs.isEmpty) {
-      return [];
-    }
+  /*Future<void> create(ServiceModel car) {
+    final model = CarCreateModel(car.name, car.odo, userID, withAvatar: car.withAvatar);
 
-    final uniqGroups = Map<String, String>();
-    result.docs.forEach((element) {
-      final DocumentReference ref = element.get('group_ref');
-      if (!uniqGroups.containsKey(ref.id)) {
-        uniqGroups[ref.id] = 
-      }
-      uniqGroups.add(ref.id);
-    });
-
-
-    final groupQuery = GroupsService().query.doc(uniqGroups.toList());
-    groupQuery.
-
-    return result.docs;
+    return FirebaseFirestore.instance.collection('cars').add(model.toJson());
   }*/
 }

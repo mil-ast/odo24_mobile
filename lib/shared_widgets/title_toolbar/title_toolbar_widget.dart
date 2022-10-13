@@ -22,7 +22,7 @@ class TitleToolBarWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
             if (actionButton != null) actionButton!,

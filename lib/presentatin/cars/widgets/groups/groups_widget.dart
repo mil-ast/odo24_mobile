@@ -31,7 +31,7 @@ class GroupsWidget extends StatelessWidget {
             TitleToolBarWidget(
               title: 'Группы',
               actionButton: IconButton(
-                color: Colors.white,
+                color: Odo24App.actionsColor,
                 onPressed: () {
                   showDialog(
                     context: context,

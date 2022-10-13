@@ -6,12 +6,14 @@ class ServiceModel implements ModelCore {
   final DocumentReference carRef;
   final int? odo;
   final Timestamp? dt;
+  final int? price;
   final String? comment;
 
   ServiceModel({
     required this.carRef,
     this.odo,
     this.dt,
+    this.price,
     this.comment,
   });
 
@@ -28,6 +30,7 @@ class ServiceModel implements ModelCore {
         carRef: json['car_ref'],
         odo: json['odo'],
         dt: json['dt'],
+        price: json['price'],
         comment: json['comment'],
       );
 
@@ -36,6 +39,7 @@ class ServiceModel implements ModelCore {
         'car_ref': carRef,
         'odo': odo,
         'dt': dt,
+        'price': price,
         'comment': comment,
       };
 }

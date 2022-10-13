@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:odo24_mobile/routes.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +12,7 @@ Future<void> main() async {
 class Odo24App extends StatelessWidget {
   static final primaryColor = Color(0xff22262b);
   static final secondColor = Color(0xfff2d3036);
-  static final actionsColor = Color(0xff89ec8d);
+  static final actionsColor = Color.fromRGBO(255, 152, 0, 1);
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +25,14 @@ class Odo24App extends StatelessWidget {
         primaryColor: primaryColor,
         shadowColor: Colors.transparent,
         secondaryHeaderColor: primaryColor,
+        primaryColorLight: Colors.black,
+        primarySwatch: Colors.orange,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
         scaffoldBackgroundColor: Color(0xfff5f8fa),
         brightness: Brightness.light,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: TextButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 97, 182, 99),
+            surfaceTintColor: actionsColor,
             padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
           ),
         ),
@@ -46,6 +50,16 @@ class Odo24App extends StatelessWidget {
         ),
         errorColor: Colors.red,
       ),
+      localizationsDelegates: const [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('ru', ''),
+      ],
+      locale: const Locale('ru', ''),
       initialRoute: '/',
       routes: routes,
     );
