@@ -4,26 +4,38 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/models/service_create_dto.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/service_create_cubit.dart';
 import 'package:intl/intl.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/update/models/service_update_dto.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/update/service_update_cubit.dart';
 
-class ServiceCreateWidget extends StatelessWidget {
-  final QueryDocumentSnapshot<Object?> carDoc;
+class ServiceUpdateWidget extends StatelessWidget {
+  final QueryDocumentSnapshot<Object?> serviceDoc;
   final QueryDocumentSnapshot<Object?> groupDoc;
-  ServiceCreateWidget(this.carDoc, this.groupDoc, {Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
-  final _dtController = TextEditingController();
-  final _odoController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _commentController = TextEditingController();
+  late final TextEditingController _dtController;
+  late final TextEditingController _odoController;
+  late final TextEditingController _priceController;
+  late final TextEditingController _commentController;
+
+  ServiceUpdateWidget(this.groupDoc, this.serviceDoc, {Key? key}) : super(key: key) {
+    final Timestamp dtTimestamp = serviceDoc.get('dt');
+    final dt = dtTimestamp.toDate();
+    final odo = serviceDoc.get('odo');
+    final price = serviceDoc.get('price');
+    final comment = serviceDoc.get('comment');
+
+    _dtController = TextEditingController.fromValue(TextEditingValue(text: DateFormat('dd.MM.yyyy').format(dt)));
+    _odoController = TextEditingController.fromValue(TextEditingValue(text: odo != null ? odo.toString() : ''));
+    _priceController = TextEditingController.fromValue(TextEditingValue(text: price != null ? price.toString() : ''));
+    _commentController = TextEditingController.fromValue(TextEditingValue(text: comment ?? ''));
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ServiceCreateCubit(),
-      child: BlocConsumer<ServiceCreateCubit, AppState>(
+      create: (_) => ServiceUpdateCubit(),
+      child: BlocConsumer<ServiceUpdateCubit, AppState>(
         listener: (context, state) {
           if (state is AppStateError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -35,8 +47,7 @@ class ServiceCreateWidget extends StatelessWidget {
           } else if (state is AppStateSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Новая запись добавлена'),
-                //backgroundColor: Theme.of(context).errorColor,
+                content: Text('Изменения успешно сохранены'),
               ),
             );
             Navigator.pop(context);
@@ -47,7 +58,6 @@ class ServiceCreateWidget extends StatelessWidget {
         },
         builder: (BuildContext context, AppState state) {
           final now = DateTime.now();
-          _dtController.text = DateFormat('dd.MM.yyyy').format(now);
           return Form(
             key: _formKey,
             child: Column(
@@ -155,7 +165,7 @@ class ServiceCreateWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  child: Text('Сохранить новую запись'),
+                  child: Text('Сохранить изменения'),
                   onPressed: () {
                     if (!_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -170,15 +180,14 @@ class ServiceCreateWidget extends StatelessWidget {
                     final price = _priceController.text.isNotEmpty ? int.tryParse(_priceController.text) : null;
                     final comment = _commentController.text.trim();
 
-                    final body = ServiceCreateDTO(
-                      carDoc: carDoc.reference,
+                    final body = ServiceUpdateDTO(
                       dt: Timestamp.fromDate(dt),
                       odo: odo,
                       comment: comment,
                       price: price,
                     );
 
-                    context.read<ServiceCreateCubit>().create(groupDoc, body);
+                    context.read<ServiceUpdateCubit>().update(serviceDoc, body);
                   },
                 ),
               ],

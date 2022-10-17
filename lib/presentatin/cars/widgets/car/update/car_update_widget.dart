@@ -1,25 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/core/services_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/group_create_cubit.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/models/group_create_dto.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/update/car_update_cubit.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/update/models/car_update_dto.dart';
 
-class GroupCreateWidget extends StatelessWidget {
-  GroupCreateWidget({Key? key}) : super(key: key);
+class CarUpdateWidget extends StatelessWidget {
+  final QueryDocumentSnapshot carDoc;
+
+  CarUpdateWidget(this.carDoc, {Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _odoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GroupCreateCubit(),
-      child: BlocConsumer<GroupCreateCubit, AppState>(
+      create: (_) => CarUpdateCubit(),
+      child: BlocConsumer<CarUpdateCubit, AppState>(
         listener: (context, state) {
-          if (state is AppStateSuccess) {
-            Navigator.of(context).pop();
-          } else if (state is AppStateError) {
+          if (state is AppStateError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Произошла ошибка'),
@@ -41,7 +43,7 @@ class GroupCreateWidget extends StatelessWidget {
                   autofocus: true,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    helperText: 'Название новой группы',
+                    helperText: 'Название вашего авто',
                     icon: Icon(Icons.title),
                   ),
                   validator: (String? name) {
@@ -53,8 +55,32 @@ class GroupCreateWidget extends StatelessWidget {
                     return null;
                   },
                 ),
+                TextFormField(
+                  controller: _odoController,
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    helperText: 'Пробег авто, км.',
+                    icon: Icon(Icons.speed),
+                  ),
+                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                  validator: (String? input) {
+                    if (input == null) {
+                      return 'Укажите пробег авто';
+                    }
+
+                    int? odo = int.tryParse(input);
+                    if (odo == null) {
+                      return 'Некорретное значение пробега';
+                    } else if (odo > 9999999) {
+                      return 'Слишком большой пробег';
+                    }
+
+                    return null;
+                  },
+                ),
                 ElevatedButton(
-                  child: Text('Добавить'),
+                  child: Text('Сохранить'),
                   onPressed: () {
                     if (!_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,12 +90,12 @@ class GroupCreateWidget extends StatelessWidget {
                       );
                     }
 
-                    final body = GroupCreateDTO(
-                      uid: ProficeServicesCore.userID,
+                    final body = CarUpdateDTO(
                       name: _nameController.text.trim(),
+                      odo: int.parse(_odoController.text),
+                      withAvatar: false,
                     );
-
-                    context.read<GroupCreateCubit>().create(body);
+                    context.read<CarUpdateCubit>().update(carDoc, body);
                   },
                 ),
               ],

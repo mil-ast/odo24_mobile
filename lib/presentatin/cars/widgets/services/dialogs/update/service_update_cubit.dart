@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/models/service_create_dto.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/update/models/service_update_dto.dart';
 
-class ServiceCreateCubit extends Cubit<AppState> {
-  ServiceCreateCubit() : super(AppStateDefault());
+class ServiceUpdateCubit extends Cubit<AppState> {
+  ServiceUpdateCubit() : super(AppStateDefault());
 
-  void create(QueryDocumentSnapshot groupDoc, ServiceCreateDTO body) {
+  void update(QueryDocumentSnapshot serviceDoc, ServiceUpdateDTO body) {
     emit(AppStateLoading());
 
-    groupDoc.reference.collection('groups').add(body.toJson()).then((_) {
+    serviceDoc.reference.update(body.toJson()).then((value) {
       emit(AppStateSuccess());
-      return null;
     }).catchError((e) {
       emit(AppStateError(
         'car_create_error',

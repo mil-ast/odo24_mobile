@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/domain/models/cars/car_model.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car/car_create_cubit.dart';
+import 'package:odo24_mobile/core/services_core.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/create/car_create_cubit.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/create/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
   CarCreateWidget({Key? key}) : super(key: key);
@@ -87,10 +88,13 @@ class CarCreateWidget extends StatelessWidget {
                       );
                     }
 
-                    final odo = int.parse(_odoController.text);
-                    final car = CarModel(_nameController.text, odo, withAvatar: false);
-
-                    context.read<CarCreateCubit>().create(car);
+                    final body = CarCreateDTO(
+                      uid: ProficeServicesCore.userID,
+                      name: _nameController.text.trim(),
+                      odo: int.parse(_odoController.text),
+                      withAvatar: false,
+                    );
+                    context.read<CarCreateCubit>().create(body);
                   },
                 ),
               ],

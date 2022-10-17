@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 import 'package:odo24_mobile/presentatin/cars/widgets/groups/groups_widget.dart';
 
 class CarItemScreen extends StatelessWidget {
-  final QueryDocumentSnapshot<CarModel> carDoc;
+  final QueryDocumentSnapshot<Object?> carDoc;
   const CarItemScreen(this.carDoc, {Key? key}) : super(key: key);
 
   @override

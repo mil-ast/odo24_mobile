@@ -1,17 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/domain/models/groups/group_create_model.dart';
-import 'package:odo24_mobile/domain/services/groups_service.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/models/group_create_dto.dart';
 
 class GroupCreateCubit extends Cubit<AppState> {
-  final GroupsService _groupsService = GroupsService();
-
   GroupCreateCubit() : super(AppStateDefault());
 
-  void create(String groupName) {
+  void create(GroupCreateDTO body) {
     emit(AppStateLoading());
 
-    _groupsService.create(groupName).then((d) {
+    FirebaseFirestore.instance.collection('groups').add(body.toJson()).then((value) {
       emit(AppStateSuccess());
     }).catchError((e) {
       emit(AppStateError(

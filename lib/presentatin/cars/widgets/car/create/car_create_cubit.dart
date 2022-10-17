@@ -1,18 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/domain/models/cars/car_model.dart';
-import 'package:odo24_mobile/domain/services/cars_service.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/car/create/models/car_create_dto.dart';
 
 class CarCreateCubit extends Cubit<AppState> {
-  final CarsService _carsService = CarsService();
-
   CarCreateCubit() : super(AppStateDefault());
 
-  void create(CarModel car) {
+  Future<void> create(CarCreateDTO body) {
     emit(AppStateLoading());
 
-    _carsService.create(car).then((_) {
+    return FirebaseFirestore.instance.collection('cars').add(body.toJson()).then((_) {
       emit(AppStateSuccess());
+      return null;
     }).catchError((e) {
       emit(AppStateError(
         'car_create_error',

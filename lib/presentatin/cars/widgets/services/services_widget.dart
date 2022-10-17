@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/domain/models/cars/car_model.dart';
-import 'package:odo24_mobile/domain/models/groups/group_model.dart';
-import 'package:odo24_mobile/domain/models/services/service_model.dart';
-import 'package:odo24_mobile/domain/services/groups_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/app_state_core.dart';
+import 'package:odo24_mobile/core/utils_core.dart';
 import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/service_create_dialog.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/update/service_update_dialog.dart';
+import 'package:odo24_mobile/presentatin/cars/widgets/services/services_cubit.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class ServicesWidget extends StatelessWidget {
-  final QueryDocumentSnapshot<CarModel> carDoc;
-  final QueryDocumentSnapshot<GroupModel> group;
-  ServicesWidget(this.carDoc, this.group, {Key? key}) : super(key: key);
+  final QueryDocumentSnapshot<Object?> carDoc;
+  final QueryDocumentSnapshot<Object?> groupDoc;
+  ServicesWidget(this.carDoc, this.groupDoc, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,52 +38,71 @@ class ServicesWidget extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TitleToolBarWidget(
-              title: group.get('name'),
-              actionButton: IconButton(
-                color: Odo24App.actionsColor,
-                onPressed: () {
+        child: BlocProvider(
+          create: (_) => ServicesCubit(),
+          child: Column(
+            children: [
+              TitleToolBarWidget(
+                title: groupDoc.get('name'),
+                actionButton: IconButton(
+                  color: Odo24App.actionsColor,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => SimpleDialog(
+                        contentPadding: EdgeInsets.all(20),
+                        insetPadding: EdgeInsets.all(20),
+                        title: Text('Добавить сервисное обслуживание'),
+                        children: [
+                          ServiceCreateWidget(carDoc, groupDoc),
+                        ],
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.add),
+                ),
+              ),
+              BlocConsumer<ServicesCubit, AppState>(listener: (context, state) {
+                if (state is AppStateServicesActionEditState) {
                   showDialog(
                     context: context,
                     builder: (context) => SimpleDialog(
+                      insetPadding: EdgeInsets.all(20),
                       contentPadding: EdgeInsets.all(20),
-                      title: Text('Добавить сервисное обслуживание'),
+                      title: Text('Изменить сервисное обслуживание'),
                       children: [
-                        ServiceCreateWidget(carDoc),
+                        ServiceUpdateWidget(groupDoc, state.service),
                       ],
                     ),
                   );
-                },
-                icon: Icon(Icons.add),
-              ),
-            ),
-            StreamBuilder(
-                stream: GroupsService().getServicesByCar(carDoc, group),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<ServiceModel>> snap) {
-                  if (snap.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
+                }
+              }, buildWhen: (previous, current) {
+                return current is AppStateError || current is AppStateServicesActionState;
+              }, builder: (context, state) {
+                return StreamBuilder(
+                    stream: context.read<ServicesCubit>().getServicesByCar(carDoc, groupDoc),
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) {
+                      if (snap.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
 
-                  if (!snap.hasData) {
-                    return Text('Нет данных');
-                  }
+                      if (!snap.hasData) {
+                        return Text('Нет данных');
+                      }
 
-                  return Column(
-                    children:
-                        snap.data!.docs.map((QueryDocumentSnapshot<ServiceModel> service) => _buildService(service)).toList(),
-                  );
-                }),
-          ],
+                      return Column(
+                        children: snap.data!.docs.map((service) => _buildService(service)).toList(),
+                      );
+                    });
+              }),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildService(QueryDocumentSnapshot<ServiceModel> service) {
-    final model = service.data();
-
+  Widget _buildService(QueryDocumentSnapshot<Map<String, dynamic>> service) {
     return Card(
       elevation: 6,
       shadowColor: Colors.black,
@@ -100,7 +120,7 @@ class ServicesWidget extends StatelessWidget {
                     direction: Axis.vertical,
                     children: [
                       Text('Пробег'),
-                      Text(model.odo.toString()),
+                      Text('${service.get('odo') ?? ''}'),
                     ],
                   ),
                 ),
@@ -109,7 +129,7 @@ class ServicesWidget extends StatelessWidget {
                     direction: Axis.vertical,
                     children: [
                       Text('Дата'),
-                      Text(model.formatDt()),
+                      Text(UtilsCore.formatTimestamp(service.get('dt'))),
                     ],
                   ),
                   PopupMenuButton(
@@ -126,7 +146,7 @@ class ServicesWidget extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          print(1);
+                          context.read<ServicesCubit>().onClickOpenEditDialog(service);
                         },
                       ),
                       PopupMenuItem(
@@ -141,7 +161,7 @@ class ServicesWidget extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          print(1);
+                          context.read<ServicesCubit>().delete(service);
                         },
                       )
                     ],
@@ -149,39 +169,10 @@ class ServicesWidget extends StatelessWidget {
                 ]),
               ],
             ),
-            Text(model.comment ?? ''),
+            Text(service.get('comment') ?? ''),
           ],
         ),
       ),
     );
   }
-
-  /*return SingleChildScrollView(
-      child: Column(
-        children: [
-          Text('Services'),
-          FutureBuilder(
-              future: ServicesService().getAllServicesByCar(carDoc.reference),
-              builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot<ServiceModel>>> snap) {
-                if (snap.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-
-                if (!snap.hasData) {
-                  return Text('Нет данных');
-                }
-
-                return Column(
-                  children: snap.data!.map((QueryDocumentSnapshot<ServiceModel> service) {
-                    final DocumentReference groupRef = service.get('group_ref');
-                    groupRef.snapshots().forEach((element) {
-                      print(element.get('name'));
-                    });
-                    return Text(service.get('comment'));
-                  }).toList(),
-                );
-              }),
-        ],
-      ),
-    );*/
 }
