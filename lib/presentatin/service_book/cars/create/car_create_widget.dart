@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/services_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car/create/car_create_cubit.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car/create/models/car_create_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/cars/create/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
   CarCreateWidget({Key? key}) : super(key: key);
@@ -26,6 +26,8 @@ class CarCreateWidget extends StatelessWidget {
                 backgroundColor: Theme.of(context).errorColor,
               ),
             );
+          } else if (state is AppStateSuccess) {
+            Navigator.of(context).pop();
           }
         },
         buildWhen: (AppState previous, AppState current) {
@@ -38,7 +40,6 @@ class CarCreateWidget extends StatelessWidget {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  autofocus: true,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
                     helperText: 'Название вашего авто',
@@ -55,7 +56,6 @@ class CarCreateWidget extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: _odoController,
-                  autofocus: true,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     helperText: 'Пробег авто, км.',
@@ -77,25 +77,38 @@ class CarCreateWidget extends StatelessWidget {
                     return null;
                   },
                 ),
-                ElevatedButton(
-                  child: Text('Сохранить'),
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Проверьте правильность заполнения формы'),
-                        ),
-                      );
-                    }
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      child: Text('Сохранить'),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Проверьте правильность заполнения формы'),
+                            ),
+                          );
+                          return;
+                        }
 
-                    final body = CarCreateDTO(
-                      uid: ProficeServicesCore.userID,
-                      name: _nameController.text.trim(),
-                      odo: int.parse(_odoController.text),
-                      withAvatar: false,
-                    );
-                    context.read<CarCreateCubit>().create(body);
-                  },
+                        final body = CarCreateDTO(
+                          uid: ProficeServicesCore.userID,
+                          name: _nameController.text.trim(),
+                          odo: int.parse(_odoController.text),
+                          withAvatar: false,
+                        );
+                        context.read<CarCreateCubit>().create(body);
+                      },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Закрыть'),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/models/service_create_dto.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/service_create_cubit.dart';
 import 'package:intl/intl.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/dialogs/create/models/service_create_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/dialogs/create/service_create_cubit.dart';
 
 class ServiceCreateWidget extends StatelessWidget {
   final QueryDocumentSnapshot<Object?> carDoc;

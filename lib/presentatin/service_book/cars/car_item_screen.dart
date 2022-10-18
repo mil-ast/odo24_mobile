@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/groups_widget.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/groups_widget.dart';
 
 class CarItemScreen extends StatelessWidget {
   final QueryDocumentSnapshot<Object?> carDoc;

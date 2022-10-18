@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/group_create_widget.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/groups_cubit.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/services_widget.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/create/group_create_widget.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/groups_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/services_widget.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class GroupsWidget extends StatelessWidget {

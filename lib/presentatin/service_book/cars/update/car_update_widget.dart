@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car/update/car_update_cubit.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/car/update/models/car_update_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/cars/update/models/car_update_dto.dart';
 
 class CarUpdateWidget extends StatelessWidget {
   final QueryDocumentSnapshot carDoc;
@@ -12,11 +12,14 @@ class CarUpdateWidget extends StatelessWidget {
   CarUpdateWidget(this.carDoc, {Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _odoController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _odoController;
 
   @override
   Widget build(BuildContext context) {
+    _nameController = TextEditingController.fromValue(TextEditingValue(text: carDoc.get('name')));
+    _odoController = TextEditingController.fromValue(TextEditingValue(text: carDoc.get('odo').toString()));
+
     return BlocProvider(
       create: (_) => CarUpdateCubit(),
       child: BlocConsumer<CarUpdateCubit, AppState>(
@@ -28,6 +31,8 @@ class CarUpdateWidget extends StatelessWidget {
                 backgroundColor: Theme.of(context).errorColor,
               ),
             );
+          } else if (state is AppStateSuccess) {
+            Navigator.of(context).pop();
           }
         },
         buildWhen: (AppState previous, AppState current) {
@@ -40,7 +45,6 @@ class CarUpdateWidget extends StatelessWidget {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  autofocus: true,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
                     helperText: 'Название вашего авто',
@@ -57,7 +61,6 @@ class CarUpdateWidget extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: _odoController,
-                  autofocus: true,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     helperText: 'Пробег авто, км.',
@@ -79,24 +82,37 @@ class CarUpdateWidget extends StatelessWidget {
                     return null;
                   },
                 ),
-                ElevatedButton(
-                  child: Text('Сохранить'),
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Проверьте правильность заполнения формы'),
-                        ),
-                      );
-                    }
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      child: Text('Сохранить'),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Проверьте правильность заполнения формы'),
+                            ),
+                          );
+                          return;
+                        }
 
-                    final body = CarUpdateDTO(
-                      name: _nameController.text.trim(),
-                      odo: int.parse(_odoController.text),
-                      withAvatar: false,
-                    );
-                    context.read<CarUpdateCubit>().update(carDoc, body);
-                  },
+                        final body = CarUpdateDTO(
+                          name: _nameController.text.trim(),
+                          odo: int.parse(_odoController.text),
+                          withAvatar: false,
+                        );
+                        context.read<CarUpdateCubit>().update(carDoc, body);
+                      },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Закрыть'),
+                    ),
+                  ],
                 ),
               ],
             ),

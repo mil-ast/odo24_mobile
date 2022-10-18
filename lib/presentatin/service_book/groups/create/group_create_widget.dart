@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/services_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/group_create_cubit.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/models/group_create_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/create/group_create_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/create/models/group_create_dto.dart';
 
 class GroupCreateWidget extends StatelessWidget {
   GroupCreateWidget({Key? key}) : super(key: key);

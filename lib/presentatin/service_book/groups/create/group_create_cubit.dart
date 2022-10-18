@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/groups/create/models/group_create_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/create/models/group_create_dto.dart';
 
 class GroupCreateCubit extends Cubit<AppState> {
   GroupCreateCubit() : super(AppStateDefault());

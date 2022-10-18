@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/utils_core.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/create/service_create_dialog.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/dialogs/update/service_update_dialog.dart';
-import 'package:odo24_mobile/presentatin/cars/widgets/services/services_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/dialogs/create/service_create_dialog.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/dialogs/update/service_update_dialog.dart';
+import 'package:odo24_mobile/presentatin/service_book/services/services_cubit.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class ServicesWidget extends StatelessWidget {
