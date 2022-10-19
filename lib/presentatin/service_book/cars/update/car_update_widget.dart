@@ -32,6 +32,10 @@ class CarUpdateWidget extends StatelessWidget {
               ),
             );
           } else if (state is AppStateSuccess) {
+            SnackBar(
+              content: Text('Изменения успешно сохранены'),
+            );
+
             Navigator.of(context).pop();
           }
         },

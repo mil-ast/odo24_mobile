@@ -8,6 +8,7 @@ import 'package:odo24_mobile/presentatin/service_book/cars/cars_cubit.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_widget.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_widget.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class CarListScreen extends StatelessWidget {
   const CarListScreen({Key? key}) : super(key: key);
@@ -75,6 +76,18 @@ class CarListScreen extends StatelessWidget {
                 ],
               ),
             );
+          } else if (state is OnDeleteCarState) {
+            showConfirmationDialog(
+              context,
+              title: state.car.get('name'),
+              message: 'Вы действительно хотите удалить авто?',
+              btnNoText: 'Отмена',
+              btnOkText: 'Удалить',
+            ).then((bool? isOk) {
+              if (isOk == true) {
+                context.read<CarsCubit>().deleteCar(state.car);
+              }
+            });
           }
         },
         builder: (BuildContext context, AppState state) {
@@ -148,7 +161,7 @@ class CarListScreen extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    //context.read<ServicesCubit>().delete(service);
+                    context.read<CarsCubit>().onClickDeleteCar(car);
                   },
                 )
               ],

@@ -27,6 +27,10 @@ class CarCreateWidget extends StatelessWidget {
               ),
             );
           } else if (state is AppStateSuccess) {
+            SnackBar(
+              content: Text('Авто успешно добавлено'),
+            );
+
             Navigator.of(context).pop();
           }
         },
