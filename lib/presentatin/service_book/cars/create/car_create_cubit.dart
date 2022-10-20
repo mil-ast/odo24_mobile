@@ -7,10 +7,10 @@ import 'package:odo24_mobile/presentatin/service_book/cars/create/models/car_cre
 class CarCreateCubit extends Cubit<AppState> {
   CarCreateCubit() : super(AppStateDefault());
 
-  Future<void> create(CarCreateDTO body) {
+  void create(CarCreateDTO body) {
     emit(AppStateLoading());
 
-    return FirebaseFirestore.instance.collection(carsCollection).add(body.toJson()).then((_) {
+    FirebaseFirestore.instance.collection(carsCollection).add(body.toJson()).then((_) {
       emit(AppStateSuccess());
       return null;
     }).catchError((e) {

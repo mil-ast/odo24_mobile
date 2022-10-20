@@ -85,10 +85,13 @@ class CarListScreen extends StatelessWidget {
               btnOkText: 'Удалить',
             ).then((bool? isOk) {
               if (isOk == true) {
-                context.read<CarsCubit>().deleteCar(state.car);
+                context.read<CarsCubit>().delete(state.car);
               }
             });
           }
+        },
+        buildWhen: (previous, current) {
+          return current is AppStateDefault;
         },
         builder: (BuildContext context, AppState state) {
           return StreamBuilder(

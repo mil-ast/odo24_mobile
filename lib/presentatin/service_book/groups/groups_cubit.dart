@@ -13,4 +13,35 @@ class GroupsCubit extends Cubit<AppState> {
         .where('uid', isEqualTo: ProficeServicesCore.userID)
         .snapshots();
   }
+
+  void delete(QueryDocumentSnapshot group) {
+    final batch = FirebaseFirestore.instance.batch();
+
+    batch.delete(group.reference);
+    group.reference.collection(servicesCollection).get().then((services) {
+      services.docs.forEach((service) {
+        batch.delete(service.reference);
+      });
+    }).then((value) {
+      return batch.commit();
+    });
+  }
+
+  void onClickUpdateGroup(QueryDocumentSnapshot group) {
+    emit(OnUpdateGroupState(group));
+  }
+
+  void onClickDeleteGroup(QueryDocumentSnapshot group) {
+    emit(OnDeleteGroupState(group));
+  }
+}
+
+class OnUpdateGroupState extends AppState {
+  final QueryDocumentSnapshot group;
+  OnUpdateGroupState(this.group);
+}
+
+class OnDeleteGroupState extends AppState {
+  final QueryDocumentSnapshot group;
+  OnDeleteGroupState(this.group);
 }

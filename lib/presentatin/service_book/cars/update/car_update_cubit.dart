@@ -6,10 +6,10 @@ import 'package:odo24_mobile/presentatin/service_book/cars/update/models/car_upd
 class CarUpdateCubit extends Cubit<AppState> {
   CarUpdateCubit() : super(AppStateDefault());
 
-  Future<void> update(QueryDocumentSnapshot carDoc, CarUpdateDTO body) {
+  void update(QueryDocumentSnapshot carDoc, CarUpdateDTO body) {
     emit(AppStateLoading());
 
-    return carDoc.reference.update(body.toJson()).then((_) {
+    carDoc.reference.update(body.toJson()).then((_) {
       emit(AppStateSuccess());
       return null;
     }).catchError((e) {

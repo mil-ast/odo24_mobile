@@ -22,7 +22,7 @@ class CarsCubit extends Cubit<AppState> {
     emit(OnDeleteCarState(car));
   }
 
-  void deleteCar(QueryDocumentSnapshot car) {
+  void delete(QueryDocumentSnapshot car) {
     final batch = FirebaseFirestore.instance.batch();
 
     batch.delete(car.reference);

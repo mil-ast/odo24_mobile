@@ -1,42 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_cubit.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/update/models/car_update_dto.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/update/group_update_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/update/models/group_update_dto.dart';
 
-class CarUpdateWidget extends StatelessWidget {
-  final QueryDocumentSnapshot carDoc;
-
-  CarUpdateWidget(this.carDoc, {Key? key}) : super(key: key);
-
+class GroupUpdateWidget extends StatelessWidget {
+  final QueryDocumentSnapshot group;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
-  late final TextEditingController _odoController;
+
+  GroupUpdateWidget(this.group, {Key? key}) : super(key: key) {
+    _nameController = TextEditingController.fromValue(TextEditingValue(text: group.get('name')));
+  }
 
   @override
   Widget build(BuildContext context) {
-    _nameController = TextEditingController.fromValue(TextEditingValue(text: carDoc.get('name')));
-    _odoController = TextEditingController.fromValue(TextEditingValue(text: carDoc.get('odo').toString()));
-
     return BlocProvider(
-      create: (_) => CarUpdateCubit(),
-      child: BlocConsumer<CarUpdateCubit, AppState>(
+      create: (_) => GroupUpdateCubit(),
+      child: BlocConsumer<GroupUpdateCubit, AppState>(
         listener: (context, state) {
-          if (state is AppStateError) {
+          if (state is AppStateSuccess) {
+            Navigator.of(context).pop();
+          } else if (state is AppStateError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Произошла ошибка'),
                 backgroundColor: Theme.of(context).errorColor,
               ),
             );
-          } else if (state is AppStateSuccess) {
-            SnackBar(
-              content: Text('Изменения успешно сохранены'),
-            );
-
-            Navigator.of(context).pop();
           }
         },
         buildWhen: (AppState previous, AppState current) {
@@ -49,9 +41,10 @@ class CarUpdateWidget extends StatelessWidget {
               children: [
                 TextFormField(
                   controller: _nameController,
+                  autofocus: true,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    helperText: 'Название вашего авто',
+                    helperText: 'Название новой группы',
                     icon: Icon(Icons.title),
                   ),
                   validator: (String? name) {
@@ -60,29 +53,6 @@ class CarUpdateWidget extends StatelessWidget {
                     } else if (name.length > 120) {
                       return 'Название слишком длинное';
                     }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _odoController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    helperText: 'Пробег авто, км.',
-                    icon: Icon(Icons.speed),
-                  ),
-                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                  validator: (String? input) {
-                    if (input == null) {
-                      return 'Укажите пробег авто';
-                    }
-
-                    int? odo = int.tryParse(input);
-                    if (odo == null) {
-                      return 'Некорретное значение пробега';
-                    } else if (odo > 9999999) {
-                      return 'Слишком большой пробег';
-                    }
-
                     return null;
                   },
                 ),
@@ -105,15 +75,13 @@ class CarUpdateWidget extends StatelessWidget {
                               content: Text('Проверьте правильность заполнения формы'),
                             ),
                           );
-                          return;
                         }
 
-                        final body = CarUpdateDTO(
+                        final body = GroupUpdateDTO(
                           name: _nameController.text.trim(),
-                          odo: int.parse(_odoController.text),
-                          withAvatar: false,
                         );
-                        context.read<CarUpdateCubit>().update(carDoc, body);
+
+                        context.read<GroupUpdateCubit>().update(group, body);
                       },
                     ),
                   ],

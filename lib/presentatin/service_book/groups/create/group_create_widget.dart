@@ -53,24 +53,36 @@ class GroupCreateWidget extends StatelessWidget {
                     return null;
                   },
                 ),
-                ElevatedButton(
-                  child: Text('Добавить'),
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Проверьте правильность заполнения формы'),
-                        ),
-                      );
-                    }
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Закрыть'),
+                    ),
+                    ElevatedButton(
+                      child: Text('Добавить'),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Проверьте правильность заполнения формы'),
+                            ),
+                          );
+                        }
 
-                    final body = GroupCreateDTO(
-                      uid: ProficeServicesCore.userID,
-                      name: _nameController.text.trim(),
-                    );
+                        final body = GroupCreateDTO(
+                          uid: ProficeServicesCore.userID,
+                          name: _nameController.text.trim(),
+                        );
 
-                    context.read<GroupCreateCubit>().create(body);
-                  },
+                        context.read<GroupCreateCubit>().create(body);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

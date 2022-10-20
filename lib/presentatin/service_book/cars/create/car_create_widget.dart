@@ -85,6 +85,12 @@ class CarCreateWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Закрыть'),
+                    ),
                     ElevatedButton(
                       child: Text('Сохранить'),
                       onPressed: () {
@@ -105,12 +111,6 @@ class CarCreateWidget extends StatelessWidget {
                         );
                         context.read<CarCreateCubit>().create(body);
                       },
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Закрыть'),
                     ),
                   ],
                 ),
