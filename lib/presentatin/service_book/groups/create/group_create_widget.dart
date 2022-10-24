@@ -6,10 +6,16 @@ import 'package:odo24_mobile/presentatin/service_book/groups/create/group_create
 import 'package:odo24_mobile/presentatin/service_book/groups/create/models/group_create_dto.dart';
 
 class GroupCreateWidget extends StatelessWidget {
-  GroupCreateWidget({Key? key}) : super(key: key);
-
+  final bool isEmbedded;
+  final String? suggestion;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+
+  GroupCreateWidget({this.isEmbedded = false, this.suggestion, Key? key}) : super(key: key) {
+    if (suggestion != null) {
+      _nameController.text = suggestion!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +63,15 @@ class GroupCreateWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Закрыть'),
-                    ),
+                    if (!isEmbedded)
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Закрыть'),
+                      )
+                    else
+                      SizedBox.shrink(),
                     ElevatedButton(
                       child: Text('Добавить'),
                       onPressed: () {

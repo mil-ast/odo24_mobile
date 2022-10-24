@@ -11,6 +11,7 @@ class GroupsCubit extends Cubit<AppState> {
     return FirebaseFirestore.instance
         .collection(groupsCollection)
         .where('uid', isEqualTo: ProficeServicesCore.userID)
+        .orderBy('sort', descending: false)
         .snapshots();
   }
 
@@ -22,9 +23,17 @@ class GroupsCubit extends Cubit<AppState> {
       services.docs.forEach((service) {
         batch.delete(service.reference);
       });
-    }).then((value) {
-      return batch.commit();
-    });
+    }).then((value) => batch.commit());
+  }
+
+  Future<void> saveOrder(List<QueryDocumentSnapshot> groups) {
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (int index = 0; index < groups.length; index++) {
+      batch.update(groups[index].reference, {'sort': index});
+    }
+
+    return batch.commit();
   }
 
   void onClickUpdateGroup(QueryDocumentSnapshot group) {

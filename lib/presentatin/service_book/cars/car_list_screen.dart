@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
+import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/car_item_screen.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/cars_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_wid
 import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_widget.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
+import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class CarListScreen extends StatelessWidget {
   const CarListScreen({Key? key}) : super(key: key);
@@ -21,40 +23,26 @@ class CarListScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('ODO24 Сервисная книжка авто'),
         actions: [
-          IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => SimpleDialog(
-                    insetPadding: EdgeInsets.all(20),
-                    contentPadding: EdgeInsets.all(20),
-                    title: Text('Добавить новое авто'),
-                    children: [
-                      CarCreateWidget(),
-                    ],
-                  ),
-                );
-              },
-              icon: Icon(Icons.add)),
+          /*IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => SimpleDialog(
+                  insetPadding: EdgeInsets.all(20),
+                  contentPadding: EdgeInsets.all(20),
+                  title: Text('Добавить новое авто'),
+                  children: [
+                    CarCreateWidget(),
+                  ],
+                ),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),*/
         ],
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text('Домашняя главная страница'),
-            _buildContent(context),
-            OutlinedButton(
-              child: Text('Выход'),
-              onPressed: () async {
-                await AuthService.logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-            ),
-          ],
-        ),
+      body: SingleChildScrollView(
+        child: _buildContent(context),
       ),
     );
   }
@@ -94,21 +82,66 @@ class CarListScreen extends StatelessWidget {
           return current is AppStateDefault;
         },
         builder: (BuildContext context, AppState state) {
-          return StreamBuilder(
-            stream: context.read<CarsCubit>().getAllCars(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TitleToolBarWidget(
+                title: 'Мои авто',
+                actionButton: IconButton(
+                  color: Odo24App.actionsColor,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => SimpleDialog(
+                        insetPadding: EdgeInsets.all(20),
+                        contentPadding: EdgeInsets.all(20),
+                        title: Text('Добавить новое авто'),
+                        children: [
+                          CarCreateWidget(),
+                        ],
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.add),
+                ),
+              ),
+              StreamBuilder(
+                stream: context.read<CarsCubit>().getAllCars(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
+                  if (snap.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
 
-              if (!snap.hasData) {
-                return Text('Нет данных');
-              }
+                  if (!snap.hasData) {
+                    return Text('Нет данных');
+                  }
 
-              return Column(
-                children: snap.data!.docs.map((car) => _buildCar(context, car)).toList(),
-              );
-            },
+                  final docs = snap.data!.docs;
+
+                  if (docs.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Text(
+                            'Добавьте ваш первый авто',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          SizedBox(height: 20),
+                          CarCreateWidget(isEmbedded: true),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    children: docs.map((car) => _buildCar(context, car)).toList(),
+                  );
+                },
+              ),
+            ],
           );
         },
       ),
@@ -128,6 +161,7 @@ class CarListScreen extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.directions_car_sharp),
                 title: Text(car.get('name')),
+                subtitle: Text('Пробег ${car.get('odo')} км'),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
                     return CarItemScreen(car);

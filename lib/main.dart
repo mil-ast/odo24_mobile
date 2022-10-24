@@ -10,7 +10,7 @@ Future<void> main() async {
 }
 
 class Odo24App extends StatelessWidget {
-  static final primaryColor = Color(0xff22262b);
+  static final primaryColor = Color(0xff202427);
   static final secondColor = Color(0xfff2d3036);
   static final actionsColor = Color.fromRGBO(255, 152, 0, 1);
 
@@ -45,8 +45,9 @@ class Odo24App extends StatelessWidget {
         appBarTheme: AppBarTheme(
           shadowColor: Colors.transparent,
           backgroundColor: primaryColor,
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 26),
           actionsIconTheme: IconThemeData(color: actionsColor),
+          toolbarHeight: 100,
         ),
         errorColor: Colors.red,
       ),

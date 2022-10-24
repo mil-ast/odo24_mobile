@@ -155,7 +155,7 @@ class ServiceCreateWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  child: Text('Сохранить новую запись'),
+                  child: Text('Добавить'),
                   onPressed: () {
                     if (!_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(

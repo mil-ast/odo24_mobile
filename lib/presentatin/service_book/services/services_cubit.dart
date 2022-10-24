@@ -16,6 +16,10 @@ class ServicesCubit extends Cubit<AppState> {
         .snapshots();
   }
 
+  void onClickOpenCreatetDialog() {
+    emit(AppStateServicesActionCreateState());
+  }
+
   void onClickOpenEditDialog(QueryDocumentSnapshot<Map<String, dynamic>> service) {
     emit(AppStateServicesActionEditState(service));
   }
@@ -34,6 +38,8 @@ class ServicesCubit extends Cubit<AppState> {
 }
 
 class AppStateServicesActionState extends AppState {}
+
+class AppStateServicesActionCreateState extends AppStateServicesActionState {}
 
 class AppStateServicesActionEditState extends AppStateServicesActionState {
   final QueryDocumentSnapshot<Map<String, dynamic>> service;

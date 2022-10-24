@@ -14,7 +14,7 @@ class TitleToolBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      color: Odo24App.secondColor,
+      color: Odo24App.primaryColor,
       child: Padding(
         padding: EdgeInsets.only(top: 10, right: 0, bottom: 10, left: 20),
         child: Row(

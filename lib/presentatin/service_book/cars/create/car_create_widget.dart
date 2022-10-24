@@ -7,7 +7,8 @@ import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_cub
 import 'package:odo24_mobile/presentatin/service_book/cars/create/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
-  CarCreateWidget({Key? key}) : super(key: key);
+  final bool isEmbedded;
+  CarCreateWidget({this.isEmbedded = false, Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -85,12 +86,15 @@ class CarCreateWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Закрыть'),
-                    ),
+                    if (!isEmbedded)
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Закрыть'),
+                      )
+                    else
+                      SizedBox.shrink(),
                     ElevatedButton(
                       child: Text('Сохранить'),
                       onPressed: () {

@@ -5,13 +5,13 @@ import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/service_book/groups/create/group_create_widget.dart';
 import 'package:odo24_mobile/presentatin/service_book/groups/groups_cubit.dart';
+import 'package:odo24_mobile/presentatin/service_book/groups/sort_groups_widget.dart';
 import 'package:odo24_mobile/presentatin/service_book/groups/update/group_update_widget.dart';
-import 'package:odo24_mobile/presentatin/service_book/services/services_widget.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
 class GroupsWidget extends StatelessWidget {
-  final QueryDocumentSnapshot<Object?> carDoc;
+  final QueryDocumentSnapshot carDoc;
   GroupsWidget(this.carDoc, {Key? key}) : super(key: key);
 
   @override
@@ -58,6 +58,28 @@ class GroupsWidget extends StatelessWidget {
               return Text('Нет данных');
             }
 
+            final docs = snap.data!.docs;
+            if (docs.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      'Добавьте первую группу',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text('Записи о сервисном обслуживании разбиваются по вашим группам'),
+                    SizedBox(height: 20),
+                    GroupCreateWidget(
+                      isEmbedded: true,
+                      suggestion: 'Моторное масло',
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -81,73 +103,17 @@ class GroupsWidget extends StatelessWidget {
                     icon: Icon(Icons.add),
                   ),
                 ),
-                Column(
-                  children: snap.data!.docs.map((group) => _buildGroup(context, group)).toList(),
+                Expanded(
+                  child: SortGroupsWidget(docs, carDoc),
                 ),
+                /*Column(
+                  children: docs.map((group) => _buildGroup(context, group)).toList(),
+                ),*/
               ],
             );
           },
         );
       }),
-    );
-  }
-
-  Widget _buildGroup(BuildContext context, QueryDocumentSnapshot group) {
-    return Card(
-      elevation: 6,
-      shadowColor: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: const Icon(Icons.folder_open),
-                title: Text(group.get('name')),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
-                    return ServicesWidget(carDoc, group);
-                  }));
-                },
-              ),
-            ),
-            PopupMenuButton(
-              elevation: 10,
-              shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12, width: 1)),
-              icon: Icon(Icons.more_vert),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.edit),
-                      Text('Изменить'),
-                    ],
-                  ),
-                  onTap: () {
-                    context.read<GroupsCubit>().onClickUpdateGroup(group);
-                  },
-                ),
-                PopupMenuItem(
-                  child: Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      Text(
-                        'Удалить',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    context.read<GroupsCubit>().onClickDeleteGroup(group);
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -63,7 +63,19 @@ class ServicesWidget extends StatelessWidget {
                 ),
               ),
               BlocConsumer<ServicesCubit, AppState>(listener: (context, state) {
-                if (state is AppStateServicesActionEditState) {
+                if (state is AppStateServicesActionCreateState) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                      contentPadding: EdgeInsets.all(20),
+                      insetPadding: EdgeInsets.all(20),
+                      title: Text('Добавить сервисное обслуживание'),
+                      children: [
+                        ServiceCreateWidget(carDoc, groupDoc),
+                      ],
+                    ),
+                  );
+                } else if (state is AppStateServicesActionEditState) {
                   showDialog(
                     context: context,
                     builder: (context) => SimpleDialog(
@@ -77,7 +89,7 @@ class ServicesWidget extends StatelessWidget {
                   );
                 }
               }, buildWhen: (previous, current) {
-                return current is AppStateError || current is AppStateServicesActionState;
+                return current is! AppStateDefault;
               }, builder: (context, state) {
                 return StreamBuilder(
                     stream: context.read<ServicesCubit>().getServicesByCar(carDoc, groupDoc),
@@ -90,8 +102,48 @@ class ServicesWidget extends StatelessWidget {
                         return Text('Нет данных');
                       }
 
+                      final docs = snap.data!.docs;
+
+                      if (docs.isEmpty) {
+                        return Column(
+                          children: [
+                            SizedBox(height: 40),
+                            Icon(Icons.comment),
+                            SizedBox(height: 20),
+                            Text(
+                              'Записей ещё нет :(',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(height: 20),
+                            Wrap(
+                              spacing: 6,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    context.read<ServicesCubit>().onClickOpenCreatetDialog();
+                                  },
+                                  child: Wrap(
+                                    children: [
+                                      Icon(Icons.add, size: 20, color: Odo24App.actionsColor),
+                                      Text(
+                                        'Добавить',
+                                        style: TextStyle(color: Odo24App.actionsColor, fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  'первую запись',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+
                       return Column(
-                        children: snap.data!.docs.map((service) => _buildService(service)).toList(),
+                        children: docs.map((service) => _buildService(service)).toList(),
                       );
                     });
               }),
