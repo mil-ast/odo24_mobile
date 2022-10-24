@@ -1,23 +1,23 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/presentatin/home_screen/home_screen.dart';
-import 'package:odo24_mobile/presentatin/register_screen/register_screen.dart';
+import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  LoginScreenState createState() {
-    return LoginScreenState();
+  RegisterScreenState createState() {
+    return RegisterScreenState();
   }
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
-  final _loginController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordConfirmController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,9 @@ class LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 TextFormField(
-                  controller: _loginController,
-                  autofocus: true,
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  autofocus: true,
                   decoration: const InputDecoration(
                     helperText: 'Email',
                     icon: Icon(Icons.email_outlined),
@@ -67,6 +67,23 @@ class LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+                TextFormField(
+                  controller: _passwordConfirmController,
+                  obscureText: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  decoration: const InputDecoration(
+                    helperText: "Повторите пароль",
+                    icon: Icon(Icons.vpn_key),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Повторите пароль';
+                    } else if (_passwordConfirmController.text != value) {
+                      return 'Пароль не совпадает';
+                    }
+                    return null;
+                  },
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
@@ -77,42 +94,59 @@ class LoginScreenState extends State<LoginScreen> {
                       );
                     }
 
-                    final login = _loginController.text;
-                    final password = _passwordController.text;
                     try {
-                      await _authService.signInWithEmailAndPassword(
+                      final login = _emailController.text;
+                      final password = _passwordController.text;
+                      final result = await _authService.createUserWithEmailAndPassword(
                         login,
                         password,
                       );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Регистрация прошла успешно!'),
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                      );
+
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     } on FirebaseException catch (e) {
+                      String errorMessage;
+
+                      switch (e.code) {
+                        case 'email-already-in-use':
+                          errorMessage = 'Email уже занят';
+                          break;
+                        default:
+                          errorMessage = e.message ?? e.code;
+                      }
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(errorMessage),
+                        ),
+                      );
+                    } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Неправильный логин или пароль'),
                         ),
                       );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Произошла внутренняя ошибка'),
-                          backgroundColor: Theme.of(context).errorColor,
-                        ),
-                      );
                     }
                   },
-                  child: const Text('Войти'),
+                  child: const Text('Зарегистрироваться'),
                 ),
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
-                  child: Text('Регистрация'),
+                  child: Text('Авторизация'),
                 )
               ],
             ),
@@ -121,10 +155,4 @@ class LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  /*return WillPopScope(
-      onWillPop: () async => false,
-      child: ,
-    );
-  }*/
 }
