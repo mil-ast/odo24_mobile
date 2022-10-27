@@ -105,41 +105,7 @@ class ServicesWidget extends StatelessWidget {
                       final docs = snap.data!.docs;
 
                       if (docs.isEmpty) {
-                        return Column(
-                          children: [
-                            SizedBox(height: 40),
-                            Icon(Icons.comment),
-                            SizedBox(height: 20),
-                            Text(
-                              'Записей ещё нет :(',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            SizedBox(height: 20),
-                            Wrap(
-                              spacing: 6,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    context.read<ServicesCubit>().onClickOpenCreatetDialog();
-                                  },
-                                  child: Wrap(
-                                    children: [
-                                      Icon(Icons.add, size: 20, color: Odo24App.actionsColor),
-                                      Text(
-                                        'Добавить',
-                                        style: TextStyle(color: Odo24App.actionsColor, fontSize: 20),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  'первую запись',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
+                        return _buildNoServices(context);
                       }
 
                       return Column(
@@ -154,11 +120,85 @@ class ServicesWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildNoServices(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 40),
+        Icon(Icons.comment),
+        SizedBox(height: 20),
+        Text(
+          'Записей ещё нет :(',
+          style: TextStyle(fontSize: 20),
+        ),
+        SizedBox(height: 20),
+        Wrap(
+          spacing: 6,
+          children: [
+            InkWell(
+              onTap: () {
+                context.read<ServicesCubit>().onClickOpenCreatetDialog();
+              },
+              child: Wrap(
+                children: [
+                  Icon(Icons.add, size: 20, color: Odo24App.actionsColor),
+                  Text(
+                    'Добавить',
+                    style: TextStyle(color: Odo24App.actionsColor, fontSize: 20),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              'первую запись',
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildValue(String value, {Icon? icon, Widget? unit, Color color = Colors.grey}) {
+    return UnconstrainedBox(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.all(
+            Radius.circular(6.0),
+          ),
+        ),
+        alignment: Alignment.centerLeft,
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          direction: Axis.horizontal,
+          spacing: 6,
+          children: [
+            if (icon != null) icon,
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            if (unit != null) unit,
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildService(QueryDocumentSnapshot<Map<String, dynamic>> service) {
+    final odo = service.get('odo');
     return Card(
       elevation: 6,
-      shadowColor: Colors.black,
-      child: Padding(
+      color: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 1, color: Colors.black12),
+          ),
+        ),
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -167,23 +207,24 @@ class ServicesWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Wrap(
-                    direction: Axis.vertical,
-                    children: [
-                      Text('Пробег'),
-                      Text('${service.get('odo') ?? ''}'),
-                    ],
-                  ),
+                Wrap(
+                  spacing: 10,
+                  children: [
+                    _buildValue(
+                      UtilsCore.formatTimestamp(service.get('dt')),
+                      color: Colors.black.withAlpha(10),
+                      icon: Icon(Icons.calendar_month),
+                    ),
+                    if (odo != null)
+                      _buildValue(
+                        '$odo',
+                        color: Colors.amber,
+                        icon: Icon(Icons.speed),
+                        unit: const Text('км'),
+                      ),
+                  ],
                 ),
                 Row(children: [
-                  Wrap(
-                    direction: Axis.vertical,
-                    children: [
-                      Text('Дата'),
-                      Text(UtilsCore.formatTimestamp(service.get('dt'))),
-                    ],
-                  ),
                   PopupMenuButton(
                     elevation: 10,
                     shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12, width: 1)),
@@ -221,6 +262,7 @@ class ServicesWidget extends StatelessWidget {
                 ]),
               ],
             ),
+            SizedBox(height: 6),
             Text(service.get('comment') ?? ''),
           ],
         ),
