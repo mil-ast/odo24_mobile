@@ -47,7 +47,7 @@ class _SortGroupsWidgetState extends State<SortGroupsWidget> {
               child: ReorderableDragStartListener(
                 index: index,
                 child: ListTile(
-                  leading: const Icon(Icons.folder_open),
+                  leading: const Icon(Icons.folder_open, color: Color(0xfff45f9d)),
                   title: Text(group.get('name')),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {

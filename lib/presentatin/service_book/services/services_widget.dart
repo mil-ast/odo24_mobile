@@ -162,7 +162,7 @@ class ServicesWidget extends StatelessWidget {
     return UnconstrainedBox(
       alignment: Alignment.centerLeft,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.all(
@@ -189,16 +189,13 @@ class ServicesWidget extends StatelessWidget {
   }
 
   Widget _buildService(QueryDocumentSnapshot<Map<String, dynamic>> service) {
-    final odo = service.get('odo');
+    final odo = service.get('odo') as int?;
+    final price = service.get('price') as int?;
+    final comment = service.get('comment');
     return Card(
       elevation: 6,
-      color: Colors.transparent,
+      shadowColor: Colors.black,
       child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(width: 1, color: Colors.black12),
-          ),
-        ),
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -207,22 +204,24 @@ class ServicesWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Wrap(
-                  spacing: 10,
-                  children: [
-                    _buildValue(
-                      UtilsCore.formatTimestamp(service.get('dt')),
-                      color: Colors.black.withAlpha(10),
-                      icon: Icon(Icons.calendar_month),
-                    ),
-                    if (odo != null)
+                Container(
+                  child: Wrap(
+                    spacing: 0,
+                    children: [
                       _buildValue(
-                        '$odo',
-                        color: Colors.amber,
-                        icon: Icon(Icons.speed),
-                        unit: const Text('км'),
+                        UtilsCore.formatTimestamp(service.get('dt')),
+                        color: Color(0xffaad7eb),
+                        icon: Icon(Icons.calendar_month),
                       ),
-                  ],
+                      if (odo != null)
+                        _buildValue(
+                          '$odo',
+                          color: Colors.transparent,
+                          icon: Icon(Icons.speed),
+                          unit: const Text('км'),
+                        ),
+                    ],
+                  ),
                 ),
                 Row(children: [
                   PopupMenuButton(
@@ -262,8 +261,23 @@ class ServicesWidget extends StatelessWidget {
                 ]),
               ],
             ),
-            SizedBox(height: 6),
-            Text(service.get('comment') ?? ''),
+            if (comment != null && comment.isNotEmpty)
+              Column(
+                children: [
+                  SizedBox(height: 6),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    child: Text(service.get('comment') ?? ''),
+                  ),
+                ],
+              ),
+            if (price != null)
+              _buildValue(
+                '$price',
+                color: Colors.transparent,
+                icon: Icon(Icons.money),
+                unit: const Text('руб'),
+              ),
           ],
         ),
       ),

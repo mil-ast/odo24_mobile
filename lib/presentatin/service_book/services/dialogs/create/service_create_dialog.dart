@@ -174,7 +174,7 @@ class ServiceCreateWidget extends StatelessWidget {
                       carDoc: carDoc.reference,
                       dt: Timestamp.fromDate(dt),
                       odo: odo,
-                      comment: comment,
+                      comment: comment.isNotEmpty ? comment : null,
                       price: price,
                     );
 

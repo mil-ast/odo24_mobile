@@ -3,29 +3,67 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/constants/database_constants.dart';
 import 'package:odo24_mobile/core/services_core.dart';
+import 'package:odo24_mobile/domain/models/cars/car_model.dart';
 
 class CarsCubit extends Cubit<AppState> {
+  final _db = FirebaseFirestore.instance.collection(carsCollection).withConverter(
+        fromFirestore: (snapshot, _) => CarModel.fromJson(snapshot.data()),
+        toFirestore: (CarModel model, _) => model.toJson(),
+      );
+
   CarsCubit() : super(AppStateDefault());
 
-  Stream<QuerySnapshot> getAllCars() {
-    return FirebaseFirestore.instance
+  /*void loadAllCars() {
+    emit(AppStateLoading());
+
+    FirebaseFirestore.instance
         .collection(carsCollection)
         .where('uid', isEqualTo: ProficeServicesCore.userID)
-        .snapshots();
+        .withConverter(
+            fromFirestore: (snapshot, _) => CarModel.fromJson(snapshot.data()),
+            toFirestore: (CarModel model, _) => model.toJson())
+        .get()
+        .then((QuerySnapshot<CarModel> result) {
+      carDocList = result.docs.map((e) => e.reference).toList();
+      emit(CarsListResultState(carDocList));
+    }).catchError((e) {
+      emit(AppStateError('cars_get.error', 'Ошибка при получении списка авто'));
+    });
+  }*/
+
+  Stream<QuerySnapshot<CarModel>> getAllCars() {
+    return _db.where('uid', isEqualTo: ProficeServicesCore.userID).snapshots();
   }
 
-  void onClickUpdateCar(QueryDocumentSnapshot car) {
-    emit(OnUpdateCarState(car));
+  void onClickUpdateCar(QueryDocumentSnapshot<CarModel> doc) {
+    emit(OpenUpdateCarDialogState(doc));
   }
 
-  void onClickDeleteCar(QueryDocumentSnapshot car) {
-    emit(OnDeleteCarState(car));
+  void onClickDeleteCar(QueryDocumentSnapshot<CarModel> car) {
+    emit(OpenDeleteCarConfirmDialogState(car));
   }
 
-  void delete(QueryDocumentSnapshot car) {
+  Future<void> create(CarModel body) {
+    emit(AppStateLoading());
+
+    return FirebaseFirestore.instance
+        .collection(carsCollection)
+        .withConverter(
+            fromFirestore: (snapshot, _) => CarModel.fromJson(snapshot.data()),
+            toFirestore: (CarModel model, _) => model.toJson())
+        .add(body)
+        .then((_) {
+      return null;
+    }).catchError((e) {
+      emit(AppStateError('car_create_error', 'Не удалось добавить авто'));
+    });
+  }
+
+  void delete(QueryDocumentSnapshot<CarModel> carDoc) {
+    emit(AppStateLoading());
     final batch = FirebaseFirestore.instance.batch();
 
-    batch.delete(car.reference);
+    batch.delete(carDoc.reference);
 
     FirebaseFirestore.instance
         .collection(groupsCollection)
@@ -35,7 +73,7 @@ class CarsCubit extends Cubit<AppState> {
       final List<Future<QuerySnapshot>> listServices = [];
       groups.docs.forEach((group) {
         listServices
-            .add(group.reference.collection(servicesCollection).where('car_ref', isEqualTo: car.reference).get());
+            .add(group.reference.collection(servicesCollection).where('car_ref', isEqualTo: carDoc.reference).get());
       });
       return Future.wait(listServices);
     }).then((services) {
@@ -46,18 +84,31 @@ class CarsCubit extends Cubit<AppState> {
       });
 
       return batch.commit();
+    }).then((_) {
+      //carDocList.remove(carDoc);
+      //emit(CarsListResultState(carDocList));
+    }).catchError((e) {
+      emit(AppStateError('cars.delete', 'Произошла ошибка при удалении авто'));
     });
   }
 }
 
-class CarsCreateFirstCarState extends AppState {}
-
-class OnUpdateCarState extends AppState {
-  final QueryDocumentSnapshot car;
-  OnUpdateCarState(this.car);
+class CarsListResultState extends AppState {
+  final List<DocumentReference<CarModel>> carList;
+  CarsListResultState(this.carList);
 }
 
-class OnDeleteCarState extends AppState {
-  final QueryDocumentSnapshot car;
-  OnDeleteCarState(this.car);
+class OnCreateCarSuccessState extends AppState {
+  final QueryDocumentSnapshot<CarModel> car;
+  OnCreateCarSuccessState(this.car);
+}
+
+class OpenUpdateCarDialogState extends AppState {
+  final QueryDocumentSnapshot<CarModel> car;
+  OpenUpdateCarDialogState(this.car);
+}
+
+class OpenDeleteCarConfirmDialogState extends AppState {
+  final QueryDocumentSnapshot<CarModel> car;
+  OpenDeleteCarConfirmDialogState(this.car);
 }

@@ -183,7 +183,7 @@ class ServiceUpdateWidget extends StatelessWidget {
                     final body = ServiceUpdateDTO(
                       dt: Timestamp.fromDate(dt),
                       odo: odo,
-                      comment: comment,
+                      comment: comment.isNotEmpty ? comment : null,
                       price: price,
                     );
 

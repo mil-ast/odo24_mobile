@@ -1,15 +1,22 @@
-class CarCreateDTO {
+class CarModel {
   final String uid;
   final String name;
   final int odo;
   final bool withAvatar;
 
-  CarCreateDTO({
+  const CarModel({
     required this.uid,
     required this.name,
     required this.odo,
-    this.withAvatar = false,
+    required this.withAvatar,
   });
+
+  factory CarModel.fromJson(json) => CarModel(
+        uid: json['uid'],
+        name: json['name'],
+        odo: json['odo'],
+        withAvatar: json['with_avatar'] ?? false,
+      );
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
