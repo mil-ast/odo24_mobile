@@ -28,12 +28,11 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   flutter_bloc: ^8.1.1
   cupertino_icons: ^1.0.5
-  firebase_core: ^1.22.0
-  firebase_auth: ^3.9.0
-  firebase_analytics: ^9.1.10
-  firebase_messaging: ^11.4.2
-  firebase_database: ^9.1.4
-  cloud_firestore: ^3.4.9
+  firebase_core: ^2.4.1
+  firebase_auth: ^4.2.4
+  firebase_analytics: ^10.1.0
+  firebase_messaging: ^14.2.1
+  cloud_firestore: ^4.3.1
 
 
 dev_dependencies:
