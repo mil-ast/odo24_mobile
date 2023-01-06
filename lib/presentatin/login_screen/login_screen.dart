@@ -29,81 +29,83 @@ class LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(20),
-          child: BlocProvider(
-            create: (context) => LoginCubit(),
-            child: BlocConsumer<LoginCubit, AppState>(
-              listener: (BuildContext context, AppState state) {
-                if (state is LoginCubitLoginSuccessState) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                } else if (state is LoginCubitOnClickRegisterState) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()),
-                  );
-                } else if (state is AppStateError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.error),
+          child: SingleChildScrollView(
+            child: BlocProvider(
+              create: (context) => LoginCubit(),
+              child: BlocConsumer<LoginCubit, AppState>(
+                listener: (BuildContext context, AppState state) {
+                  if (state is LoginCubitLoginSuccessState) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  } else if (state is LoginCubitOnClickRegisterState) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  } else if (state is AppStateError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
+                },
+                buildWhen: (previous, current) {
+                  if (current is LoginCubitLoginSuccessState || current is LoginCubitOnClickRegisterState) {
+                    return false;
+                  }
+
+                  return true;
+                },
+                builder: (BuildContext context, AppState state) {
+                  return Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.always,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _loginController,
+                          autofocus: true,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            helperText: 'Email',
+                            icon: Icon(Icons.email_outlined),
+                          ),
+                          validator: context.read<LoginCubit>().validateEmail,
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          keyboardType: TextInputType.visiblePassword,
+                          decoration: const InputDecoration(
+                            helperText: "Пароль",
+                            icon: Icon(Icons.vpn_key),
+                          ),
+                          validator: context.read<LoginCubit>().validatePassword,
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            context.read<LoginCubit>().login(_loginController.text, _passwordController.text);
+                          },
+                          child: const Text('Войти'),
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: context.read<LoginCubit>().onClickRegister,
+                          child: Text('Регистрация'),
+                        )
+                      ],
                     ),
                   );
-                }
-              },
-              buildWhen: (previous, current) {
-                if (current is LoginCubitLoginSuccessState || current is LoginCubitOnClickRegisterState) {
-                  return false;
-                }
-
-                return true;
-              },
-              builder: (BuildContext context, AppState state) {
-                return Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.always,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: _loginController,
-                        autofocus: true,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          helperText: 'Email',
-                          icon: Icon(Icons.email_outlined),
-                        ),
-                        validator: context.read<LoginCubit>().validateEmail,
-                      ),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        decoration: const InputDecoration(
-                          helperText: "Пароль",
-                          icon: Icon(Icons.vpn_key),
-                        ),
-                        validator: context.read<LoginCubit>().validatePassword,
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (!_formKey.currentState!.validate()) {
-                            return;
-                          }
-
-                          context.read<LoginCubit>().login(_loginController.text, _passwordController.text);
-                        },
-                        child: const Text('Войти'),
-                      ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: context.read<LoginCubit>().onClickRegister,
-                        child: Text('Регистрация'),
-                      )
-                    ],
-                  ),
-                );
-              },
+                },
+              ),
             ),
           ),
         ),
