@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:odo24_mobile/presentatin/home_screen/home_screen.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
-import 'package:odo24_mobile/services/auth/user_model.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,10 +11,10 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       initialData: null,
-      future: AuthService.getUser().first,
-      builder: (BuildContext context, AsyncSnapshot<UserModel?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
+      future: AuthService().isAuth(),
+      builder: (BuildContext context, AsyncSnapshot<bool?> snap) {
+        if (snap.connectionState == ConnectionState.done) {
+          if (snap.hasData && snap.data == true) {
             return HomeScreen();
           }
           return LoginScreen();

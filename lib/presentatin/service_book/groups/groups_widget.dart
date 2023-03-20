@@ -51,7 +51,9 @@ class GroupsWidget extends StatelessWidget {
           stream: context.read<GroupsCubit>().getAll(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
             if (snap.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             if (!snap.hasData) {

@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/car_item_screen.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/cars_cubit.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_widget.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_widget.dart';
-import 'package:odo24_mobile/services/auth/auth_service.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
@@ -17,33 +15,8 @@ class CarListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text('ODO24 Сервисная книжка авто'),
-        actions: [
-          /*IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => SimpleDialog(
-                  insetPadding: EdgeInsets.all(20),
-                  contentPadding: EdgeInsets.all(20),
-                  title: Text('Добавить новое авто'),
-                  children: [
-                    CarCreateWidget(),
-                  ],
-                ),
-              );
-            },
-            icon: Icon(Icons.add),
-          ),*/
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: _buildContent(context),
-      ),
+    return SingleChildScrollView(
+      child: _buildContent(context),
     );
   }
 
@@ -110,7 +83,9 @@ class CarListScreen extends StatelessWidget {
                 stream: context.read<CarsCubit>().getAllCars(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
                   if (snap.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
 
                   if (!snap.hasData) {

@@ -1,36 +1,96 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:odo24_mobile/services/auth/user_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:odo24_mobile/main.dart';
+import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
+import 'package:odo24_mobile/repository/auth/auth.repository.dart';
+import 'package:odo24_mobile/services/auth/models/auth_token.dart';
+import 'package:odo24_mobile/services/auth/models/user_model.dart';
 
 class AuthService {
-  Future<UserModel> signInWithEmailAndPassword(String email, String password) {
-    return FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        )
-        .then((UserCredential user) => UserModel.fromUserCredential(user));
+  static const _keyBearerToken = 'auth_bearer_token';
+  static const _keyRefreshToken = 'auth_refresh_token';
+
+  static final _instance = AuthService._internal();
+  static final _secureStorage = FlutterSecureStorage();
+  static final _authRepository = AuthRepository();
+
+  AuthToken? authToken;
+
+  factory AuthService() {
+    return _instance;
   }
 
-  Future<UserModel> createUserWithEmailAndPassword(String email, String password) {
-    return FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        )
-        .then((UserCredential user) => UserModel.fromUserCredential(user));
+  AuthService._internal();
+
+  Future<void> saveAuthToken(AuthToken token) {
+    authToken = token;
+    return Future.wait([
+      _secureStorage.write(key: _keyBearerToken, value: token.accessToken),
+      _secureStorage.write(key: _keyRefreshToken, value: token.refreshToken),
+    ]);
   }
 
-  static Future<void> logout() {
-    return FirebaseAuth.instance.signOut();
+  Future<AuthToken?> getAuthToken() async {
+    if (authToken != null) {
+      return authToken;
+    }
+    final storageData = await Future.wait<String?>([
+      _secureStorage.read(key: _keyBearerToken),
+      _secureStorage.read(key: _keyRefreshToken),
+    ]);
+
+    if (storageData[0] == null || storageData[1] == null) {
+      return null;
+    }
+
+    authToken = AuthToken.fromStrings(storageData[0]!, storageData[1]!);
+    return authToken;
   }
 
-  static Stream<UserModel?> getUser() {
-    return FirebaseAuth.instance.userChanges().map((User? user) {
-      if (user == null) {
-        return null;
+  Future<bool> isAuth() async {
+    try {
+      final token = await getAuthToken();
+      if (token == null) {
+        return false;
       }
 
-      return UserModel.fromUser(user);
+      if (token.isRefreshTokenExpired()) {
+        return false;
+      }
+
+      if (token.isExpired()) {
+        final newToken = await refreshToken(token);
+        await saveAuthToken(newToken);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<AuthToken> refreshToken(AuthToken token) {
+    return _authRepository.refreshToken(token).then((authResult) => AuthToken.fromStrings(
+          authResult.accessToken,
+          authResult.refreshToken,
+        ));
+  }
+
+  Future<UserModel> signInWithEmailAndPassword(String email, String password) {
+    return _authRepository.signInWithEmailAndPassword(email, password).then((dto) {
+      return UserModel.fromDTO(email, dto);
     });
+  }
+
+  void logout() {
+    Future.wait([
+      _secureStorage.delete(key: _keyBearerToken),
+      _secureStorage.delete(key: _keyRefreshToken),
+    ]);
+
+    Odo24App.navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
   }
 }

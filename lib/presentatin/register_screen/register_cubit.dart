@@ -35,12 +35,12 @@ class RegisterCubit extends Cubit<AppState> {
     return null;
   }
 
-  void register(String login, String password) async {
+  void register(String email, String password) async {
     try {
-      await _authService.createUserWithEmailAndPassword(
-        login,
-        password,
-      );
+      /* await _authService.sendSignInLinkToEmail(
+        email,
+        //password,
+      ); */
 
       emit(RegisterCubitRegisterSuccessState());
     } on FirebaseException catch (e) {

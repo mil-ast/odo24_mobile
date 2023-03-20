@@ -2,16 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/constants/database_constants.dart';
-import 'package:odo24_mobile/core/services_core.dart';
 
 class CarsCubit extends Cubit<AppState> {
   CarsCubit() : super(AppStateDefault());
 
-  Stream<QuerySnapshot> getAllCars() {
-    return FirebaseFirestore.instance
+  Future getAllCars() {
+    /* return FirebaseFirestore.instance
         .collection(carsCollection)
         .where('uid', isEqualTo: ProficeServicesCore.userID)
-        .snapshots();
+        .snapshots(); */
+    return Future.value();
   }
 
   void onClickUpdateCar(QueryDocumentSnapshot car) {

@@ -16,8 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _loginController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController _loginController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,54 +53,70 @@ class LoginScreenState extends State<LoginScreen> {
                   }
                 },
                 buildWhen: (previous, current) {
-                  if (current is LoginCubitLoginSuccessState || current is LoginCubitOnClickRegisterState) {
+                  if (current is LoginCubitLoginSuccessState) {
                     return false;
                   }
-
                   return true;
                 },
                 builder: (BuildContext context, AppState state) {
-                  return Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
+                  return Card(
                     child: Column(
                       children: [
-                        TextFormField(
-                          controller: _loginController,
-                          autofocus: true,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            helperText: 'Email',
-                            icon: Icon(Icons.email_outlined),
-                          ),
-                          validator: context.read<LoginCubit>().validateEmail,
+                        Center(
+                          child: Text('Введите логин (e-mail) и пароль'),
                         ),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration: const InputDecoration(
-                            helperText: "Пароль",
-                            icon: Icon(Icons.vpn_key),
-                          ),
-                          validator: context.read<LoginCubit>().validatePassword,
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (!_formKey.currentState!.validate()) {
-                              return;
-                            }
+                        SizedBox(height: 60),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  helperText: "Логин",
+                                  icon: Icon(Icons.email_outlined),
+                                ),
+                                controller: _loginController,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Логин не указан';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  helperText: "Пароль",
+                                  icon: Icon(Icons.password_rounded),
+                                ),
+                                controller: _passwordController,
+                                obscureText: true,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Пароль не указан';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (!_formKey.currentState!.validate()) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Неверный логин или пароль')),
+                                    );
+                                  }
 
-                            context.read<LoginCubit>().login(_loginController.text, _passwordController.text);
-                          },
-                          child: const Text('Войти'),
+                                  final login = _loginController.text;
+                                  final password = _passwordController.text;
+
+                                  context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
+                                },
+                                child: const Text('Войти'),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        TextButton(
-                          onPressed: context.read<LoginCubit>().onClickRegister,
-                          child: Text('Регистрация'),
-                        )
                       ],
                     ),
                   );
@@ -110,6 +126,47 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoginForm(BuildContext context, AppState state) {
+    if (state is AppStateLoading) {
+      return const Center(
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        OutlinedButton(
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all(EdgeInsets.all(16)),
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+            side: MaterialStateProperty.all(
+              BorderSide(width: 1.0, color: Color.fromRGBO(221, 75, 57, 1)),
+            ),
+          ),
+          onPressed: () {
+            //context.read<LoginCubit>().signInWithGoogle();
+          },
+          child: Row(
+            children: [
+              Image.asset('assets/icons/google.png'),
+              const SizedBox(width: 26),
+              const Text(
+                'GOOGLE',
+                style: TextStyle(
+                  color: Color.fromRGBO(221, 75, 57, 1),
+                  fontSize: 26,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

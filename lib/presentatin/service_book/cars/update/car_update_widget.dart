@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_cubit.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/update/models/car_update_dto.dart';
 
 class CarUpdateWidget extends StatelessWidget {
   final QueryDocumentSnapshot carDoc;
+  File? avatar;
 
   CarUpdateWidget(this.carDoc, {Key? key}) : super(key: key);
 
@@ -47,6 +52,19 @@ class CarUpdateWidget extends StatelessWidget {
             key: _formKey,
             child: Column(
               children: [
+                ElevatedButton(
+                    child: Text("Pick Image"),
+                    onPressed: () async {
+                      final _picker = ImagePicker();
+                      final image = await _picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        final ref = FirebaseStorage.instance.ref();
+                        final addImg = await ref
+                            .child("car_avatars/${carDoc.id}")
+                            .putFile(File(image.path), SettableMetadata(contentType: image.mimeType));
+                        if (addImg.state == TaskState.success) {}
+                      }
+                    }),
                 TextFormField(
                   controller: _nameController,
                   keyboardType: TextInputType.text,

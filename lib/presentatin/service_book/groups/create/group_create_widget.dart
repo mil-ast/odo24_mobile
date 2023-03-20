@@ -24,7 +24,9 @@ class GroupCreateWidget extends StatelessWidget {
       child: BlocConsumer<GroupCreateCubit, AppState>(
         listener: (context, state) {
           if (state is AppStateSuccess) {
-            Navigator.of(context).pop();
+            if (!isEmbedded) {
+              Navigator.of(context).pop();
+            }
           } else if (state is AppStateError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -35,7 +37,7 @@ class GroupCreateWidget extends StatelessWidget {
           }
         },
         buildWhen: (AppState previous, AppState current) {
-          return current is! AppStateError;
+          return current is AppStateDefault || current is AppStateLoading;
         },
         builder: (BuildContext context, AppState state) {
           return Form(

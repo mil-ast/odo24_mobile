@@ -25,14 +25,19 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_secure_storage: ^5.0.2
   flutter_bloc: ^8.1.1
   cupertino_icons: ^1.0.5
+  dio: ^5.0.1
+  flutter_secure_storage: ^8.0.0
+  image_picker: ^0.8.6+1
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.4
   firebase_analytics: ^10.1.0
   firebase_messaging: ^14.2.1
+  google_sign_in: ^5.4.2
+  firebase_app_check: ^0.1.1+8
   cloud_firestore: ^4.3.1
+  firebase_storage: ^11.0.10
 
 
 dev_dependencies:
@@ -44,6 +49,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/engine_background.jpg
+    - assets/icons/google.png
+    - assets/icons/google_white.png
+    - assets/icons/yandex.png
+    - assets/icons/yandex_white.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

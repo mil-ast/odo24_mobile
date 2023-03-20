@@ -32,11 +32,13 @@ class CarCreateWidget extends StatelessWidget {
               content: Text('Авто успешно добавлено'),
             );
 
-            Navigator.of(context).pop();
+            if (!isEmbedded) {
+              Navigator.of(context).pop();
+            }
           }
         },
         buildWhen: (AppState previous, AppState current) {
-          return current is! AppStateError;
+          return current is AppStateDefault || current is AppStateLoading;
         },
         builder: (BuildContext context, AppState state) {
           return Form(

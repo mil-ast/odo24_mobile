@@ -1,43 +1,19 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/services/auth/models/user_model.dart';
 
 class LoginCubit extends Cubit<AppState> {
   final _authService = AuthService();
 
   LoginCubit() : super(AppStateDefault());
 
-  String? validateEmail(String? email) {
-    if (email == null || email.length < 5) {
-      return 'Введите ваш Email';
-    } else if (!email.contains('@')) {
-      return 'Некорректный email';
-    }
-    return null;
-  }
-
-  String? validatePassword(String? passwd) {
-    if (passwd == null || passwd.isEmpty) {
-      return 'Введите пароль';
-    } else if (passwd.length < 6) {
-      return 'Пароль слишком короткий';
-    }
-    return null;
-  }
-
-  void login(String login, String password) async {
+  void signInWithEmailAndPassword(String email, String password) async {
     try {
-      await _authService.signInWithEmailAndPassword(
-        login,
-        password,
-      );
-
-      emit(LoginCubitLoginSuccessState());
-    } on FirebaseException {
-      emit(AppStateError('firebase.exception', 'Неправильный логин или пароль'));
+      final user = await _authService.signInWithEmailAndPassword(email, password);
+      emit(LoginCubitLoginSuccessState(user));
     } catch (e) {
-      emit(AppStateError('internal.error', 'Произошла внутренняя ошибка'));
+      emit(AppState.catchErrorHandler(e));
     }
   }
 
@@ -46,6 +22,9 @@ class LoginCubit extends Cubit<AppState> {
   }
 }
 
-class LoginCubitLoginSuccessState extends AppState {}
+class LoginCubitLoginSuccessState implements AppState {
+  final UserModel user;
+  const LoginCubitLoginSuccessState(this.user);
+}
 
 class LoginCubitOnClickRegisterState extends AppState {}
