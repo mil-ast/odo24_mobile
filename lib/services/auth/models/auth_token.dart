@@ -44,10 +44,10 @@ class AuthToken {
   }
 
   bool isExpired() {
-    return accessTokenExpires.difference(DateTime.now()).inMilliseconds <= 0;
+    return accessTokenExpires.difference(DateTime.now()).inMilliseconds <= 1000 * 240;
   }
 
   bool isRefreshTokenExpired() {
-    return refreshTokenExpires.difference(DateTime.now()).inMilliseconds <= 0;
+    return refreshTokenExpires.difference(DateTime.now()).inMilliseconds <= 1000 * 240;
   }
 }

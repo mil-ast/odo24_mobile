@@ -29,26 +29,28 @@ class HomeScreen extends StatelessWidget {
       ),
       //body: CarListScreen(),
       body: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => CarsCubit()),
-        ],
-        child: BlocConsumer<CarsCubit, AppState>(
-          listener: (context, state) {
-            if (state is OnUpdateCarState) {
-              showDialog(
-                context: context,
-                builder: (context) => SimpleDialog(
-                  insetPadding: EdgeInsets.all(20),
-                  contentPadding: EdgeInsets.all(20),
-                  title: Text('Редактировать авто'),
-                  children: [
-                    CarUpdateWidget(state.car),
-                  ],
-                ),
-              );
-            }
-          },
-          builder: (context, state) => StreamBuilder(
+          providers: [
+            BlocProvider(create: (context) => CarsCubit()),
+          ],
+          child: BlocConsumer<CarsCubit, AppState>(
+            listener: (context, state) {
+              if (state is OnUpdateCarState) {
+                showDialog(
+                  context: context,
+                  builder: (context) => SimpleDialog(
+                    insetPadding: EdgeInsets.all(20),
+                    contentPadding: EdgeInsets.all(20),
+                    title: Text('Редактировать авто'),
+                    children: [
+                      CarUpdateWidget(state.car),
+                    ],
+                  ),
+                );
+              }
+            },
+            builder: (context, state) => CarListScreen(),
+          )
+          /* builder: (context, state) => StreamBuilder(
             stream: context.read<CarsCubit>().getAllCars(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
               if (snap.connectionState == ConnectionState.waiting) {
@@ -87,8 +89,8 @@ class HomeScreen extends StatelessWidget {
               );
             },
           ),
-        ),
-      ),
+        ), */
+          ),
     );
   }
 

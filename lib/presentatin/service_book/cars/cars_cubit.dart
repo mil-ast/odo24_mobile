@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/core/constants/database_constants.dart';
+import 'package:odo24_mobile/services/cars/cars.service.dart';
+import 'package:odo24_mobile/services/cars/models/car.model.dart';
 
 class CarsCubit extends Cubit<AppState> {
+  final _service = CarsService();
+
   CarsCubit() : super(AppStateDefault());
 
-  Future getAllCars() {
-    /* return FirebaseFirestore.instance
-        .collection(carsCollection)
-        .where('uid', isEqualTo: ProficeServicesCore.userID)
-        .snapshots(); */
-    return Future.value();
+  void getAllCars() async {
+    emit(AppStateLoading());
+    final cars = await _service.getAll();
+    emit(CarsState(cars));
   }
 
   void onClickUpdateCar(QueryDocumentSnapshot car) {
@@ -22,35 +23,17 @@ class CarsCubit extends Cubit<AppState> {
     emit(OnDeleteCarState(car));
   }
 
-  void delete(QueryDocumentSnapshot car) {
-    final batch = FirebaseFirestore.instance.batch();
-
-    batch.delete(car.reference);
-
-    FirebaseFirestore.instance
-        .collection(groupsCollection)
-        .where('uid', isEqualTo: ProficeServicesCore.userID)
-        .get()
-        .then((groups) {
-      final List<Future<QuerySnapshot>> listServices = [];
-      groups.docs.forEach((group) {
-        listServices
-            .add(group.reference.collection(servicesCollection).where('car_ref', isEqualTo: car.reference).get());
-      });
-      return Future.wait(listServices);
-    }).then((services) {
-      services.forEach((service) {
-        service.docs.forEach((service) {
-          batch.delete(service.reference);
-        });
-      });
-
-      return batch.commit();
-    });
-  }
+  void delete(QueryDocumentSnapshot car) {}
 }
 
-class CarsCreateFirstCarState extends AppState {}
+class CarsStateBuilder implements AppState {}
+
+class CarsState implements CarsStateBuilder {
+  final List<CarModel> cars;
+  const CarsState(this.cars);
+}
+
+class CarsCreateFirstCarState implements AppState {}
 
 class OnUpdateCarState extends AppState {
   final QueryDocumentSnapshot car;

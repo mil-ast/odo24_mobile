@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/core/services_core.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_cubit.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/create/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
   final bool isEmbedded;
@@ -109,13 +107,13 @@ class CarCreateWidget extends StatelessWidget {
                           return;
                         }
 
-                        final body = CarCreateDTO(
+                        /* final body = CarCreateDTO(
                           uid: ProficeServicesCore.userID,
                           name: _nameController.text.trim(),
                           odo: int.parse(_odoController.text),
                           withAvatar: false,
                         );
-                        context.read<CarCreateCubit>().create(body);
+                        context.read<CarCreateCubit>().create(body); */
                       },
                     ),
                   ],

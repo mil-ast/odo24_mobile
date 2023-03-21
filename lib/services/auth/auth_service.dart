@@ -78,7 +78,9 @@ class AuthService {
 
   Future<UserModel> signInWithEmailAndPassword(String email, String password) {
     return _authRepository.signInWithEmailAndPassword(email, password).then((dto) {
-      return UserModel.fromDTO(email, dto);
+      final token = UserModel.fromDTO(email, dto);
+      saveAuthToken(token.token);
+      return token;
     });
   }
 

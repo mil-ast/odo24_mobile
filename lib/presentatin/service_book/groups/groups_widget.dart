@@ -47,7 +47,8 @@ class GroupsWidget extends StatelessWidget {
       }, buildWhen: (previous, current) {
         return current is AppStateDefault;
       }, builder: (BuildContext context, AppState state) {
-        return StreamBuilder(
+        return Text('groups');
+        /* return StreamBuilder(
           stream: context.read<GroupsCubit>().getAll(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
             if (snap.connectionState == ConnectionState.waiting) {
@@ -114,7 +115,7 @@ class GroupsWidget extends StatelessWidget {
               ],
             );
           },
-        );
+        ); */
       }),
     );
   }

@@ -56,9 +56,14 @@ class HttpAPI {
           AuthToken? tokenInfo = await AuthService().getAuthToken();
           if (tokenInfo != null) {
             if (tokenInfo.isExpired()) {
-              final d = Dio(BaseOptions(headers: {
-                'Authorization': 'Bearer ${tokenInfo.accessToken}',
-              }));
+              final d = Dio(
+                BaseOptions(
+                  baseUrl: _baseURLHost,
+                  headers: {
+                    'Authorization': 'Bearer ${tokenInfo.accessToken}',
+                  },
+                ),
+              );
               final authResult = await d.post('/api/auth/refresh_token', data: {
                 'refresh_token': tokenInfo.refreshToken,
               });

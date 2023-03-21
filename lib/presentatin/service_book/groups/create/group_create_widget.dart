@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/core/services_core.dart';
 import 'package:odo24_mobile/presentatin/service_book/groups/create/group_create_cubit.dart';
-import 'package:odo24_mobile/presentatin/service_book/groups/create/models/group_create_dto.dart';
 
 class GroupCreateWidget extends StatelessWidget {
   final bool isEmbedded;
@@ -85,12 +83,7 @@ class GroupCreateWidget extends StatelessWidget {
                           );
                         }
 
-                        final body = GroupCreateDTO(
-                          uid: ProficeServicesCore.userID,
-                          name: _nameController.text.trim(),
-                        );
-
-                        context.read<GroupCreateCubit>().create(body);
+                        //context.read<GroupCreateCubit>().create(body);
                       },
                     ),
                   ],

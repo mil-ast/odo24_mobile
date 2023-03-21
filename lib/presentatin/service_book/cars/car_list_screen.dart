@@ -7,6 +7,7 @@ import 'package:odo24_mobile/presentatin/service_book/cars/car_item_screen.dart'
 import 'package:odo24_mobile/presentatin/service_book/cars/cars_cubit.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_widget.dart';
 import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_widget.dart';
+import 'package:odo24_mobile/services/cars/models/car.model.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/shared_widgets/title_toolbar/title_toolbar_widget.dart';
 
@@ -22,7 +23,7 @@ class CarListScreen extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     return BlocProvider(
-      create: (_) => CarsCubit(),
+      create: (_) => CarsCubit()..getAllCars(),
       child: BlocConsumer<CarsCubit, AppState>(
         listener: (BuildContext context, AppState state) {
           if (state is OnUpdateCarState) {
@@ -52,7 +53,7 @@ class CarListScreen extends StatelessWidget {
           }
         },
         buildWhen: (previous, current) {
-          return current is AppStateDefault;
+          return current is AppStateDefault || current is AppStateLoading || current is CarsStateBuilder;
         },
         builder: (BuildContext context, AppState state) {
           return Column(
@@ -79,7 +80,12 @@ class CarListScreen extends StatelessWidget {
                   icon: Icon(Icons.add),
                 ),
               ),
-              StreamBuilder(
+              if (state is CarsState)
+                SingleChildScrollView(
+                  child: Column(children: state.cars.map((e) => _buildCar(context, e)).toList()),
+                ),
+
+              /* StreamBuilder(
                 stream: context.read<CarsCubit>().getAllCars(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
                   if (snap.connectionState == ConnectionState.waiting) {
@@ -115,7 +121,7 @@ class CarListScreen extends StatelessWidget {
                     children: docs.map((car) => _buildCar(context, car)).toList(),
                   );
                 },
-              ),
+              ), */
             ],
           );
         },
@@ -123,7 +129,7 @@ class CarListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCar(BuildContext context, QueryDocumentSnapshot<Object?> car) {
+  Widget _buildCar(BuildContext context, CarModel car) {
     return Card(
       elevation: 6,
       shadowColor: Colors.black,
@@ -135,12 +141,12 @@ class CarListScreen extends StatelessWidget {
             Expanded(
               child: ListTile(
                 leading: const Icon(Icons.directions_car_sharp),
-                title: Text(car.get('name')),
-                subtitle: Text('Пробег ${car.get('odo')} км'),
+                title: Text(car.name),
+                subtitle: Text('Пробег ${car.odo} км'),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                  /* Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
                     return CarItemScreen(car);
-                  }));
+                  })); */
                 },
               ),
             ),
@@ -158,7 +164,7 @@ class CarListScreen extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    context.read<CarsCubit>().onClickUpdateCar(car);
+                    //context.read<CarsCubit>().onClickUpdateCar(car);
                   },
                 ),
                 PopupMenuItem(
@@ -173,7 +179,7 @@ class CarListScreen extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    context.read<CarsCubit>().onClickDeleteCar(car);
+                    //context.read<CarsCubit>().onClickDeleteCar(car);
                   },
                 )
               ],
