@@ -30,10 +30,10 @@ class HttpAPI {
     options.receiveTimeout = Duration(milliseconds: receiveTimeout);
     options.connectTimeout = Duration(milliseconds: connectTimeout);
     options.sendTimeout = Duration(milliseconds: receiveTimeout);
-    final d = Dio(options);
+    final dio = Dio(options);
 
     if (allowBadCertificate == true) {
-      d.httpClientAdapter = IOHttpClientAdapter()
+      dio.httpClientAdapter = IOHttpClientAdapter()
         ..onHttpClientCreate = (_) {
           final HttpClient client = HttpClient(context: SecurityContext(withTrustedRoots: false));
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
@@ -42,46 +42,51 @@ class HttpAPI {
         ..validateCertificate = (cert, host, port) => cert != null;
     }
 
-    d.interceptors.add(
+    dio.interceptors.add(
       InterceptorsWrapper(
         //Интерсептор подстановки авторизации
         onRequest: (
           RequestOptions options,
           RequestInterceptorHandler handler,
         ) async {
-          if (options.baseUrl != _baseURLHost) {
-            options = options.copyWith(baseUrl: _baseURLHost);
-          }
+          try {
+            AuthToken? tokenInfo = await AuthService().getAuthToken();
+            if (tokenInfo != null) {
+              if (tokenInfo.isExpired()) {
+                final d = Dio(
+                  BaseOptions(
+                    baseUrl: _baseURLHost,
+                    headers: {
+                      'Authorization': 'Bearer ${tokenInfo.accessToken}',
+                    },
+                  ),
+                );
+                final authResult = await d.post('/api/auth/refresh_token', data: {
+                  'refresh_token': tokenInfo.refreshToken,
+                });
+                final Map<String, dynamic> data = authResult.data;
+                tokenInfo = AuthToken.fromStrings(data['access_token'], data['refresh_token']);
+                AuthService().saveAuthToken(tokenInfo);
+              }
 
-          AuthToken? tokenInfo = await AuthService().getAuthToken();
-          if (tokenInfo != null) {
-            if (tokenInfo.isExpired()) {
-              final d = Dio(
-                BaseOptions(
-                  baseUrl: _baseURLHost,
-                  headers: {
-                    'Authorization': 'Bearer ${tokenInfo.accessToken}',
-                  },
-                ),
-              );
-              final authResult = await d.post('/api/auth/refresh_token', data: {
-                'refresh_token': tokenInfo.refreshToken,
-              });
-              final Map<String, dynamic> data = authResult.data;
-              tokenInfo = AuthToken.fromStrings(data['access_token'], data['refresh_token']);
+              options.headers['Authorization'] = 'Bearer ${tokenInfo.accessToken}';
+              handler.next(options);
+              return;
+            } else {
+              handler.reject(DioError(
+                requestOptions: options,
+                error: 'Token is empty',
+              ));
             }
 
-            options.headers['Authorization'] = 'Bearer ${tokenInfo.accessToken}';
-            handler.next(options);
-            return;
-          } else {
+            AuthService().logout();
+          } catch (e) {
             handler.reject(DioError(
               requestOptions: options,
-              error: 'Token is empty',
+              error: e.toString(),
             ));
+            AuthService().logout();
           }
-
-          AuthService().logout();
         },
         onResponse: (response, handler) {
           if (response.statusCode == 401 && logoutOn401) {
@@ -108,7 +113,7 @@ class HttpAPI {
     );
 
     if (forceJsonContent) {
-      d.interceptors.add(
+      dio.interceptors.add(
         //Чтобы парсилось в json даже если бэком не установлен хэдер application/json
         InterceptorsWrapper(
           onResponse: (response, handler) {
@@ -122,10 +127,10 @@ class HttpAPI {
     }
 
     if (!kReleaseMode) {
-      d.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+      dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
     }
 
-    return d;
+    return dio;
   }
 
   static Dio newDioWithoutAuth({

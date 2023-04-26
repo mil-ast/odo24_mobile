@@ -1,16 +1,18 @@
-import 'package:odo24_mobile/repository/cars/auth_result.dto.dart';
+import 'package:odo24_mobile/repository/cars/car_result_dto.dart';
 
 class CarModel {
   final int carID;
-  final String name;
-  final int odo;
-  final bool avatar;
+  String name;
+  int odo;
+  bool avatar;
+  final int servicesTotal;
 
   CarModel({
     required this.carID,
     required this.name,
     required this.odo,
     required this.avatar,
+    required this.servicesTotal,
   });
 
   factory CarModel.fromDTO(CarDTO dto) {
@@ -19,6 +21,7 @@ class CarModel {
       name: dto.name,
       odo: dto.odo,
       avatar: dto.avatar,
+      servicesTotal: dto.servicesTotal,
     );
   }
 }

@@ -14,7 +14,7 @@ abstract class AppState {
   }
 }
 
-class AppStateError extends AppState {
+class AppStateError implements AppState {
   String key;
   String error;
   String? details;
@@ -22,7 +22,7 @@ class AppStateError extends AppState {
   AppStateError(this.key, this.error, {this.details});
 }
 
-class AppStateSuccess<T> extends AppState {
+class AppStateSuccess<T> implements AppState {
   T? data;
 
   AppStateSuccess([this.data]);
@@ -32,6 +32,6 @@ class AppStateSuccess<T> extends AppState {
   }
 }
 
-class AppStateDefault extends AppState {}
+class AppStateDefault implements AppState {}
 
-class AppStateLoading extends AppState {}
+class AppStateLoading implements AppState {}

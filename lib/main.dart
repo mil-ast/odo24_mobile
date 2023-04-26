@@ -23,6 +23,8 @@ class Odo24App extends StatelessWidget {
   static const secondColor = Color(0xfff2d3036);
   static const actionsColor = Color.fromRGBO(255, 152, 0, 1);
 
+  const Odo24App({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +35,7 @@ class Odo24App extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: primaryColor,
         secondaryHeaderColor: secondColor,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: const Color(0xfff9f9f9),
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.black87)),
         appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(color: Colors.white),

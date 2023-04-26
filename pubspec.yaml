@@ -43,6 +43,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  analyzer: ^5.10.0
+  flutter_lints: ^2.0.1
 
 # The following section is specific to Flutter.
 flutter:

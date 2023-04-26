@@ -1,12 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/car_list_screen.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/cars_cubit.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/create/car_create_widget.dart';
-import 'package:odo24_mobile/presentatin/service_book/cars/update/car_update_widget.dart';
+import 'package:odo24_mobile/presentatin/home_screen/form_car_create.widget.dart';
+import 'package:odo24_mobile/presentatin/home_screen/cars/car_item_widget.dart';
+import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
+import 'package:odo24_mobile/presentatin/home_screen/cars/create/car_create_widget.dart';
+import 'package:odo24_mobile/presentatin/home_screen/cars/update/car_update_widget.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,133 +24,95 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async {
               AuthService().logout();
             },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
-      //body: CarListScreen(),
-      body: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) => CarsCubit()),
-          ],
+      body: SingleChildScrollView(
+        child: BlocProvider(
+          create: (context) => CarsCubit()..getAllCars(),
           child: BlocConsumer<CarsCubit, AppState>(
+            listenWhen: (previous, current) => current is ListenCarsState || current is AppStateError,
             listener: (context, state) {
-              if (state is OnUpdateCarState) {
-                showDialog(
+              if (state is ShowUpdateCarState) {
+                showDialog<bool>(
                   context: context,
-                  builder: (context) => SimpleDialog(
-                    insetPadding: EdgeInsets.all(20),
-                    contentPadding: EdgeInsets.all(20),
-                    title: Text('Редактировать авто'),
+                  builder: (BuildContext context) => SimpleDialog(
+                    title: const Text('Редактирование авто'),
+                    contentPadding: const EdgeInsets.all(26),
                     children: [
-                      CarUpdateWidget(state.car),
+                      CarUpdateWidget(
+                        state.car,
+                      ),
                     ],
                   ),
+                ).then((bool? onSuccess) {
+                  if (onSuccess == true) {
+                    context.read<CarsCubit>().refreshCarList();
+                  }
+                });
+              } else if (state is ShowCreateCarState) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => SimpleDialog(
+                    title: const Text('Добавление авто'),
+                    contentPadding: const EdgeInsets.all(26),
+                    children: [CarCreateWidget(isEmbedded: false)],
+                  ),
                 );
+              } else if (state is ConfirmationDeleteCarState) {
+                showConfirmationDialog(
+                  context,
+                  title: 'Удаление авто',
+                  message: 'Вы действительно хотите удалить ваш автомобиль "${state.car.name}" со всеми записями?',
+                ).then((isOk) {
+                  if (isOk == true) {
+                    context.read<CarsCubit>().delete(state.car);
+                  }
+                });
               }
             },
-            builder: (context, state) => CarListScreen(),
-          )
-          /* builder: (context, state) => StreamBuilder(
-            stream: context.read<CarsCubit>().getAllCars(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
+            buildWhen: (previous, current) => current is BuildCarsState || current is AppStateLoading,
+            builder: (context, state) {
+              if (state is AppStateLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
+              if (state is CarsState) {
+                if (state.cars.isEmpty) {
+                  return FormCarCreateWidget();
+                }
 
-              if (!snap.hasData) {
-                return Text('Нет данных');
-              }
-
-              final docs = snap.data!.docs;
-
-              if (docs.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Text(
-                        'Добавьте ваш первый авто',
-                        style: TextStyle(fontSize: 20),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, right: 10),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FilledButton(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 6,
+                            children: const [
+                              Icon(Icons.add),
+                              Text('Добавить авто'),
+                            ],
+                          ),
+                          onPressed: () {
+                            context.read<CarsCubit>().onClickCreateCar();
+                          },
+                        ),
                       ),
-                      SizedBox(height: 20),
-                      CarCreateWidget(isEmbedded: true),
-                    ],
-                  ),
+                    ),
+                    ...state.cars.map((e) => CarItemWidget(e)).toList()
+                  ],
                 );
               }
 
-              return Column(
-                children: docs.map((car) {
-                  return _buildCar(context, car);
-                }).toList(),
-              );
+              return FormCarCreateWidget();
             },
           ),
-        ), */
-          ),
-    );
-  }
-
-  Widget _buildCar(BuildContext context, QueryDocumentSnapshot<Object?> car) {
-    return Card(
-      elevation: 6,
-      shadowColor: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: const Icon(Icons.directions_car_sharp),
-                title: Text(car.get('name')),
-                subtitle: Text('Пробег ${car.get('odo')} км'),
-                onTap: () {
-                  /* Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
-                    return CarItemScreen(car);
-                  })); */
-                },
-              ),
-            ),
-            PopupMenuButton(
-              elevation: 10,
-              shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12, width: 1)),
-              icon: Icon(Icons.more_vert),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.edit),
-                      Text('Изменить'),
-                    ],
-                  ),
-                  onTap: () {
-                    context.read<CarsCubit>().onClickUpdateCar(car);
-                  },
-                ),
-                PopupMenuItem(
-                  child: Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      Text(
-                        'Удалить',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    context.read<CarsCubit>().onClickDeleteCar(car);
-                  },
-                )
-              ],
-            ),
-          ],
         ),
       ),
     );
