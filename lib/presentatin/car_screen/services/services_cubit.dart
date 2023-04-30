@@ -5,13 +5,13 @@ import 'package:odo24_mobile/services/groups/models/group.model.dart';
 import 'package:odo24_mobile/services/services/models/service_result_model.dart';
 import 'package:odo24_mobile/services/services/services.dart';
 
-class ServicesListCubit extends Cubit<AppState> {
+class ServicesCubit extends Cubit<AppState> {
   final CarModel car;
   final GroupModel group;
   final List<ServiceModel> _services = [];
   final _service = Services();
 
-  ServicesListCubit(this.car, this.group) : super(AppStateDefault());
+  ServicesCubit(this.car, this.group) : super(AppStateDefault());
 
   void getByGroupID() async {
     emit(AppStateLoading());
