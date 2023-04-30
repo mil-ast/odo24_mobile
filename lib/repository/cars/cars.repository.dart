@@ -1,8 +1,8 @@
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
-import 'package:odo24_mobile/repository/cars/car_create_dto.dart';
-import 'package:odo24_mobile/repository/cars/car_result_dto.dart';
-import 'package:odo24_mobile/repository/cars/car_update_dto.dart';
+import 'package:odo24_mobile/repository/cars/models/car_create_dto.dart';
+import 'package:odo24_mobile/repository/cars/models/car_result_dto.dart';
+import 'package:odo24_mobile/repository/cars/models/car_update_dto.dart';
 
 class CarsRepository {
   final _api = HttpAPI.newDio();
@@ -10,7 +10,10 @@ class CarsRepository {
   Future<List<CarDTO>> getAll() async {
     final result = await _api.get('/api/cars');
 
-    final List<dynamic> json = ResponseHandler.parse(result);
+    final List<dynamic>? json = ResponseHandler.parse(result);
+    if (json == null) {
+      return [];
+    }
     return json.map((e) => CarDTO.fromJson(e)).toList();
   }
 
@@ -26,7 +29,6 @@ class CarsRepository {
   }
 
   Future<void> delete(int carID) {
-    return Future.value(null); // TODO
     return _api.delete('/api/cars/$carID');
   }
 }

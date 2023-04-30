@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/car_screen/car_screen_cubit.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_create/group_create_dialog.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_update/group_update_dialog.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_create_dialog.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_update_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_cubit.dart';
 import 'package:odo24_mobile/services/groups/models/group.model.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class GroupsSettingsDialog extends StatefulWidget {
   final List<GroupModel> groups;
-  final CarScreenCubit carCubit;
+  final GroupsCubit groupsCubit;
 
-  const GroupsSettingsDialog(this.carCubit, this.groups, {super.key});
+  const GroupsSettingsDialog(this.groupsCubit, this.groups, {super.key});
 
   @override
   GroupsSettingsDialogState createState() {
@@ -30,19 +30,20 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
       body: PrimaryScrollController(
         controller: ScrollController(),
         child: BlocProvider(
-          create: (context) => GroupsSettingsCubit(widget.carCubit),
+          create: (context) => GroupsSettingsCubit(widget.groupsCubit),
           child: BlocConsumer<GroupsSettingsCubit, AppState>(
             listenWhen: (previous, current) => current is GroupsSettingsListenState,
             listener: (context, state) {
               if (state is GroupsSettingsShowEditGroupState) {
                 showDialog<bool>(
                   context: context,
-                  builder: (BuildContext context) => SimpleDialog(
+                  builder: (BuildContext ctx) => SimpleDialog(
                     title: const Text('Редактирование группы'),
                     contentPadding: const EdgeInsets.all(26),
                     children: [
                       GroupUpdateWidget(
                         state.group,
+                        widget.groupsCubit,
                       ),
                     ],
                   ),
@@ -52,16 +53,15 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
               } else if (state is GroupsSettingsShowCreateGroupState) {
                 showDialog<GroupModel?>(
                   context: context,
-                  builder: (BuildContext context) => SimpleDialog(
+                  builder: (BuildContext ctx) => SimpleDialog(
                     title: const Text('Добавление новой группы'),
                     contentPadding: const EdgeInsets.all(26),
                     children: [
-                      GroupCreateWidget(),
+                      GroupCreateWidget(widget.groupsCubit),
                     ],
                   ),
                 ).then((group) {
                   if (group != null) {
-                    widget.groups.add(group);
                     setState(() {});
                   }
                 });

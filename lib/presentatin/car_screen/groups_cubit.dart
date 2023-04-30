@@ -1,30 +1,58 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
+import 'package:odo24_mobile/repository/groups/group_create_request_model.dart';
+import 'package:odo24_mobile/repository/groups/group_update_request_model.dart';
 import 'package:odo24_mobile/services/groups/groups_service.dart';
 import 'package:odo24_mobile/services/groups/models/group.model.dart';
 
-class CarScreenCubit extends Cubit<AppState> {
+class GroupsCubit extends Cubit<AppState> {
   final List<GroupModel> _groups = [];
   int _selectedIndex = -1;
   final _service = GroupsService();
 
-  CarScreenCubit() : super(AppStateDefault());
+  GroupsCubit() : super(AppStateDefault());
 
   void getAllGroups() async {
     emit(AppStateLoading());
 
-    final groups = await _service.getAll();
-    groups.sort((a, b) => a.sort - b.sort);
+    try {
+      final groups = await _service.getAll();
+      groups.sort((a, b) => a.sort - b.sort);
 
-    _groups.addAll(groups);
+      _groups.addAll(groups);
 
-    GroupModel? selected;
-    if (groups.isNotEmpty) {
-      _selectedIndex = 0;
-      selected = groups.first;
+      GroupModel? selected;
+      if (groups.isNotEmpty) {
+        _selectedIndex = 0;
+        selected = groups.first;
+      }
+
+      emit(GroupsState(_groups, selected));
+    } catch (e) {
+      emit(AppState.catchErrorHandler(e));
     }
+  }
 
-    emit(GroupsState(_groups, selected));
+  void create(GroupCreateRequestModel body) async {
+    try {
+      final group = await _service.create(body);
+
+      _groups.add(group);
+      emit(GroupCreateSuccessful(group));
+      _selectedIndex = _groups.length - 1;
+      refresh();
+    } catch (e) {
+      emit(AppState.catchErrorHandler(e));
+    }
+  }
+
+  void update(GroupUpdateRequestModel body) async {
+    try {
+      await _service.update(body);
+      emit(AppStateSuccess<GroupUpdateRequestModel>(body));
+    } catch (e) {
+      emit(AppState.catchErrorHandler(e));
+    }
   }
 
   void onChangeGroup(GroupModel? group) {
@@ -67,4 +95,9 @@ class GroupsState implements BuildGroupsState {
 class OpenGroupsSettingDialogState implements ListenGroupsState {
   final List<GroupModel> groups;
   const OpenGroupsSettingDialogState(this.groups);
+}
+
+class GroupCreateSuccessful implements ListenGroupsState {
+  final GroupModel newGroup;
+  const GroupCreateSuccessful(this.newGroup);
 }

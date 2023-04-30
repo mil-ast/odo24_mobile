@@ -1,11 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
+import 'package:odo24_mobile/repository/cars/models/car_create_dto.dart';
+import 'package:odo24_mobile/repository/cars/models/car_update_dto.dart';
 import 'package:odo24_mobile/services/cars/cars.service.dart';
 import 'package:odo24_mobile/services/cars/models/car.model.dart';
 
 class CarsCubit extends Cubit<AppState> {
   List<CarModel> _carList = [];
-  int _selecterCar = -1;
 
   final _service = CarsService();
 
@@ -16,13 +17,7 @@ class CarsCubit extends Cubit<AppState> {
     final cars = await _service.getAll();
     _carList = cars;
 
-    if (_selecterCar == -1) {
-      _selecterCar = 0;
-    }
-    emit(CarsState(
-      cars: cars,
-      selectedIndex: _selecterCar,
-    ));
+    emit(CarsState(cars: cars));
   }
 
   void onClickCreateCar() {
@@ -37,6 +32,38 @@ class CarsCubit extends Cubit<AppState> {
     emit(ConfirmationDeleteCarState(car));
   }
 
+  void create(CarCreateDTO body) async {
+    emit(AppStateLoading());
+
+    try {
+      final result = await _service.create(body);
+      _carList.add(result);
+
+      emit(CarCreateSuccessState(result));
+
+      refreshCarList();
+    } catch (e) {
+      emit(AppState.catchErrorHandler(e));
+    }
+  }
+
+  void update(CarModel car, CarUpdateDTO body) async {
+    emit(AppStateLoading());
+
+    try {
+      await _service.update(body);
+
+      car.name = body.name;
+      car.odo = body.odo;
+      car.avatar = body.avatar;
+
+      emit(CarUpdateSuccessState());
+      refreshCarList();
+    } catch (e) {
+      emit(AppState.catchErrorHandler(e));
+    }
+  }
+
   void delete(CarModel car) async {
     try {
       await _service.delete(car);
@@ -44,12 +71,10 @@ class CarsCubit extends Cubit<AppState> {
       _carList.removeAt(indexCar);
 
       if (_carList.isNotEmpty) {
-        selectCar(_carList.first);
+        refreshCarList();
       } else {
-        _selecterCar = -1;
         emit(CarsState(
           cars: _carList,
-          selectedIndex: _selecterCar,
         ));
       }
     } catch (e) {
@@ -57,19 +82,13 @@ class CarsCubit extends Cubit<AppState> {
     }
   }
 
-  void selectCar(CarModel car) {
-    _selecterCar = _carList.indexOf(car);
-    refreshCarList();
-  }
-
   void onCreateCar(CarModel car) {
     _carList.add(car);
-    _selecterCar = _carList.indexOf(car);
     refreshCarList();
   }
 
   void refreshCarList() {
-    emit(CarsState(cars: _carList, selectedIndex: _selecterCar));
+    emit(CarsState(cars: _carList));
   }
 }
 
@@ -79,14 +98,19 @@ abstract class ListenCarsState extends AppState {}
 
 class CarsState implements BuildCarsState {
   final List<CarModel> cars;
-  final int selectedIndex;
   const CarsState({
     required this.cars,
-    this.selectedIndex = -1,
   });
 }
 
 class ShowCreateCarState implements ListenCarsState {}
+
+class CarCreateSuccessState implements ListenCarsState {
+  final CarModel car;
+  const CarCreateSuccessState(this.car);
+}
+
+class CarUpdateSuccessState implements ListenCarsState {}
 
 class ShowUpdateCarState implements ListenCarsState {
   final CarModel car;

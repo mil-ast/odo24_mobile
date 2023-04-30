@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/car_screen/car_screen_cubit.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_dialog.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups/form_group_create.widget.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups/groups_selector_widget.dart';
+import 'package:odo24_mobile/presentatin/car_screen/services/services_list_widget.dart';
 import 'package:odo24_mobile/services/cars/models/car.model.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
 
 class CarScreen extends StatelessWidget {
   final CarModel car;
@@ -33,33 +35,26 @@ class CarScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: MultiBlocProvider(
           providers: [
-            BlocProvider<CarScreenCubit>(
-              create: (context) => CarScreenCubit()..getAllGroups(),
+            BlocProvider<GroupsCubit>(
+              create: (context) => GroupsCubit()..getAllGroups(),
             ),
           ],
-          child: BlocConsumer<CarScreenCubit, AppState>(
+          child: BlocConsumer<GroupsCubit, AppState>(
             listenWhen: (previous, current) => current is AppStateError || current is ListenGroupsState,
             listener: (context, state) {
               if (state is OpenGroupsSettingDialogState) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => GroupsSettingsDialog(context.read<CarScreenCubit>(), state.groups),
+                    builder: (_) => GroupsSettingsDialog(
+                      context.read<GroupsCubit>(),
+                      state.groups,
+                    ),
                     fullscreenDialog: false,
                   ),
                 ).then((value) {
-                  context.read<CarScreenCubit>().refresh();
+                  context.read<GroupsCubit>().refresh();
                 });
-                /* showDialog(
-                  context: context,
-                  builder: (BuildContext context) => SimpleDialog(
-                    title: const Text('Добавление авто'),
-                    contentPadding: const EdgeInsets.all(26),
-                    children: [
-                      GroupsSettingsDialog(state.groups),
-                    ],
-                  ),
-                ); */
               }
             },
             buildWhen: (previous, current) => current is BuildGroupsState || current is AppStateLoading,
@@ -71,56 +66,13 @@ class CarScreen extends StatelessWidget {
               }
 
               if (state is GroupsState) {
+                if (state.groups.isEmpty) {
+                  return FormGroupCreateWidget();
+                }
                 return Column(
                   children: [
-                    Container(
-                      color: Colors.white,
-                      height: 80,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: DropdownButton<GroupModel>(
-                              isExpanded: true,
-                              value: state.selected,
-                              items: state.groups.map((GroupModel group) {
-                                return DropdownMenuItem<GroupModel>(
-                                  value: group,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(group.name),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (group) {
-                                context.read<CarScreenCubit>().onChangeGroup(group);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          SizedBox(
-                            width: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                context.read<CarScreenCubit>().onClickOpenGroupsSettingsDialog();
-                              },
-                              icon: const Icon(Icons.settings),
-                              style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(Color(0xFF5abd70)),
-                                iconColor: MaterialStatePropertyAll(Colors.white),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                        ],
-                      ),
-                    ),
+                    GroupsSelectorWidget(state.groups, state.selected),
+                    if (state.selected != null) ServicesListWidget(car, state.selected!),
                   ],
                 );
               }

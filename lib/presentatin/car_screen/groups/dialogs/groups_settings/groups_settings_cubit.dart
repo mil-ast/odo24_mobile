@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/car_screen/car_screen_cubit.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/services/groups/groups_service.dart';
 import 'package:odo24_mobile/services/groups/models/group.model.dart';
 
 class GroupsSettingsCubit extends Cubit<AppState> {
-  final CarScreenCubit carCubit;
+  final GroupsCubit carCubit;
   final _service = GroupsService();
 
   GroupsSettingsCubit(this.carCubit) : super(AppStateDefault());
@@ -26,7 +26,7 @@ class GroupsSettingsCubit extends Cubit<AppState> {
   }
 
   void onClickEditGroup(GroupModel group) {
-    emit(GroupsSettingsDeleteGroupConfirmationState(group));
+    emit(GroupsSettingsShowEditGroupState(group));
   }
 
   void onClickDeleteGroup(GroupModel group) {

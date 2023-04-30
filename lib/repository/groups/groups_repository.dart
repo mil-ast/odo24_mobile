@@ -10,7 +10,10 @@ class GroupsRepository {
   Future<List<GroupDTO>> getAll() async {
     final result = await _api.get('/api/groups');
 
-    final List<dynamic> json = ResponseHandler.parse(result);
+    final List<dynamic>? json = ResponseHandler.parse(result);
+    if (json == null) {
+      return [];
+    }
     return json.map((e) => GroupDTO.fromJson(e)).toList();
   }
 
@@ -31,20 +34,4 @@ class GroupsRepository {
   Future<void> delete(int groupID) {
     return _api.delete('/api/groups/$groupID');
   }
-
-  /* Future<CarDTO> create(CarCreateDTO car) async {
-    final result = await _api.post('/api/cars', data: car);
-
-    final Map<String, dynamic> json = ResponseHandler.parse(result);
-    return CarDTO.fromJson(json);
-  }
-
-  Future<void> update(CarUpdateDTO car) {
-    return _api.put('/api/cars/${car.carID}', data: car);
-  }
-
-  Future<void> delete(int carID) {
-    return Future.value(null); // TODO
-    return _api.delete('/api/cars/$carID');
-  } */
 }

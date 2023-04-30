@@ -37,28 +37,31 @@ class HomeScreen extends StatelessWidget {
               if (state is ShowUpdateCarState) {
                 showDialog<bool>(
                   context: context,
-                  builder: (BuildContext context) => SimpleDialog(
+                  builder: (BuildContext ctx) => SimpleDialog(
                     title: const Text('Редактирование авто'),
                     contentPadding: const EdgeInsets.all(26),
                     children: [
                       CarUpdateWidget(
                         state.car,
+                        context.read<CarsCubit>(),
                       ),
                     ],
                   ),
-                ).then((bool? onSuccess) {
-                  if (onSuccess == true) {
-                    context.read<CarsCubit>().refreshCarList();
-                  }
-                });
+                );
               } else if (state is ShowCreateCarState) {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => SimpleDialog(
+                  builder: (BuildContext ctx) => SimpleDialog(
                     title: const Text('Добавление авто'),
                     contentPadding: const EdgeInsets.all(26),
-                    children: [CarCreateWidget(isEmbedded: false)],
+                    children: [
+                      CarCreateWidget(context.read<CarsCubit>()),
+                    ],
                   ),
+                );
+              } else if (state is CarCreateSuccessState) {
+                const SnackBar(
+                  content: Text('Авто успешно добавлено'),
                 );
               } else if (state is ConfirmationDeleteCarState) {
                 showConfirmationDialog(

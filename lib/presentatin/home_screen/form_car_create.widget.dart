@@ -1,62 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/main.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
-import 'package:odo24_mobile/presentatin/home_screen/cars/create/car_create_widget.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/repository/cars/models/car_create_dto.dart';
 
 class FormCarCreateWidget extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _odoController = TextEditingController();
+
+  FormCarCreateWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 40),
-          Icon(Icons.comment),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 40),
+          const Icon(Icons.comment),
+          const SizedBox(height: 20),
+          const Text(
             'Автомобилей ещё нет :(',
             style: TextStyle(fontSize: 20),
           ),
-          SizedBox(height: 20),
-          Wrap(
-            spacing: 6,
-            children: [
-              InkWell(
-                onTap: () {
-                  showDialog<CarModel>(
-                    context: context,
-                    builder: (context) => SimpleDialog(
-                      contentPadding: EdgeInsets.all(20),
-                      insetPadding: EdgeInsets.all(20),
-                      title: Text('Добавить авто'),
-                      children: [
-                        CarCreateWidget(isEmbedded: false),
-                      ],
-                    ),
-                  ).then((car) {
-                    if (car != null) {
-                      context.read<CarsCubit>().onCreateCar(car);
+          const SizedBox(height: 20),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    helperText: 'Название вашего авто',
+                    icon: Icon(Icons.title),
+                  ),
+                  validator: (String? name) {
+                    if (name == null || name.length < 3) {
+                      return 'Название слишком короткое';
+                    } else if (name.length > 120) {
+                      return 'Название слишком длинное';
                     }
-                  });
-                },
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 10,
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _odoController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    helperText: 'Пробег авто, км.',
+                    icon: Icon(Icons.speed),
+                  ),
+                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                  validator: (String? input) {
+                    if (input == null) {
+                      return 'Укажите пробег авто';
+                    }
+
+                    int? odo = int.tryParse(input);
+                    if (odo == null) {
+                      return 'Некорретное значение пробега';
+                    } else if (odo > 9999999) {
+                      return 'Слишком большой пробег';
+                    }
+
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.car_rental, size: 30, color: Odo24App.actionsColor),
-                    Text(
-                      'Добавить',
-                      style: TextStyle(color: Odo24App.actionsColor, fontSize: 20),
+                    const SizedBox.shrink(),
+                    ElevatedButton(
+                      child: const Text('Добавить'),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Проверьте правильность заполнения формы'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final body = CarCreateDTO(
+                          name: _nameController.text.trim(),
+                          odo: int.parse(_odoController.text),
+                          avatar: false,
+                        );
+                        context.read<CarsCubit>().create(body);
+                      },
                     ),
                   ],
                 ),
-              ),
-              Text(
-                'авто',
-                style: TextStyle(fontSize: 20),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
