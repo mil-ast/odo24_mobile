@@ -1,3 +1,4 @@
+import 'package:odo24_mobile/repository/services/models/service_create_request_model.dart';
 import 'package:odo24_mobile/repository/services/services_repository.dart';
 import 'package:odo24_mobile/services/services/models/service_result_model.dart';
 
@@ -17,11 +18,13 @@ class Services {
 
     return result.map((dto) => ServiceModel.fromDTO(dto)).toList();
   }
-/* 
-  Future<CarModel> create(CarCreateDTO car) async {
-    final result = await _repository.create(car);
-    return CarModel.fromDTO(result);
+
+  Future<ServiceModel> create(int carID, int groupID, ServiceCreateRequestModel service) async {
+    final result = await _repository.create(carID, groupID, service);
+    return ServiceModel.fromDTO(result);
   }
+/* 
+
 
   Future<void> update(CarUpdateDTO car) {
     return _repository.update(car);

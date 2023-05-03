@@ -1,10 +1,11 @@
-import 'package:odo24_mobile/repository/services/service_result_dto.dart';
+import 'package:intl/intl.dart';
+import 'package:odo24_mobile/repository/services/models/service_result_dto.dart';
 
 class ServiceModel {
   final int serviceID;
   final int? odo;
   final int? nextDistance;
-  final String dt;
+  final DateTime dt;
   final String? description;
   final int? price;
 
@@ -17,12 +18,30 @@ class ServiceModel {
     required this.price,
   });
 
+  String get formatDt {
+    return DateFormat.yMMMMd().format(dt);
+  }
+
+  String? get formatOdo {
+    if (odo == null) {
+      return null;
+    }
+    return NumberFormat.decimalPattern().format(odo);
+  }
+
+  String? get formatPrice {
+    if (price == null) {
+      return null;
+    }
+    return NumberFormat.currency(decimalDigits: 0, symbol: '₽').format(price);
+  }
+
   factory ServiceModel.fromDTO(ServiceDTO dto) {
     return ServiceModel(
       serviceID: dto.serviceID,
       odo: dto.odo,
       nextDistance: dto.nextDistance,
-      dt: dto.dt,
+      dt: DateTime.parse(dto.dt),
       description: dto.description,
       price: dto.price,
     );

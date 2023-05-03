@@ -17,9 +17,52 @@ class GroupsSelectorWidget extends StatelessWidget {
         children: [
           const SizedBox(width: 20),
           Expanded(
-            child: DropdownButton<GroupModel>(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xfff9f9f9),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: DropdownButton<GroupModel>(
+                  value: selected,
+                  isExpanded: true,
+                  items: groups.map((GroupModel group) {
+                    return DropdownMenuItem<GroupModel>(
+                      key: UniqueKey(),
+                      value: group,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(group.name),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (group) {
+                    BlocProvider.of<GroupsCubit>(context).onChangeGroup(group);
+                  },
+                  icon: const Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Icon(Icons.arrow_drop_down_outlined, color: Colors.black87),
+                  ),
+                  iconEnabledColor: Colors.black87,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                  ),
+                  underline: Container(), //remove underline
+                ),
+              ),
+            ),
+            /* child: DropdownButton<GroupModel>(
               key: UniqueKey(),
               isExpanded: true,
+              underline: SizedBox.shrink(),
               value: selected,
               items: groups.map((GroupModel group) {
                 return DropdownMenuItem<GroupModel>(
@@ -40,7 +83,7 @@ class GroupsSelectorWidget extends StatelessWidget {
               onChanged: (group) {
                 BlocProvider.of<GroupsCubit>(context).onChangeGroup(group);
               },
-            ),
+            ), */
           ),
           const SizedBox(width: 20),
           SizedBox(

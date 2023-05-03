@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
-import 'package:odo24_mobile/repository/groups/group_create_request_model.dart';
+import 'package:odo24_mobile/repository/groups/models/group_create_request_model.dart';
 
 class FormGroupCreateWidget extends StatelessWidget {
   FormGroupCreateWidget({super.key});

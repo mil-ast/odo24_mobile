@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_dialog.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups/form_group_create.widget.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/groups_selector_widget.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_list_widget.dart';
 import 'package:odo24_mobile/services/cars/models/car.model.dart';
@@ -32,7 +31,7 @@ class CarScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: MultiBlocProvider(
           providers: [
             BlocProvider<GroupsCubit>(
@@ -66,16 +65,35 @@ class CarScreen extends StatelessWidget {
               }
 
               if (state is GroupsState) {
-                if (state.groups.isEmpty) {
-                  return FormGroupCreateWidget();
-                }
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     GroupsSelectorWidget(state.groups, state.selected),
-                    if (state.selected != null) ServicesListWidget(car, state.selected!),
+                    if (state.selected != null)
+                      Expanded(
+                        child: ServicesListWidget(car, state.selected!, key: UniqueKey()),
+                      ),
                   ],
                 );
               }
+
+              /* if (state is GroupsState) {
+                if (state.groups.isEmpty) {
+                  return FormGroupCreateWidget();
+                }
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      GroupsSelectorWidget(state.groups, state.selected),
+                      if (state.selected != null)
+                        Expanded(
+                          child: SingleChildScrollView(child: ServicesListWidget(car, state.selected!)),
+                        ),
+                    ],
+                  ),
+                );
+              } */
 
               return const SizedBox.shrink();
             },

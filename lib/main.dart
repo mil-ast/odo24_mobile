@@ -1,20 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:intl/intl.dart';
+import 'package:odo24_mobile/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final defaultApp = await Firebase.initializeApp();
-  FirebaseAuth.instanceFor(app: defaultApp);
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-  );
+  Intl.defaultLocale = 'ru_RU';
 
-  runApp(Odo24App());
+  runApp(const Odo24App());
 }
 
 class Odo24App extends StatelessWidget {

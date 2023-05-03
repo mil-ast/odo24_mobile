@@ -7,7 +7,8 @@ import 'package:odo24_mobile/services/auth/auth_service.dart';
 import 'package:odo24_mobile/services/auth/models/auth_token.dart';
 
 class HttpAPI {
-  static String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
+  static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
+  static bool _isRefresh = false;
 
   static Dio newDio({
     int receiveTimeout = 5000,
@@ -52,7 +53,9 @@ class HttpAPI {
           try {
             AuthToken? tokenInfo = await AuthService().getAuthToken();
             if (tokenInfo != null) {
-              if (tokenInfo.isExpired()) {
+              if (tokenInfo.isExpired() && !_isRefresh) {
+                _isRefresh = true;
+
                 final d = Dio(
                   BaseOptions(
                     baseUrl: _baseURLHost,
@@ -63,6 +66,8 @@ class HttpAPI {
                 );
                 final authResult = await d.post('/api/auth/refresh_token', data: {
                   'refresh_token': tokenInfo.refreshToken,
+                }).whenComplete(() {
+                  _isRefresh = false;
                 });
                 final Map<String, dynamic> data = authResult.data;
                 tokenInfo = AuthToken.fromStrings(data['access_token'], data['refresh_token']);

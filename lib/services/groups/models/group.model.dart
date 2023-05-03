@@ -1,4 +1,4 @@
-import 'package:odo24_mobile/repository/groups/group_result_dto.dart';
+import 'package:odo24_mobile/repository/groups/models/group_result_dto.dart';
 
 class GroupModel {
   final int groupID;

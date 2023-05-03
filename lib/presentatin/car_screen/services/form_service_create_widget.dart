@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
-import 'package:odo24_mobile/repository/groups/group_create_request_model.dart';
+import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
+import 'package:odo24_mobile/repository/services/models/service_create_request_model.dart';
 import 'package:odo24_mobile/services/cars/models/car.model.dart';
 import 'package:odo24_mobile/services/groups/models/group.model.dart';
 
@@ -27,13 +27,6 @@ class FormServiceCreateWidget extends StatelessWidget {
       TextEditingValue(text: DateTime.now().toIso8601String().substring(0, 10)),
     );
   }
-
-  /*   final int serviceID;
-  final int? odo;
-  final int? nextDistance;
-  final String dt;
-  final String? description;
-  final int? price; */
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +132,16 @@ class FormServiceCreateWidget extends StatelessWidget {
                             return;
                           }
 
-                          /* final body = GroupCreateRequestModel(
-                            name: _nameController.text.trim(),
+                          final body = ServiceCreateRequestModel(
+                            odo: _odoController.text.isNotEmpty ? int.parse(_odoController.text) : null,
+                            nextDistance: _nextDistanceController.text.isNotEmpty
+                                ? int.parse(_nextDistanceController.text)
+                                : null,
+                            dt: _dtController.text,
+                            description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+                            price: _priceController.text.isNotEmpty ? int.parse(_priceController.text) : null,
                           );
-                          context.read<GroupsCubit>().create(body); */
+                          context.read<ServicesCubit>().create(car.carID, selectedGroup.groupID, body);
                         },
                       ),
                     ],

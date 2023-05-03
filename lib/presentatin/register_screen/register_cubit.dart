@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
@@ -43,14 +42,6 @@ class RegisterCubit extends Cubit<AppState> {
       ); */
 
       emit(RegisterCubitRegisterSuccessState());
-    } on FirebaseException catch (e) {
-      switch (e.code) {
-        case 'email-already-in-use':
-          emit(AppStateError('firebase.error', 'Email уже занят'));
-          break;
-        default:
-          emit(AppStateError('internal.error', e.message ?? e.code));
-      }
     } catch (e) {
       emit(AppStateError('internal.error', 'Неправильный логин или пароль'));
     }
