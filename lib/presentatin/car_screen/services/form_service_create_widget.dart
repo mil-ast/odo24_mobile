@@ -141,7 +141,7 @@ class FormServiceCreateWidget extends StatelessWidget {
                             description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
                             price: _priceController.text.isNotEmpty ? int.parse(_priceController.text) : null,
                           );
-                          context.read<ServicesCubit>().create(car.carID, selectedGroup.groupID, body);
+                          context.read<ServicesCubit>().create(car, selectedGroup.groupID, body);
                         },
                       ),
                     ],

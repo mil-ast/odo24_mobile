@@ -2,6 +2,7 @@ import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/repository/services/models/service_create_request_model.dart';
 import 'package:odo24_mobile/repository/services/models/service_result_dto.dart';
+import 'package:odo24_mobile/repository/services/models/service_update_request_model.dart';
 
 class ServicesRepository {
   final _api = HttpAPI.newDio();
@@ -20,5 +21,13 @@ class ServicesRepository {
     final result = await _api.post('/api/cars/$carID/groups/$groupID/services', data: service);
     final Map<String, dynamic> json = ResponseHandler.parse(result);
     return ServiceDTO.fromJson(json);
+  }
+
+  Future<void> update(int serviceID, ServiceUpdateRequestModel service) {
+    return _api.put('/api/services/$serviceID', data: service);
+  }
+
+  Future<void> delete(int serviceID) {
+    return _api.delete('/api/services/$serviceID');
   }
 }

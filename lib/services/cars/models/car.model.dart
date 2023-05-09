@@ -5,7 +5,7 @@ class CarModel {
   String name;
   int odo;
   bool avatar;
-  final int servicesTotal;
+  int servicesTotal;
 
   CarModel({
     required this.carID,

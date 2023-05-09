@@ -59,31 +59,6 @@ class GroupsSelectorWidget extends StatelessWidget {
                 ),
               ),
             ),
-            /* child: DropdownButton<GroupModel>(
-              key: UniqueKey(),
-              isExpanded: true,
-              underline: SizedBox.shrink(),
-              value: selected,
-              items: groups.map((GroupModel group) {
-                return DropdownMenuItem<GroupModel>(
-                  key: UniqueKey(),
-                  value: group,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(group.name),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (group) {
-                BlocProvider.of<GroupsCubit>(context).onChangeGroup(group);
-              },
-            ), */
           ),
           const SizedBox(width: 20),
           SizedBox(

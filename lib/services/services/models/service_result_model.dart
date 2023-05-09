@@ -3,11 +3,11 @@ import 'package:odo24_mobile/repository/services/models/service_result_dto.dart'
 
 class ServiceModel {
   final int serviceID;
-  final int? odo;
-  final int? nextDistance;
-  final DateTime dt;
-  final String? description;
-  final int? price;
+  int? odo;
+  int? nextDistance;
+  DateTime dt;
+  String? description;
+  int? price;
 
   ServiceModel({
     required this.serviceID,

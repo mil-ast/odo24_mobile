@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
 import 'package:odo24_mobile/services/services/models/service_result_model.dart';
 
 class ServiceItemWidget extends StatelessWidget {
@@ -42,8 +44,40 @@ class ServiceItemWidget extends StatelessWidget {
                       )
                     : const SizedBox.shrink(),
               ),
-              SizedBox(
-                child: Icon(Icons.more_vert_outlined),
+              const SizedBox(width: 20),
+              PopupMenuButton(
+                onSelected: (value) {},
+                child: const Icon(Icons.menu),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      onTap: () {
+                        context.read<ServicesCubit>().onClickEditService(service);
+                      },
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
+                        children: const [
+                          Icon(Icons.edit),
+                          Text('Изменить'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {
+                        context.read<ServicesCubit>().onClickDeleteService(service);
+                      },
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
+                        children: const [
+                          Icon(Icons.delete),
+                          Text('Удалить'),
+                        ],
+                      ),
+                    ),
+                  ];
+                },
               ),
             ],
           ),
