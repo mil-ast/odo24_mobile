@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/home_screen/home_screen.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_cubit.dart';
@@ -16,8 +17,8 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _loginController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class LoginScreenState extends State<LoginScreen> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: SingleChildScrollView(
             child: BlocProvider(
               create: (context) => LoginCubit(),
@@ -37,12 +38,12 @@ class LoginScreenState extends State<LoginScreen> {
                   if (state is LoginCubitLoginSuccessState) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
                     );
                   } else if (state is LoginCubitOnClickRegisterState) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
                     );
                   } else if (state is AppStateError) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -59,13 +60,17 @@ class LoginScreenState extends State<LoginScreen> {
                   return true;
                 },
                 builder: (BuildContext context, AppState state) {
-                  return Card(
+                  return Padding(
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
                         Center(
-                          child: Text('Введите логин (e-mail) и пароль'),
+                          child: SvgPicture.asset(
+                            'assets/logo.svg',
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
-                        SizedBox(height: 60),
                         Form(
                           key: _formKey,
                           child: Column(
@@ -99,20 +104,33 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (!_formKey.currentState!.validate()) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Неверный логин или пароль')),
-                                    );
-                                  }
+                              const SizedBox(height: 40),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: const Wrap(
+                                      children: [Text('Восстановить')],
+                                    ),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () {
+                                      if (!_formKey.currentState!.validate()) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Неверный логин или пароль')),
+                                        );
+                                        return;
+                                      }
 
-                                  final login = _loginController.text;
-                                  final password = _passwordController.text;
+                                      final login = _loginController.text;
+                                      final password = _passwordController.text;
 
-                                  context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
-                                },
-                                child: const Text('Войти'),
+                                      context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
+                                    },
+                                    child: const Text('Войти'),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

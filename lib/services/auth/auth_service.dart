@@ -58,10 +58,10 @@ class AuthService {
         return false;
       }
 
-      if (token.isExpired()) {
+      /* if (token.isExpired()) {
         final newToken = await refreshToken(token);
         await saveAuthToken(newToken);
-      }
+      } */
 
       return true;
     } catch (e) {
@@ -69,12 +69,12 @@ class AuthService {
     }
   }
 
-  Future<AuthToken> refreshToken(AuthToken token) {
+  /* Future<AuthToken> refreshToken(AuthToken token) {
     return _authRepository.refreshToken(token).then((authResult) => AuthToken.fromStrings(
           authResult.accessToken,
           authResult.refreshToken,
         ));
-  }
+  } */
 
   Future<UserModel> signInWithEmailAndPassword(String email, String password) {
     return _authRepository.signInWithEmailAndPassword(email, password).then((dto) {
@@ -90,9 +90,8 @@ class AuthService {
       _secureStorage.delete(key: _keyRefreshToken),
     ]);
 
-    Odo24App.navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (route) => false,
-    );
+    authToken = null;
+
+    Odo24App.navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
   }
 }
