@@ -27,10 +27,11 @@ class LoginScreenState extends State<LoginScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Сервисная книжка авто'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: BlocProvider(
               create: (context) => LoginCubit(),
               child: BlocConsumer<LoginCubit, AppState>(
@@ -74,11 +75,11 @@ class LoginScreenState extends State<LoginScreen> {
                         Form(
                           key: _formKey,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               TextFormField(
                                 decoration: const InputDecoration(
-                                  helperText: "Логин",
-                                  icon: Icon(Icons.email_outlined),
+                                  hintText: "Логин",
                                 ),
                                 controller: _loginController,
                                 keyboardType: TextInputType.emailAddress,
@@ -89,10 +90,10 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
+                              const SizedBox(height: 20),
                               TextFormField(
                                 decoration: const InputDecoration(
-                                  helperText: "Пароль",
-                                  icon: Icon(Icons.password_rounded),
+                                  hintText: "Пароль",
                                 ),
                                 controller: _passwordController,
                                 obscureText: true,
@@ -104,31 +105,45 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 40),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              const SizedBox(height: 20),
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                alignment: WrapAlignment.spaceBetween,
                                 children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/register');
+                                    },
+                                    child: const Text('Регистрация'),
+                                  ),
                                   TextButton(
                                     onPressed: () {},
                                     child: const Wrap(
-                                      children: [Text('Восстановить')],
+                                      children: [Text('Забыли пароль?')],
                                     ),
                                   ),
-                                  FilledButton(
-                                    onPressed: () {
-                                      if (!_formKey.currentState!.validate()) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Неверный логин или пароль')),
-                                        );
-                                        return;
-                                      }
+                                ],
+                              ),
+                              const SizedBox(height: 40),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: FilledButton(
+                                      onPressed: () {
+                                        if (!_formKey.currentState!.validate()) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Неверный логин или пароль')),
+                                          );
+                                          return;
+                                        }
 
-                                      final login = _loginController.text;
-                                      final password = _passwordController.text;
+                                        final login = _loginController.text;
+                                        final password = _passwordController.text;
 
-                                      context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
-                                    },
-                                    child: const Text('Войти'),
+                                        context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
+                                      },
+                                      child: const Text('Войти'),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -144,47 +159,6 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildLoginForm(BuildContext context, AppState state) {
-    if (state is AppStateLoading) {
-      return const Center(
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    return Column(
-      children: [
-        OutlinedButton(
-          style: ButtonStyle(
-            padding: MaterialStateProperty.all(EdgeInsets.all(16)),
-            backgroundColor: MaterialStateProperty.all(Colors.transparent),
-            side: MaterialStateProperty.all(
-              BorderSide(width: 1.0, color: Color.fromRGBO(221, 75, 57, 1)),
-            ),
-          ),
-          onPressed: () {
-            //context.read<LoginCubit>().signInWithGoogle();
-          },
-          child: Row(
-            children: [
-              Image.asset('assets/icons/google.png'),
-              const SizedBox(width: 26),
-              const Text(
-                'GOOGLE',
-                style: TextStyle(
-                  color: Color.fromRGBO(221, 75, 57, 1),
-                  fontSize: 26,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

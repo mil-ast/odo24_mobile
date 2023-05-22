@@ -16,12 +16,17 @@ class AuthRepository {
     return AuthResultDTO.fromJson(json);
   }
 
-  /* Future<AuthResultDTO> refreshToken(AuthToken token) async {
-    final result = await _api.post('/api/auth/refresh_token', data: {
-      'refresh_token': token.refreshToken,
+  Future<void> registerSendConfirmationCode(String email) {
+    return _apiWithoutAuth.post('/api/register/register_send_code', data: {
+      'email': email,
     });
+  }
 
-    final json = ResponseHandler.parse(result);
-    return AuthResultDTO.fromJson(json);
-  } */
+  Future<void> register(String email, String password, int code) {
+    return _apiWithoutAuth.post('/api/register/register_by_email', data: {
+      'email': email,
+      'password': password,
+      'code': code,
+    });
+  }
 }

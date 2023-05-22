@@ -109,9 +109,9 @@ class CarItemWidget extends StatelessWidget {
               icon: const Icon(Icons.more_vert),
               itemBuilder: (ctx) => [
                 PopupMenuItem(
-                  child: Wrap(
+                  child: const Wrap(
                     spacing: 10,
-                    children: const [
+                    children: [
                       Icon(Icons.edit),
                       Text('Изменить'),
                     ],
@@ -121,9 +121,9 @@ class CarItemWidget extends StatelessWidget {
                   },
                 ),
                 PopupMenuItem(
-                  child: Wrap(
+                  child: const Wrap(
                     spacing: 10,
-                    children: const [
+                    children: [
                       Icon(Icons.delete, color: Colors.red),
                       Text(
                         'Удалить',

@@ -34,13 +34,26 @@ class RegisterCubit extends Cubit<AppState> {
     return null;
   }
 
-  void register(String email, String password) async {
-    try {
-      /* await _authService.sendSignInLinkToEmail(
-        email,
-        //password,
-      ); */
+  String? validateCode(String? code) {
+    if (code == null || code.isEmpty) {
+      return 'Введите код из e-mail';
+    } else if (code.length < 4) {
+      return 'Слишком короткий';
+    }
+    return null;
+  }
 
+  void sendRegisterCode(String email) {
+    _authService.registerSendConfirmationCode(email).then((_) {
+      emit(RegisterCubitSendCodeSuccessState());
+    }).catchError((e) {
+      emit(AppState.catchErrorHandler(e));
+    });
+  }
+
+  void register(String email, String password, String code) async {
+    try {
+      await _authService.register(email, password, int.parse(code));
       emit(RegisterCubitRegisterSuccessState());
     } catch (e) {
       emit(AppStateError('internal.error', 'Неправильный логин или пароль'));
@@ -48,4 +61,8 @@ class RegisterCubit extends Cubit<AppState> {
   }
 }
 
-class RegisterCubitRegisterSuccessState extends AppState {}
+class RegisterCubitListenerState implements AppState {}
+
+class RegisterCubitRegisterSuccessState implements RegisterCubitListenerState {}
+
+class RegisterCubitSendCodeSuccessState implements RegisterCubitListenerState {}

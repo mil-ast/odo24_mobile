@@ -69,12 +69,13 @@ class AuthService {
     }
   }
 
-  /* Future<AuthToken> refreshToken(AuthToken token) {
-    return _authRepository.refreshToken(token).then((authResult) => AuthToken.fromStrings(
-          authResult.accessToken,
-          authResult.refreshToken,
-        ));
-  } */
+  Future<void> registerSendConfirmationCode(String email) {
+    return _authRepository.registerSendConfirmationCode(email);
+  }
+
+  Future<void> register(String email, String password, int code) {
+    return _authRepository.register(email, password, code);
+  }
 
   Future<UserModel> signInWithEmailAndPassword(String email, String password) {
     return _authRepository.signInWithEmailAndPassword(email, password).then((dto) {

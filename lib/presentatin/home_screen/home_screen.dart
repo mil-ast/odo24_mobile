@@ -94,10 +94,10 @@ class HomeScreen extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: FilledButton(
-                          child: Wrap(
+                          child: const Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             spacing: 6,
-                            children: const [
+                            children: [
                               Icon(Icons.add),
                               Text('Добавить авто'),
                             ],
