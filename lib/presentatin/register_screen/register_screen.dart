@@ -71,31 +71,13 @@ final class RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        autofocus: true,
-                        decoration: const InputDecoration(
-                          helperText: 'Email',
-                        ),
-                        validator: context.read<RegisterCubit>().validateEmail),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autofocus: true,
                       decoration: const InputDecoration(
-                        helperText: "Пароль",
+                        helperText: 'Email',
                       ),
-                      validator: context.read<RegisterCubit>().validatePassword,
-                    ),
-                    TextFormField(
-                      controller: _passwordConfirmController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      decoration: const InputDecoration(
-                        helperText: "Повторите пароль",
-                      ),
-                      validator: (value) =>
-                          context.read<RegisterCubit>().validateConfirmPassword(_passwordController.text, value),
+                      validator: context.read<RegisterCubit>().validateEmail,
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -135,6 +117,26 @@ final class RegisterScreenState extends State<RegisterScreen> {
                         child:
                             Text('На указанный e-mail придёт код подтверждения. Введите его и завершите регистрацию.'),
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: const InputDecoration(
+                        helperText: "Придумайте пароль",
+                      ),
+                      validator: context.read<RegisterCubit>().validatePassword,
+                    ),
+                    TextFormField(
+                      controller: _passwordConfirmController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: const InputDecoration(
+                        helperText: "Повторите пароль",
+                      ),
+                      validator: (value) =>
+                          context.read<RegisterCubit>().validateConfirmPassword(_passwordController.text, value),
                     ),
                     const SizedBox(height: 40),
                     ElevatedButton(

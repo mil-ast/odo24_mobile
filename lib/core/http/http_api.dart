@@ -7,13 +7,12 @@ import 'package:odo24_mobile/services/auth/auth_service.dart';
 import 'package:odo24_mobile/services/auth/models/auth_token.dart';
 
 class HttpAPI {
-  static const String _baseURLHost = kDebugMode ? 'http://192.168.1.63:8000' : 'https://odo24.ru';
+  static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
   static bool _isRefresh = false;
 
   static Dio newDio({
     int receiveTimeout = 5000,
     int connectTimeout = 5000,
-    bool ignoreErrCodes = true,
     bool logoutOn401 = true,
     bool forceJsonContent = false, // true - если в ответе нет хедера application/json
     bool allowBadCertificate = false,
@@ -23,11 +22,6 @@ class HttpAPI {
       baseUrl: baseURL ?? _baseURLHost,
       contentType: 'application/json',
     );
-    if (ignoreErrCodes) {
-      options.validateStatus = (status) {
-        return status != null;
-      };
-    }
     options.receiveTimeout = Duration(milliseconds: receiveTimeout);
     options.connectTimeout = Duration(milliseconds: connectTimeout);
     options.sendTimeout = Duration(milliseconds: receiveTimeout);
@@ -78,7 +72,7 @@ class HttpAPI {
               handler.next(options);
               return;
             } else {
-              handler.reject(DioError(
+              handler.reject(DioException(
                 requestOptions: options,
                 error: 'Token is empty',
               ));
@@ -86,7 +80,7 @@ class HttpAPI {
 
             AuthService().logout();
           } catch (e) {
-            handler.reject(DioError(
+            handler.reject(DioException(
               requestOptions: options,
               error: e.toString(),
             ));
@@ -104,7 +98,7 @@ class HttpAPI {
           }
           return handler.next(response);
         },
-        onError: (DioError e, handler) async {
+        onError: (DioException e, handler) async {
           if (e.response == null) {
             return handler.reject(e);
           }
@@ -141,7 +135,6 @@ class HttpAPI {
   static Dio newDioWithoutAuth({
     int receiveTimeout = 5000,
     int connectTimeout = 5000,
-    bool ignoreErrCodes = true,
     bool logoutOn401 = true,
     bool forceJsonContent = false, // true - если в ответе нет хедера application/json
     bool allowBadCertificate = false,
@@ -150,11 +143,11 @@ class HttpAPI {
     final options = BaseOptions(
       baseUrl: baseURL ?? _baseURLHost,
     );
-    if (ignoreErrCodes) {
+    /* if (ignoreErrCodes) {
       options.validateStatus = (status) {
         return status != null;
       };
-    }
+    } */
 
     options.receiveTimeout = Duration(milliseconds: receiveTimeout);
     options.connectTimeout = Duration(milliseconds: connectTimeout);
@@ -184,7 +177,7 @@ class HttpAPI {
           }
           return handler.next(response);
         },
-        onError: (DioError e, handler) async {
+        onError: (DioException e, handler) async {
           if (e.response == null) {
             return handler.reject(e);
           }

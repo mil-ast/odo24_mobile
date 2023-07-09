@@ -18,8 +18,10 @@ class AuthToken {
 
   factory AuthToken.fromStrings(String accessToken, String refreshToken) {
     // access token
-    List<String> split = accessToken.split('.');
-    Uint8List b64Decoded = base64.decode(split[1]);
+    var split = accessToken.split('.');
+
+    var normalize = base64.normalize(split[1]);
+    Uint8List b64Decoded = base64.decode(normalize);
     String rawJson = utf8.decode(b64Decoded);
     Map<String, dynamic> claims = json.decode(rawJson);
 
@@ -28,7 +30,8 @@ class AuthToken {
 
     // refresh token
     split = refreshToken.split('.');
-    b64Decoded = base64.decode(split[1]);
+    normalize = base64.normalize(split[1]);
+    b64Decoded = base64.decode(normalize);
     rawJson = utf8.decode(b64Decoded);
     claims = json.decode(rawJson);
 

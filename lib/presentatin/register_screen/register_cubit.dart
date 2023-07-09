@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/services/auth/auth_service.dart';
@@ -55,8 +56,13 @@ class RegisterCubit extends Cubit<AppState> {
     try {
       await _authService.register(email, password, int.parse(code));
       emit(RegisterCubitRegisterSuccessState());
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        emit(AppStateError('access.error', 'Проверьте код подтверждения или e-mail'));
+      }
+      emit(AppStateError('internal.error', 'Произошла ошибка'));
     } catch (e) {
-      emit(AppStateError('internal.error', 'Неправильный логин или пароль'));
+      emit(AppStateError('internal.error', 'Произошла ошибка'));
     }
   }
 }
