@@ -7,7 +7,8 @@ import 'package:odo24_mobile/services/auth/auth_service.dart';
 import 'package:odo24_mobile/services/auth/models/auth_token.dart';
 
 class HttpAPI {
-  static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
+  //static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
+  static const String _baseURLHost = kDebugMode ? 'https://backend.odo24.ru' : 'https://odo24.ru';
   static bool _isRefresh = false;
 
   static Dio newDio({
@@ -27,7 +28,7 @@ class HttpAPI {
     options.sendTimeout = Duration(milliseconds: receiveTimeout);
     final dio = Dio(options);
 
-    if (allowBadCertificate == true) {
+    /* if (allowBadCertificate == true) {
       dio.httpClientAdapter = IOHttpClientAdapter()
         ..onHttpClientCreate = (_) {
           final HttpClient client = HttpClient(context: SecurityContext(withTrustedRoots: false));
@@ -35,7 +36,7 @@ class HttpAPI {
           return client;
         }
         ..validateCertificate = (cert, host, port) => cert != null;
-    }
+    } */
 
     dio.interceptors.add(
       InterceptorsWrapper(
@@ -155,13 +156,13 @@ class HttpAPI {
 
     final Dio d = Dio(options);
     if (allowBadCertificate == true) {
-      d.httpClientAdapter = IOHttpClientAdapter()
-        ..onHttpClientCreate = (_) {
-          final HttpClient client = HttpClient(context: SecurityContext(withTrustedRoots: false));
+      d.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
           return client;
-        }
-        ..validateCertificate = (cert, host, port) => cert != null;
+        },
+      )..validateCertificate = (cert, host, port) => cert != null;
     }
 
     d.interceptors.add(

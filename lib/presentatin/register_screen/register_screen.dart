@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/presentatin/register_screen/register_cubit.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -79,7 +78,26 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       ),
                       validator: context.read<RegisterCubit>().validateEmail,
                     ),
-                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: const InputDecoration(
+                        helperText: "Придумайте пароль",
+                      ),
+                      validator: context.read<RegisterCubit>().validatePassword,
+                    ),
+                    TextFormField(
+                      controller: _passwordConfirmController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: const InputDecoration(
+                        helperText: "Повторите пароль",
+                      ),
+                      validator: (value) =>
+                          context.read<RegisterCubit>().validateConfirmPassword(_passwordController.text, value),
+                    ),
+                    const SizedBox(height: 40),
                     Row(
                       children: [
                         Expanded(
@@ -119,26 +137,6 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      decoration: const InputDecoration(
-                        helperText: "Придумайте пароль",
-                      ),
-                      validator: context.read<RegisterCubit>().validatePassword,
-                    ),
-                    TextFormField(
-                      controller: _passwordConfirmController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      decoration: const InputDecoration(
-                        helperText: "Повторите пароль",
-                      ),
-                      validator: (value) =>
-                          context.read<RegisterCubit>().validateConfirmPassword(_passwordController.text, value),
-                    ),
-                    const SizedBox(height: 40),
                     ElevatedButton(
                       onPressed: () async {
                         if (!_formKey.currentState!.validate()) {

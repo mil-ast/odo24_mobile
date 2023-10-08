@@ -10,6 +10,7 @@ class LoginCubit extends Cubit<AppState> {
 
   void signInWithEmailAndPassword(String email, String password) async {
     try {
+      emit(AppStateLoading());
       final user = await _authService.signInWithEmailAndPassword(email, password);
       emit(LoginCubitLoginSuccessState(user));
     } catch (e) {
@@ -20,6 +21,10 @@ class LoginCubit extends Cubit<AppState> {
   void onClickRegister() {
     emit(LoginCubitOnClickRegisterState());
   }
+
+  void onClickPasswordRecovery() {
+    emit(LoginCubitOnClickPasswordRecoveryState());
+  }
 }
 
 class LoginCubitLoginSuccessState implements AppState {
@@ -27,4 +32,6 @@ class LoginCubitLoginSuccessState implements AppState {
   const LoginCubitLoginSuccessState(this.user);
 }
 
-class LoginCubitOnClickRegisterState extends AppState {}
+class LoginCubitOnClickRegisterState implements AppState {}
+
+class LoginCubitOnClickPasswordRecoveryState implements AppState {}

@@ -3,8 +3,7 @@ import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/repository/auth/auth_result.dto.dart';
 
 class AuthRepository {
-  final _api = HttpAPI.newDio();
-  final _apiWithoutAuth = HttpAPI.newDioWithoutAuth();
+  final _apiWithoutAuth = HttpAPI.newDioWithoutAuth(allowBadCertificate: true);
 
   Future<AuthResultDTO> signInWithEmailAndPassword(String email, String password) async {
     final result = await _apiWithoutAuth.post('/api/auth/login', data: {
@@ -27,6 +26,12 @@ class AuthRepository {
       'email': email,
       'password': password,
       'code': code,
+    });
+  }
+
+  Future<void> recoverSendEmailCodeConfirmation(String email) {
+    return _apiWithoutAuth.post('/api/register/recover_send_code', data: {
+      'email': email,
     });
   }
 }

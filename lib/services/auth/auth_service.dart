@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
 import 'package:odo24_mobile/repository/auth/auth.repository.dart';
 import 'package:odo24_mobile/services/auth/models/auth_token.dart';
 import 'package:odo24_mobile/services/auth/models/user_model.dart';
@@ -10,15 +8,13 @@ class AuthService {
   static const _keyBearerToken = 'auth_bearer_token';
   static const _keyRefreshToken = 'auth_refresh_token';
 
-  static final _instance = AuthService._internal();
-  static final _secureStorage = FlutterSecureStorage();
+  static final instance = AuthService._internal();
+  static const _secureStorage = FlutterSecureStorage();
   static final _authRepository = AuthRepository();
 
   AuthToken? authToken;
 
-  factory AuthService() {
-    return _instance;
-  }
+  factory AuthService() => instance;
 
   AuthService._internal();
 
@@ -75,6 +71,10 @@ class AuthService {
 
   Future<void> register(String email, String password, int code) {
     return _authRepository.register(email, password, code);
+  }
+
+  Future<void> recoverSendEmailCodeConfirmation(String email) {
+    return _authRepository.recoverSendEmailCodeConfirmation(email);
   }
 
   Future<UserModel> signInWithEmailAndPassword(String email, String password) {
