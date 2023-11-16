@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/repository/cars/models/car_create_dto.dart';
-import 'package:odo24_mobile/repository/cars/models/car_update_dto.dart';
-import 'package:odo24_mobile/services/cars/cars.service.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/data/repository/cars/models/car_create_dto.dart';
+import 'package:odo24_mobile/data/repository/cars/models/car_update_dto.dart';
+import 'package:odo24_mobile/domain/services/cars/cars.service.dart';
+import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
 
 class CarsCubit extends Cubit<AppState> {
   List<CarModel> _carList = [];

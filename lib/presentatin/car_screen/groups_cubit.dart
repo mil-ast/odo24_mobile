@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/repository/groups/models/group_create_request_model.dart';
-import 'package:odo24_mobile/repository/groups/models/group_update_request_model.dart';
-import 'package:odo24_mobile/services/groups/groups_service.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/data/repository/groups/models/group_create_request_model.dart';
+import 'package:odo24_mobile/data/repository/groups/models/group_update_request_model.dart';
+import 'package:odo24_mobile/domain/services/groups/groups_service.dart';
+import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 
 class GroupsCubit extends Cubit<AppState> {
   final List<GroupModel> _groups = [];

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
 
 class PasswordRecoveryCubit extends Cubit<AppState> {
   final _authService = AuthService();

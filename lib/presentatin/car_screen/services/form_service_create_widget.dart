@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
-import 'package:odo24_mobile/repository/services/models/service_create_request_model.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/data/repository/services/models/service_create_request_model.dart';
+import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 
 class FormServiceCreateWidget extends StatelessWidget {
   final CarModel car;

@@ -6,7 +6,7 @@ import 'package:odo24_mobile/presentatin/home_screen/cars/car_item_widget.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/create/car_create_widget.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/update/car_update_widget.dart';
-import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class HomeScreen extends StatelessWidget {

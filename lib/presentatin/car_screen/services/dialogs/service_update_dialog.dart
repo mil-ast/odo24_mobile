@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
-import 'package:odo24_mobile/repository/services/models/service_update_request_model.dart';
-import 'package:odo24_mobile/services/services/models/service_result_model.dart';
+import 'package:odo24_mobile/data/repository/services/models/service_update_request_model.dart';
+import 'package:odo24_mobile/domain/services/services/models/service_result_model.dart';
 
 class ServiceRecUpdateWidget extends StatelessWidget {
   final ServiceModel service;

@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:odo24_mobile/repository/services/models/service_result_dto.dart';
+import 'package:odo24_mobile/data/repository/services/models/service_result_dto.dart';
 
 class ServiceModel {
   final int serviceID;

@@ -5,7 +5,7 @@ import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_create_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_update_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_cubit.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class GroupsSettingsDialog extends StatefulWidget {

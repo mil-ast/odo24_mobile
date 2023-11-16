@@ -1,8 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:odo24_mobile/main.dart';
-import 'package:odo24_mobile/repository/auth/auth.repository.dart';
-import 'package:odo24_mobile/services/auth/models/auth_token.dart';
-import 'package:odo24_mobile/services/auth/models/user_model.dart';
+import 'package:odo24_mobile/data/repository/auth/auth.repository.dart';
+import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
+import 'package:odo24_mobile/domain/services/auth/models/user_model.dart';
 
 class AuthService {
   static const _keyBearerToken = 'auth_bearer_token';

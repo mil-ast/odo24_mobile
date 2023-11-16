@@ -1,4 +1,4 @@
-import 'package:odo24_mobile/repository/cars/models/car_result_dto.dart';
+import 'package:odo24_mobile/data/repository/cars/models/car_result_dto.dart';
 
 class CarModel {
   final int carID;

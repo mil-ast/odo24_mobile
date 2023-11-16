@@ -5,7 +5,7 @@ import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/groups_selector_widget.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_list_widget.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
 
 class CarScreen extends StatelessWidget {
   final CarModel car;

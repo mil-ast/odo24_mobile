@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:odo24_mobile/services/auth/auth_service.dart';
-import 'package:odo24_mobile/services/auth/models/auth_token.dart';
+import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
+import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
 
 class HttpAPI {
   //static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
@@ -26,17 +26,18 @@ class HttpAPI {
     options.receiveTimeout = Duration(milliseconds: receiveTimeout);
     options.connectTimeout = Duration(milliseconds: connectTimeout);
     options.sendTimeout = Duration(milliseconds: receiveTimeout);
+    options.validateStatus = (status) => status != null;
     final dio = Dio(options);
 
-    /* if (allowBadCertificate == true) {
-      dio.httpClientAdapter = IOHttpClientAdapter()
-        ..onHttpClientCreate = (_) {
-          final HttpClient client = HttpClient(context: SecurityContext(withTrustedRoots: false));
+    if (allowBadCertificate == true) {
+      dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
           return client;
-        }
-        ..validateCertificate = (cert, host, port) => cert != null;
-    } */
+        },
+      )..validateCertificate = (cert, host, port) => cert != null;
+    }
 
     dio.interceptors.add(
       InterceptorsWrapper(
@@ -144,11 +145,7 @@ class HttpAPI {
     final options = BaseOptions(
       baseUrl: baseURL ?? _baseURLHost,
     );
-    /* if (ignoreErrCodes) {
-      options.validateStatus = (status) {
-        return status != null;
-      };
-    } */
+    options.validateStatus = (status) => status != null;
 
     options.receiveTimeout = Duration(milliseconds: receiveTimeout);
     options.connectTimeout = Duration(milliseconds: connectTimeout);

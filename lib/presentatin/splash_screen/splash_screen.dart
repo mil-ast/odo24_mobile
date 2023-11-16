@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:odo24_mobile/presentatin/home_screen/home_screen.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_screen.dart';
-import 'package:odo24_mobile/services/auth/auth_service.dart';
+import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

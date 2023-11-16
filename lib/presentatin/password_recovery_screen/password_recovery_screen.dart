@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_cubit.dart';
+import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_new_password_screen.dart';
 
 class PasswordRecoveryScreen extends StatefulWidget {
   const PasswordRecoveryScreen({super.key});
@@ -26,8 +27,20 @@ class _PasswordRecoveryState extends State<PasswordRecoveryScreen> {
           child: BlocProvider(
             create: (context) => PasswordRecoveryCubit(),
             child: BlocConsumer<PasswordRecoveryCubit, AppState>(
-              listener: (context, state) {},
-              buildWhen: (previous, current) => current is! AppStateError,
+              listener: (context, state) {
+                if (state is PasswordRecoverySendCodeSuccessState) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<PasswordRecoveryCubit>(),
+                        child: const PasswordRecoveryNewPasswordScreen(),
+                      ),
+                    ),
+                  );
+                }
+              },
+              buildWhen: (previous, current) => current is! PasswordRecoverySendCodeSuccessState,
               builder: (context, state) {
                 return Form(
                   key: _formKey,
@@ -62,6 +75,7 @@ class _PasswordRecoveryState extends State<PasswordRecoveryScreen> {
                           child: const Text('Отправить'),
                         ),
                       ),
+                      if (state is AppStateError) Text(state.error),
                     ],
                   ),
                 );

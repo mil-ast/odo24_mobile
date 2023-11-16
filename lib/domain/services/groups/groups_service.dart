@@ -1,7 +1,7 @@
-import 'package:odo24_mobile/repository/groups/models/group_create_request_model.dart';
-import 'package:odo24_mobile/repository/groups/models/group_update_request_model.dart';
-import 'package:odo24_mobile/repository/groups/groups_repository.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/data/repository/groups/models/group_create_request_model.dart';
+import 'package:odo24_mobile/data/repository/groups/models/group_update_request_model.dart';
+import 'package:odo24_mobile/data/repository/groups/groups_repository.dart';
+import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 
 class GroupsService {
   static final _instance = GroupsService._internal();

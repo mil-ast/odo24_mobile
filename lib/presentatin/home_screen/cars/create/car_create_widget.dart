@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
-import 'package:odo24_mobile/repository/cars/models/car_create_dto.dart';
+import 'package:odo24_mobile/data/repository/cars/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
   final CarsCubit carsCubit;

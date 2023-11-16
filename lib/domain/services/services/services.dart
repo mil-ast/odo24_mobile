@@ -1,7 +1,7 @@
-import 'package:odo24_mobile/repository/services/models/service_create_request_model.dart';
-import 'package:odo24_mobile/repository/services/models/service_update_request_model.dart';
-import 'package:odo24_mobile/repository/services/services_repository.dart';
-import 'package:odo24_mobile/services/services/models/service_result_model.dart';
+import 'package:odo24_mobile/data/repository/services/models/service_create_request_model.dart';
+import 'package:odo24_mobile/data/repository/services/models/service_update_request_model.dart';
+import 'package:odo24_mobile/data/repository/services/services_repository.dart';
+import 'package:odo24_mobile/domain/services/services/models/service_result_model.dart';
 
 class Services {
   static final _instance = Services._internal();

@@ -1,5 +1,5 @@
-import 'package:odo24_mobile/repository/auth/auth_result.dto.dart';
-import 'package:odo24_mobile/services/auth/models/auth_token.dart';
+import 'package:odo24_mobile/data/repository/auth/auth_result.dto.dart';
+import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
 
 class UserModel {
   String email;

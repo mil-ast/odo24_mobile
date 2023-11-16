@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/presentatin/car_screen/car_screen.dart';
 import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
 
 class CarItemWidget extends StatelessWidget {
   final CarModel car;

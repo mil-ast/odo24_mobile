@@ -6,8 +6,8 @@ import 'package:odo24_mobile/presentatin/car_screen/services/dialogs/service_upd
 import 'package:odo24_mobile/presentatin/car_screen/services/form_service_create_widget.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/service_item_widget.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
-import 'package:odo24_mobile/services/cars/models/car.model.dart';
-import 'package:odo24_mobile/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
+import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class ServicesListWidget extends StatelessWidget {
