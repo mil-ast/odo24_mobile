@@ -93,22 +93,14 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 10, right: 10),
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: FilledButton(
-                          child: const Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            spacing: 6,
-                            children: [
-                              Icon(Icons.add),
-                              Text('Добавить авто'),
-                            ],
-                          ),
-                          onPressed: () {
-                            context.read<CarsCubit>().onClickCreateCar();
-                          },
+                        child: FilledButton.icon(
+                          onPressed: context.read<CarsCubit>().onClickCreateCar,
+                          icon: const Icon(Icons.add),
+                          label: const Text('Добавить авто'),
                         ),
                       ),
                     ),
-                    ...state.cars.map((e) => CarItemWidget(e)).toList()
+                    ...state.cars.map((e) => CarItemWidget(e))
                   ],
                 );
               }

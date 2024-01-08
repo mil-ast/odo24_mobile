@@ -109,27 +109,21 @@ class CarItemWidget extends StatelessWidget {
               icon: const Icon(Icons.more_vert),
               itemBuilder: (ctx) => [
                 PopupMenuItem(
-                  child: const Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.edit),
-                      Text('Изменить'),
-                    ],
+                  child: const ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text('Изменить'),
                   ),
                   onTap: () {
                     context.read<CarsCubit>().onClickUpdateCar(car);
                   },
                 ),
                 PopupMenuItem(
-                  child: const Wrap(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      Text(
-                        'Удалить',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
+                  child: const ListTile(
+                    leading: Icon(Icons.delete, color: Colors.red),
+                    title: Text(
+                      'Удалить',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                   onTap: () {
                     context.read<CarsCubit>().onClickDeleteCar(car);

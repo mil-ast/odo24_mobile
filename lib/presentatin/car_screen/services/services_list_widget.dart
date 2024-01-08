@@ -99,17 +99,15 @@ class ServicesListWidget extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: FilledButton(
-                      child: Wrap(
+                      onPressed: context.read<ServicesCubit>().onClickCreateServiceRec,
+                      child: const Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 6,
-                        children: const [
+                        children: [
                           Icon(Icons.add),
                           Text('Добавить запись'),
                         ],
                       ),
-                      onPressed: () {
-                        context.read<ServicesCubit>().onClickCreateServiceRec();
-                      },
                     ),
                   ),
                 ),

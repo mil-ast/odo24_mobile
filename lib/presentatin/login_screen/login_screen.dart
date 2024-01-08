@@ -129,17 +129,7 @@ class LoginScreenState extends State<LoginScreen> {
                                     child: FilledButton(
                                       onPressed: state is! AppStateLoading
                                           ? () {
-                                              if (!_formKey.currentState!.validate()) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(content: Text('Неверный логин или пароль')),
-                                                );
-                                                return;
-                                              }
-
-                                              final login = _loginController.text;
-                                              final password = _passwordController.text;
-
-                                              context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
+                                              _onLogin(context);
                                             }
                                           : null,
                                       child: const Text('Войти'),
@@ -160,5 +150,19 @@ class LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void _onLogin(BuildContext context) {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Неверный логин или пароль')),
+      );
+      return;
+    }
+
+    final login = _loginController.text;
+    final password = _passwordController.text;
+
+    context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
   }
 }

@@ -35,6 +35,11 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 33
 
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -76,6 +81,4 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation platform('com.google.firebase:firebase-bom:30.4.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
