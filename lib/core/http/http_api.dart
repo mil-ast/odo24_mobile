@@ -8,7 +8,6 @@ import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
 
 class HttpAPI {
   static const String _baseURLHost = 'https://backend.odo24.ru';
-  //static const String _baseURLHost = kDebugMode ? 'https://backend.odo24.ru' : 'https://odo24.ru';
   static bool _isRefresh = false;
 
   static Dio newDio({

@@ -1,5 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.odo24.mobile">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="ru.odo24.mobile">
+  <uses-permission android:name="android.permission.INTERNET"/>
+  
    <application
         android:label="odo24_mobile"
         android:icon="@mipmap/ic_launcher">

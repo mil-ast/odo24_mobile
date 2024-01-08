@@ -58,8 +58,11 @@ class LoginScreenState extends State<LoginScreen> {
                     );
                   }
                 },
-                buildWhen: (previous, current) =>
-                    current is LoginCubitLoginSuccessState || current is AppStateDefault || current is AppStateLoading,
+                buildWhen: (previous, state) =>
+                    state is LoginCubitLoginSuccessState ||
+                    state is AppStateDefault ||
+                    state is AppStateLoading ||
+                    state is AppStateError,
                 builder: (BuildContext context, AppState state) {
                   return Padding(
                     padding: const EdgeInsets.all(20),
@@ -127,11 +130,11 @@ class LoginScreenState extends State<LoginScreen> {
                                 children: [
                                   Expanded(
                                     child: FilledButton(
-                                      onPressed: state is! AppStateLoading
-                                          ? () {
+                                      onPressed: state is AppStateLoading
+                                          ? null
+                                          : () {
                                               _onLogin(context);
-                                            }
-                                          : null,
+                                            },
                                       child: const Text('Войти'),
                                     ),
                                   ),
