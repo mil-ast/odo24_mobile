@@ -21,8 +21,8 @@ class CarsService {
   }
 
   Future<CarModel> create(CarCreateDTO car) async {
-    final result = await _repository.create(car);
-    return CarModel.fromDTO(result);
+    final dto = await _repository.create(car);
+    return CarModel.fromDTO(dto);
   }
 
   Future<void> update(CarUpdateDTO car) {

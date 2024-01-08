@@ -7,13 +7,14 @@ import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
 import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
 
 class HttpAPI {
-  //static const String _baseURLHost = kDebugMode ? 'http://192.168.1.57:8000' : 'https://odo24.ru';
-  static const String _baseURLHost = kDebugMode ? 'https://backend.odo24.ru' : 'https://odo24.ru';
+  static const String _baseURLHost = 'https://backend.odo24.ru';
+  //static const String _baseURLHost = kDebugMode ? 'https://backend.odo24.ru' : 'https://odo24.ru';
   static bool _isRefresh = false;
 
   static Dio newDio({
-    int receiveTimeout = 5000,
-    int connectTimeout = 5000,
+    Duration receiveTimeout = const Duration(seconds: 5),
+    Duration connectTimeout = const Duration(seconds: 10),
+    Duration sendTimeout = const Duration(seconds: 5),
     bool logoutOn401 = true,
     bool forceJsonContent = false, // true - если в ответе нет хедера application/json
     bool allowBadCertificate = false,
@@ -23,9 +24,9 @@ class HttpAPI {
       baseUrl: baseURL ?? _baseURLHost,
       contentType: 'application/json',
     );
-    options.receiveTimeout = Duration(milliseconds: receiveTimeout);
-    options.connectTimeout = Duration(milliseconds: connectTimeout);
-    options.sendTimeout = Duration(milliseconds: receiveTimeout);
+    options.receiveTimeout = receiveTimeout;
+    options.connectTimeout = connectTimeout;
+    options.sendTimeout = sendTimeout;
     options.validateStatus = (status) => status != null;
     final dio = Dio(options);
 
@@ -135,8 +136,9 @@ class HttpAPI {
   }
 
   static Dio newDioWithoutAuth({
-    int receiveTimeout = 5000,
-    int connectTimeout = 5000,
+    Duration receiveTimeout = const Duration(seconds: 5),
+    Duration connectTimeout = const Duration(seconds: 10),
+    Duration sendTimeout = const Duration(seconds: 5),
     bool logoutOn401 = true,
     bool forceJsonContent = false, // true - если в ответе нет хедера application/json
     bool allowBadCertificate = false,
@@ -147,9 +149,9 @@ class HttpAPI {
     );
     options.validateStatus = (status) => status != null;
 
-    options.receiveTimeout = Duration(milliseconds: receiveTimeout);
-    options.connectTimeout = Duration(milliseconds: connectTimeout);
-    options.sendTimeout = Duration(milliseconds: receiveTimeout);
+    options.receiveTimeout = receiveTimeout;
+    options.connectTimeout = connectTimeout;
+    options.sendTimeout = sendTimeout;
 
     final Dio d = Dio(options);
     if (allowBadCertificate == true) {

@@ -20,8 +20,8 @@ class Services {
   }
 
   Future<ServiceModel> create(int carID, int groupID, ServiceCreateRequestModel service) async {
-    final result = await _repository.create(carID, groupID, service);
-    return ServiceModel.fromDTO(result);
+    final dto = await _repository.create(carID, groupID, service);
+    return ServiceModel.fromDTO(dto);
   }
 
   Future<void> update(ServiceModel service, ServiceUpdateRequestModel body) {

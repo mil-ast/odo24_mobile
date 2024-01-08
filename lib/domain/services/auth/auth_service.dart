@@ -69,6 +69,10 @@ class AuthService {
     return _authRepository.registerSendConfirmationCode(email);
   }
 
+  Future<void> registerSaveNewPassword(String email, int code, String newPassword) {
+    return _authRepository.registerSaveNewPassword(email, code, newPassword);
+  }
+
   Future<void> register(String email, String password, int code) {
     return _authRepository.register(email, password, code);
   }
@@ -77,12 +81,11 @@ class AuthService {
     return _authRepository.recoverSendEmailCodeConfirmation(email);
   }
 
-  Future<UserModel> signInWithEmailAndPassword(String email, String password) {
-    return _authRepository.signInWithEmailAndPassword(email, password).then((dto) {
-      final token = UserModel.fromDTO(email, dto);
-      saveAuthToken(token.token);
-      return token;
-    });
+  Future<UserModel> signInWithEmailAndPassword(String email, String password) async {
+    final dto = await _authRepository.signInWithEmailAndPassword(email, password);
+    final token = UserModel.fromDTO(email, dto);
+    saveAuthToken(token.token);
+    return token;
   }
 
   void logout() {

@@ -3,9 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 
 class ResponseHandler {
-  static Future<Map<String, dynamic>> parseJSON(Future<Response<dynamic>> api) async {
+  static Future<Map<String, dynamic>?> parseJSON(Future<Response<dynamic>> api) async {
     final result = await _parse(api);
-    if (result is List) {
+    if (result == null) {
+      return null;
+    } else if (result is List) {
       return result.first;
     }
     return result;
@@ -47,7 +49,7 @@ class ResponseHandler {
       default:
         throw AppStateError(
           'http.error',
-          'Ошибка',
+          'Ошибка, ${res.statusCode}, ${res.statusMessage}',
           details: res.statusMessage,
         );
     }

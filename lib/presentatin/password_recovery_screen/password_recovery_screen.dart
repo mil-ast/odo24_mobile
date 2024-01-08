@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_cubit.dart';
-import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_new_password_screen.dart';
+import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_stepper_widget.dart';
+import 'package:odo24_mobile/shared_widgets/dialogs/error_dialog.dart';
 
 class PasswordRecoveryScreen extends StatefulWidget {
   const PasswordRecoveryScreen({super.key});
@@ -12,9 +13,6 @@ class PasswordRecoveryScreen extends StatefulWidget {
 }
 
 class _PasswordRecoveryState extends State<PasswordRecoveryScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,58 +26,21 @@ class _PasswordRecoveryState extends State<PasswordRecoveryScreen> {
             create: (context) => PasswordRecoveryCubit(),
             child: BlocConsumer<PasswordRecoveryCubit, AppState>(
               listener: (context, state) {
-                if (state is PasswordRecoverySendCodeSuccessState) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<PasswordRecoveryCubit>(),
-                        child: const PasswordRecoveryNewPasswordScreen(),
-                      ),
-                    ),
-                  );
+                if (state is AppStateError) {
+                  showErrorDialog(context, title: 'Восстановление пароля', message: state.error);
+                } else if (state is PasswordRecoverySendCodeSuccessState) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Код отправлен на ${state.email}"),
+                  ));
+                } else if (state is PasswordRecoverySuccessState) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Новый пароль сохранён'),
+                  ));
+                  Navigator.of(context).pop();
                 }
               },
               buildWhen: (previous, current) => current is! PasswordRecoverySendCodeSuccessState,
-              builder: (context, state) {
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 40),
-                      Text(
-                        'Укажите ваш адрес электронной почты',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        autofocus: true,
-                        decoration: const InputDecoration(
-                          helperText: 'Email',
-                        ),
-                        validator: context.read<PasswordRecoveryCubit>().validateEmail,
-                      ),
-                      const SizedBox(width: 10),
-                      Center(
-                        child: FilledButton(
-                          onPressed: () {
-                            if (!_formKey.currentState!.validate()) {
-                              return;
-                            }
-                            context
-                                .read<PasswordRecoveryCubit>()
-                                .recoverSendEmailCodeConfirmation(_emailController.text);
-                          },
-                          child: const Text('Отправить'),
-                        ),
-                      ),
-                      if (state is AppStateError) Text(state.error),
-                    ],
-                  ),
-                );
-              },
+              builder: (context, state) => const PasswordRecoveryStepperWidget(),
             ),
           ),
         ),

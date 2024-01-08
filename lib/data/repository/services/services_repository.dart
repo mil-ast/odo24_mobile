@@ -1,3 +1,4 @@
+import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/data/repository/services/models/service_create_request_model.dart';
@@ -20,6 +21,9 @@ class ServicesRepository {
   Future<ServiceDTO> create(int carID, int groupID, ServiceCreateRequestModel service) async {
     final api = _api.post('/api/cars/$carID/groups/$groupID/services', data: service);
     final json = await ResponseHandler.parseJSON(api);
+    if (json == null) {
+      throw AppStateError('repository.services.create', 'Не удалось создать запись');
+    }
     return ServiceDTO.fromJson(json);
   }
 

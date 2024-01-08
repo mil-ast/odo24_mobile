@@ -1,3 +1,4 @@
+import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/data/repository/groups/models/group_create_request_model.dart';
@@ -28,6 +29,9 @@ class GroupsRepository {
   Future<GroupDTO> create(GroupCreateRequestModel group) async {
     final api = _api.post('/api/groups', data: group);
     final json = await ResponseHandler.parseJSON(api);
+    if (json == null) {
+      throw AppStateError('repository.groups.create', 'Произошла ошибка при создании группы');
+    }
     return GroupDTO.fromJson(json);
   }
 

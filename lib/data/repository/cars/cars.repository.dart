@@ -1,3 +1,4 @@
+import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/data/repository/cars/models/car_create_dto.dart';
@@ -21,6 +22,9 @@ class CarsRepository {
     final api = _api.post('/api/cars', data: car);
 
     final json = await ResponseHandler.parseJSON(api);
+    if (json == null) {
+      throw AppStateError('repository.cars.create', 'Произошла ошибка при создании авто');
+    }
     return CarDTO.fromJson(json);
   }
 
