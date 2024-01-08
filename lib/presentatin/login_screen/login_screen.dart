@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/presentatin/home_screen/home_screen.dart';
 import 'package:odo24_mobile/presentatin/login_screen/login_cubit.dart';
+import 'package:odo24_mobile/presentatin/password_recovery_screen/password_recovery_screen.dart';
 import 'package:odo24_mobile/presentatin/register_screen/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  LoginScreenState createState() {
-    return LoginScreenState();
-  }
+  LoginScreenState createState() => LoginScreenState();
 }
 
 class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _loginController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,11 @@ class LoginScreenState extends State<LoginScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Сервисная книжка авто'),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: SingleChildScrollView(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: BlocProvider(
               create: (context) => LoginCubit(),
               child: BlocConsumer<LoginCubit, AppState>(
@@ -37,12 +38,17 @@ class LoginScreenState extends State<LoginScreen> {
                   if (state is LoginCubitLoginSuccessState) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
                     );
                   } else if (state is LoginCubitOnClickRegisterState) {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
+                  } else if (state is LoginCubitOnClickPasswordRecoveryState) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PasswordRecoveryScreen()),
                     );
                   } else if (state is AppStateError) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -52,55 +58,91 @@ class LoginScreenState extends State<LoginScreen> {
                     );
                   }
                 },
-                buildWhen: (previous, current) {
-                  if (current is LoginCubitLoginSuccessState || current is LoginCubitOnClickRegisterState) {
-                    return false;
-                  }
-
-                  return true;
-                },
+                buildWhen: (previous, state) =>
+                    state is LoginCubitLoginSuccessState ||
+                    state is AppStateDefault ||
+                    state is AppStateLoading ||
+                    state is AppStateError,
                 builder: (BuildContext context, AppState state) {
-                  return Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
+                  return Padding(
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        TextFormField(
-                          controller: _loginController,
-                          autofocus: true,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            helperText: 'Email',
-                            icon: Icon(Icons.email_outlined),
+                        Center(
+                          child: SvgPicture.asset(
+                            'assets/logo.svg',
+                            width: 80,
+                            height: 80,
                           ),
-                          validator: context.read<LoginCubit>().validateEmail,
                         ),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration: const InputDecoration(
-                            helperText: "Пароль",
-                            icon: Icon(Icons.vpn_key),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  hintText: "Логин",
+                                ),
+                                controller: _loginController,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Логин не указан';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  hintText: "Пароль",
+                                ),
+                                controller: _passwordController,
+                                obscureText: true,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Пароль не указан';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                alignment: WrapAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: context.read<LoginCubit>().onClickRegister,
+                                    child: const Text('Регистрация'),
+                                  ),
+                                  TextButton(
+                                    onPressed: context.read<LoginCubit>().onClickPasswordRecovery,
+                                    child: const Wrap(
+                                      children: [Text('Забыли пароль?')],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 40),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: FilledButton(
+                                      onPressed: state is AppStateLoading
+                                          ? null
+                                          : () {
+                                              _onLogin(context);
+                                            },
+                                      child: const Text('Войти'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          validator: context.read<LoginCubit>().validatePassword,
                         ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (!_formKey.currentState!.validate()) {
-                              return;
-                            }
-
-                            context.read<LoginCubit>().login(_loginController.text, _passwordController.text);
-                          },
-                          child: const Text('Войти'),
-                        ),
-                        const SizedBox(height: 20),
-                        TextButton(
-                          onPressed: context.read<LoginCubit>().onClickRegister,
-                          child: Text('Регистрация'),
-                        )
                       ],
                     ),
                   );
@@ -111,5 +153,19 @@ class LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void _onLogin(BuildContext context) {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Неверный логин или пароль')),
+      );
+      return;
+    }
+
+    final login = _loginController.text;
+    final password = _passwordController.text;
+
+    context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
   }
 }

@@ -10,8 +10,8 @@ Future<bool?> showConfirmationDialog(
   return showDialog<bool>(
     context: context,
     builder: (context) => SimpleDialog(
-      insetPadding: EdgeInsets.all(20),
-      contentPadding: EdgeInsets.all(20),
+      insetPadding: const EdgeInsets.all(20),
+      contentPadding: const EdgeInsets.all(20),
       title: Text(title),
       children: [
         ConfirmationDialog(
@@ -29,7 +29,8 @@ class ConfirmationDialog extends StatelessWidget {
   final String? btnOkText;
   final String? btnNoText;
 
-  ConfirmationDialog({
+  const ConfirmationDialog({
+    super.key,
     required this.message,
     this.btnOkText,
     this.btnNoText,
@@ -40,7 +41,7 @@ class ConfirmationDialog extends StatelessWidget {
     return Column(
       children: [
         Text(message),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -50,7 +51,7 @@ class ConfirmationDialog extends StatelessWidget {
               },
               child: Text(btnNoText ?? 'Нет'),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context, true);
