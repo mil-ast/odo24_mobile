@@ -12,6 +12,13 @@ class GroupsCubit extends Cubit<AppState> {
 
   GroupsCubit() : super(AppStateDefault());
 
+  GroupModel? getSelected() {
+    if (_selectedIndex == -1) {
+      return null;
+    }
+    return _groups.elementAt(_selectedIndex);
+  }
+
   void getAllGroups() async {
     emit(AppStateLoading());
 

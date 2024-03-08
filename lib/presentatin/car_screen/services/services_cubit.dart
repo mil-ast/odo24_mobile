@@ -3,23 +3,23 @@ import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/data/repository/services/models/service_create_request_model.dart';
 import 'package:odo24_mobile/data/repository/services/models/service_update_request_model.dart';
 import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
-import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 import 'package:odo24_mobile/domain/services/services/models/service_result_model.dart';
 import 'package:odo24_mobile/domain/services/services/services.dart';
 
 class ServicesCubit extends Cubit<AppState> {
   final CarModel car;
-  final GroupModel group;
+
   final List<ServiceModel> _services = [];
   final _service = Services();
 
-  ServicesCubit(this.car, this.group) : super(AppStateDefault());
+  ServicesCubit(this.car) : super(AppStateDefault());
 
-  void getByGroupID() async {
+  void getByGroupID(int groupID) async {
     emit(AppStateLoading());
 
-    final result = await _service.getByCarAndGroup(car.carID, group.groupID);
+    final result = await _service.getByCarAndGroup(car.carID, groupID);
 
+    _services.clear();
     _services.addAll(result);
 
     if (!isClosed) {
