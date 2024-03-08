@@ -10,104 +10,95 @@ import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text('ODO24 Сервисная книжка авто'),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              AuthService().logout();
-            },
-            icon: const Icon(Icons.logout),
+    return BlocProvider(
+      create: (context) => CarsCubit()..getAllCars(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Theme.of(context).primaryColor,
+          title: const Text('ODO24 Сервисная книжка авто'),
+          actions: [
+            IconButton(
+              onPressed: AuthService().logout,
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+        ),
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+            onPressed: context.read<CarsCubit>().onClickCreateCar,
+            child: const Icon(Icons.add),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: BlocProvider(
-          create: (context) => CarsCubit()..getAllCars(),
-          child: BlocConsumer<CarsCubit, AppState>(
-            listenWhen: (previous, current) => current is ListenCarsState || current is AppStateError,
-            listener: (context, state) {
-              if (state is ShowUpdateCarState) {
-                showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext ctx) => SimpleDialog(
+        ),
+        body: BlocConsumer<CarsCubit, AppState>(
+          listenWhen: (previous, current) => current is ListenCarsState || current is AppStateError,
+          listener: (context, state) {
+            if (state is ShowUpdateCarState) {
+              showDialog<bool>(
+                context: context,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<CarsCubit>(),
+                  child: SimpleDialog(
                     title: const Text('Редактирование авто'),
                     contentPadding: const EdgeInsets.all(26),
                     children: [
                       CarUpdateWidget(
                         state.car,
-                        context.read<CarsCubit>(),
                       ),
                     ],
                   ),
-                );
-              } else if (state is ShowCreateCarState) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext ctx) => SimpleDialog(
+                ),
+              );
+            } else if (state is ShowCreateCarState) {
+              showDialog(
+                context: context,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<CarsCubit>(),
+                  child: SimpleDialog(
                     title: const Text('Добавление авто'),
                     contentPadding: const EdgeInsets.all(26),
                     children: [
-                      CarCreateWidget(context.read<CarsCubit>()),
+                      CarCreateWidget(),
                     ],
                   ),
-                );
-              } else if (state is CarCreateSuccessState) {
-                const SnackBar(
-                  content: Text('Авто успешно добавлено'),
-                );
-              } else if (state is ConfirmationDeleteCarState) {
-                showConfirmationDialog(
-                  context,
-                  title: 'Удаление авто',
-                  message: 'Вы действительно хотите удалить ваш автомобиль "${state.car.name}" со всеми записями?',
-                ).then((isOk) {
-                  if (isOk == true) {
-                    context.read<CarsCubit>().delete(state.car);
-                  }
-                });
-              }
-            },
-            buildWhen: (previous, current) => current is BuildCarsState || current is AppStateLoading,
-            builder: (context, state) {
-              if (state is AppStateLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (state is CarsState) {
-                if (state.cars.isEmpty) {
-                  return FormCarCreateWidget();
+                ),
+              );
+            } else if (state is CarCreateSuccessState) {
+              const SnackBar(
+                content: Text('Авто успешно добавлено'),
+              );
+            } else if (state is ConfirmationDeleteCarState) {
+              showConfirmationDialog(
+                context,
+                title: 'Удаление авто',
+                message: 'Вы действительно хотите удалить ваш автомобиль "${state.car.name}" со всеми записями?',
+              ).then((isOk) {
+                if (isOk == true) {
+                  context.read<CarsCubit>().delete(state.car);
                 }
+              });
+            }
+          },
+          buildWhen: (previous, current) => current is BuildCarsState || current is AppStateLoading,
+          builder: (context, state) {
+            if (state is AppStateLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is CarsState && state.cars.isNotEmpty) {
+              return ListView.builder(
+                itemCount: state.cars.length,
+                itemBuilder: (context, i) => CarItemWidget(state.cars[i]),
+              );
+            }
 
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, right: 10),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FilledButton.icon(
-                          onPressed: context.read<CarsCubit>().onClickCreateCar,
-                          icon: const Icon(Icons.add),
-                          label: const Text('Добавить авто'),
-                        ),
-                      ),
-                    ),
-                    ...state.cars.map((e) => CarItemWidget(e))
-                  ],
-                );
-              }
-
-              return FormCarCreateWidget();
-            },
-          ),
+            return FormCarCreateWidget();
+          },
         ),
       ),
     );

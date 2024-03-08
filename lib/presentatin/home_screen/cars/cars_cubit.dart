@@ -28,6 +28,10 @@ class CarsCubit extends Cubit<AppState> {
     emit(ShowUpdateCarState(car));
   }
 
+  void onClickEditMiliage(CarModel car) {
+    emit(ShowEditMiliageState(car));
+  }
+
   void onClickDeleteCar(CarModel car) {
     emit(ConfirmationDeleteCarState(car));
   }
@@ -115,6 +119,11 @@ class CarUpdateSuccessState implements ListenCarsState {}
 class ShowUpdateCarState implements ListenCarsState {
   final CarModel car;
   const ShowUpdateCarState(this.car);
+}
+
+class ShowEditMiliageState implements ListenCarsState {
+  final CarModel car;
+  const ShowEditMiliageState(this.car);
 }
 
 class ConfirmationDeleteCarState implements ListenCarsState {

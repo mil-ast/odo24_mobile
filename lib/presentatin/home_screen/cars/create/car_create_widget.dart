@@ -6,9 +6,7 @@ import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
 import 'package:odo24_mobile/data/repository/cars/models/car_create_dto.dart';
 
 class CarCreateWidget extends StatelessWidget {
-  final CarsCubit carsCubit;
-
-  CarCreateWidget(this.carsCubit, {Key? key}) : super(key: key);
+  CarCreateWidget({super.key});
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -17,7 +15,6 @@ class CarCreateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<CarsCubit, AppState>(
-      bloc: carsCubit,
       listener: (context, state) {
         if (state is CarCreateSuccessState) {
           Navigator.pop(context);
@@ -62,7 +59,6 @@ class CarCreateWidget extends StatelessWidget {
                 } else if (odo > 9999999) {
                   return 'Слишком большой пробег';
                 }
-
                 return null;
               },
             ),
@@ -88,12 +84,13 @@ class CarCreateWidget extends StatelessWidget {
                       return;
                     }
 
-                    final body = CarCreateDTO(
-                      name: _nameController.text.trim(),
-                      odo: int.parse(_odoController.text),
-                      avatar: false,
-                    );
-                    carsCubit.create(body);
+                    context.read<CarsCubit>().create(
+                          CarCreateDTO(
+                            name: _nameController.text.trim(),
+                            odo: int.parse(_odoController.text),
+                            avatar: false,
+                          ),
+                        );
                   },
                 ),
               ],

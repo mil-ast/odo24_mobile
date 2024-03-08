@@ -6,17 +6,15 @@ import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
 import 'package:odo24_mobile/data/repository/cars/models/car_update_dto.dart';
 import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
 
-class CarUpdateWidget extends StatelessWidget {
+class EditMiliageWidget extends StatelessWidget {
   final CarModel car;
-  CarUpdateWidget(this.car, {super.key});
+  EditMiliageWidget(this.car, {super.key});
 
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _nameController;
   late final TextEditingController _odoController;
 
   @override
   Widget build(BuildContext context) {
-    _nameController = TextEditingController.fromValue(TextEditingValue(text: car.name));
     _odoController = TextEditingController.fromValue(TextEditingValue(text: car.odo.toString()));
 
     return BlocListener<CarsCubit, AppState>(
@@ -29,22 +27,6 @@ class CarUpdateWidget extends StatelessWidget {
         key: _formKey,
         child: Column(
           children: [
-            TextFormField(
-              controller: _nameController,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                helperText: 'Название вашего авто',
-                icon: Icon(Icons.title),
-              ),
-              validator: (String? name) {
-                if (name == null || name.length < 3) {
-                  return 'Название слишком короткое';
-                } else if (name.length > 120) {
-                  return 'Название слишком длинное';
-                }
-                return null;
-              },
-            ),
             TextFormField(
               controller: _odoController,
               keyboardType: TextInputType.number,
@@ -67,6 +49,16 @@ class CarUpdateWidget extends StatelessWidget {
 
                 return null;
               },
+            ),
+            Wrap(
+              children: [50, 100, 200, 500, 1000]
+                  .map((v) => TextButton(
+                        onPressed: () {
+                          _addMiliage(v);
+                        },
+                        child: Text('+$vкм'),
+                      ))
+                  .toList(),
             ),
             const SizedBox(height: 20),
             Row(
@@ -94,7 +86,7 @@ class CarUpdateWidget extends StatelessWidget {
                           car,
                           CarUpdateDTO(
                             carID: car.carID,
-                            name: _nameController.text.trim(),
+                            name: car.name,
                             odo: int.parse(_odoController.text),
                             avatar: false,
                           ),
@@ -107,5 +99,14 @@ class CarUpdateWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _addMiliage(int miliage) {
+    final currentValue = int.tryParse(_odoController.text);
+    if (currentValue == null) {
+      return;
+    }
+
+    _odoController.text = '${currentValue + miliage}';
   }
 }

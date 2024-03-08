@@ -9,35 +9,35 @@ import 'package:odo24_mobile/domain/services/cars/models/car.model.dart';
 
 class CarScreen extends StatelessWidget {
   final CarModel car;
-  const CarScreen(this.car, {Key? key}) : super(key: key);
+  const CarScreen(this.car, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        toolbarHeight: 80,
-        leadingWidth: 80,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              car.name,
-              style: const TextStyle(fontSize: 22),
-            ),
-            const SizedBox(height: 10),
-            Text('${car.odo} км', style: const TextStyle(color: Colors.white60)),
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<GroupsCubit>(
+          create: (context) => GroupsCubit()..getAllGroups(),
         ),
-      ),
-      body: SafeArea(
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<GroupsCubit>(
-              create: (context) => GroupsCubit()..getAllGroups(),
-            ),
-          ],
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          toolbarHeight: 80,
+          leadingWidth: 80,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                car.name,
+                style: const TextStyle(fontSize: 22),
+              ),
+              const SizedBox(height: 10),
+              Text('${car.odo} км', style: const TextStyle(color: Colors.white60)),
+            ],
+          ),
+        ),
+        body: SafeArea(
           child: BlocConsumer<GroupsCubit, AppState>(
             listenWhen: (previous, current) => current is AppStateError || current is ListenGroupsState,
             listener: (context, state) {
@@ -76,24 +76,6 @@ class CarScreen extends StatelessWidget {
                   ],
                 );
               }
-
-              /* if (state is GroupsState) {
-                if (state.groups.isEmpty) {
-                  return FormGroupCreateWidget();
-                }
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      GroupsSelectorWidget(state.groups, state.selected),
-                      if (state.selected != null)
-                        Expanded(
-                          child: SingleChildScrollView(child: ServicesListWidget(car, state.selected!)),
-                        ),
-                    ],
-                  ),
-                );
-              } */
 
               return const SizedBox.shrink();
             },

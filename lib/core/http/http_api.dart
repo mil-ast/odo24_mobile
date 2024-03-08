@@ -8,6 +8,7 @@ import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
 
 class HttpAPI {
   static const String _baseURLHost = 'https://backend.odo24.ru';
+  //static const String _baseURLHost = 'http://0.0.0.0:8000';
   static bool _isRefresh = false;
 
   static Dio newDio({
@@ -52,6 +53,10 @@ class HttpAPI {
               if (tokenInfo.isExpired() && !_isRefresh) {
                 _isRefresh = true;
 
+                if (kDebugMode) {
+                  print('ODO24: tokenInfo expired');
+                }
+
                 final d = Dio(
                   BaseOptions(
                     baseUrl: _baseURLHost,
@@ -87,6 +92,7 @@ class HttpAPI {
               error: e.toString(),
             ));
             AuthService().logout();
+            rethrow;
           }
         },
         onResponse: (response, handler) {

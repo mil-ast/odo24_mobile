@@ -43,6 +43,10 @@ class ODO24Theme {
         indicatorColor: Colors.white,
         unselectedLabelColor: Colors.white.withAlpha(180),
       ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: ODO24Colors.primary,
+        foregroundColor: Colors.white,
+      ),
     );
   }
 }
