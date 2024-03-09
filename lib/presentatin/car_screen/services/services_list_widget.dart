@@ -97,9 +97,7 @@ class ServicesListWidget extends StatelessWidget {
               Expanded(
                 child: ListView.builder(
                   itemCount: state.services.length,
-                  itemBuilder: (context, i) {
-                    return ServiceItemWidget(state.services[i]);
-                  },
+                  itemBuilder: (context, i) => ServiceItemWidget(state.services[i]),
                 ),
               ),
             ],

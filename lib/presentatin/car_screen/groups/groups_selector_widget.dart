@@ -64,14 +64,8 @@ class GroupsSelectorWidget extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
-              onPressed: () {
-                context.read<GroupsCubit>().onClickOpenGroupsSettingsDialog();
-              },
+              onPressed: context.read<GroupsCubit>().onClickOpenGroupsSettingsDialog,
               icon: const Icon(Icons.settings),
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Color(0xFF5abd70)),
-                iconColor: MaterialStatePropertyAll(Colors.white),
-              ),
             ),
           ),
           const SizedBox(width: 20),

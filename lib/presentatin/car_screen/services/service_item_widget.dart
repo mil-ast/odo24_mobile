@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
 import 'package:odo24_mobile/domain/services/services/models/service_result_model.dart';
 
@@ -54,10 +55,10 @@ class ServiceItemWidget extends StatelessWidget {
                       onTap: () {
                         context.read<ServicesCubit>().onClickEditService(service);
                       },
-                      child: Wrap(
+                      child: const Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
-                        children: const [
+                        children: [
                           Icon(Icons.edit),
                           Text('Изменить'),
                         ],
@@ -67,10 +68,10 @@ class ServiceItemWidget extends StatelessWidget {
                       onTap: () {
                         context.read<ServicesCubit>().onClickDeleteService(service);
                       },
-                      child: Wrap(
+                      child: const Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
-                        children: const [
+                        children: [
                           Icon(Icons.delete),
                           Text('Удалить'),
                         ],
@@ -91,6 +92,16 @@ class ServiceItemWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (service.leftDistance != null)
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+              ),
+              child: Text(
+                'Пройдено ${service.formatLeftOdo}км',
+                textScaler: const TextScaler.linear(0.9),
+              ),
+            ),
         ],
       ),
     );

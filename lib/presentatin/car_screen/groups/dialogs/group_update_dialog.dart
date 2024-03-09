@@ -6,9 +6,8 @@ import 'package:odo24_mobile/data/repository/groups/models/group_update_request_
 import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 
 class GroupUpdateWidget extends StatelessWidget {
-  final GroupsCubit groupsCubit;
   final GroupModel group;
-  GroupUpdateWidget(this.group, this.groupsCubit, {super.key});
+  GroupUpdateWidget(this.group, {super.key});
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
@@ -18,7 +17,6 @@ class GroupUpdateWidget extends StatelessWidget {
     _nameController = TextEditingController.fromValue(TextEditingValue(text: group.name));
 
     return BlocListener<GroupsCubit, AppState>(
-      bloc: groupsCubit,
       listener: (context, state) {
         if (state is AppStateSuccess<GroupUpdateRequestModel>) {
           group.name = state.data!.name;
@@ -72,7 +70,7 @@ class GroupUpdateWidget extends StatelessWidget {
                         groupID: group.groupID,
                         name: _nameController.text.trim(),
                       );
-                      groupsCubit.update(body);
+                      context.read<GroupsCubit>().update(body);
                     },
                   ),
                 ],

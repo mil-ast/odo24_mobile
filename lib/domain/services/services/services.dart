@@ -16,7 +16,29 @@ class Services {
 
   Future<List<ServiceModel>> getByCarAndGroup(int carID, int groupID) async {
     final result = await _repository.getByGroup(carID, groupID);
-    return result.map((dto) => ServiceModel.fromDTO(dto)).toList();
+    /* result.sort((a, b) {
+      if (a.odo != null && b.odo != null) {
+        return b.odo! - a.odo!;
+      }
+      return 0;
+    }); */
+
+    final resultModels = <ServiceModel>[];
+    for (int i = 0; i < result.length; i++) {
+      final dto = result.elementAt(i);
+      final model = ServiceModel.fromDTO(dto);
+      if (i > 0) {
+        final leftDto = result.elementAt(i - 1);
+        if (leftDto.odo != null && dto.odo != null) {
+          final distance = dto.odo! - leftDto.odo!;
+          if (distance > 0) {
+            model.leftDistance = distance;
+          }
+        }
+      }
+      resultModels.add(model);
+    }
+    return resultModels;
   }
 
   Future<ServiceModel> create(int carID, int groupID, ServiceCreateRequestModel service) async {

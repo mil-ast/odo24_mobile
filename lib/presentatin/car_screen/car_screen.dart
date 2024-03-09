@@ -54,9 +54,11 @@ class CarScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => GroupsSettingsDialog(
-                      context.read<GroupsCubit>(),
-                      state.groups,
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<GroupsCubit>(),
+                      child: GroupsSettingsDialog(
+                        state.groups,
+                      ),
                     ),
                     fullscreenDialog: false,
                   ),

@@ -23,7 +23,7 @@ class ServicesCubit extends Cubit<AppState> {
     _services.addAll(result);
 
     if (!isClosed) {
-      _sortServicesByOdo();
+      //_sortServicesByOdo();
       refresh();
     }
   }
@@ -38,7 +38,7 @@ class ServicesCubit extends Cubit<AppState> {
 
       car.servicesTotal++;
 
-      _sortServicesByOdo();
+      //_sortServicesByOdo();
       refresh();
     } catch (e) {
       emit(AppState.catchErrorHandler(e));
@@ -56,7 +56,7 @@ class ServicesCubit extends Cubit<AppState> {
 
       emit(ServiceUpdateSuccessful());
 
-      _sortServicesByOdo();
+      //_sortServicesByOdo();
       refresh();
     } catch (e) {
       emit(AppState.catchErrorHandler(e));

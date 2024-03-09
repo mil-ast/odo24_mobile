@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_create_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/group_update_dialog.dart';
 import 'package:odo24_mobile/presentatin/car_screen/groups/dialogs/groups_settings/groups_settings_cubit.dart';
 import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
+import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
+import 'package:odo24_mobile/presentatin/home_screen/cars/cars_cubit.dart';
 import 'package:odo24_mobile/shared_widgets/dialogs/confirmation_dialog.dart';
 
 class GroupsSettingsDialog extends StatefulWidget {
   final List<GroupModel> groups;
-  final GroupsCubit groupsCubit;
 
-  const GroupsSettingsDialog(this.groupsCubit, this.groups, {super.key});
+  const GroupsSettingsDialog(this.groups, {super.key});
 
   @override
   GroupsSettingsDialogState createState() {
@@ -23,29 +23,37 @@ class GroupsSettingsDialog extends StatefulWidget {
 class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Настройка сервисных групп'),
-      ),
-      body: PrimaryScrollController(
-        controller: ScrollController(),
-        child: BlocProvider(
-          create: (context) => GroupsSettingsCubit(widget.groupsCubit),
+    return BlocProvider(
+      create: (context) => GroupsSettingsCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Настройка сервисных групп'),
+        ),
+        floatingActionButton: Builder(builder: (context) {
+          return FloatingActionButton(
+            onPressed: context.read<GroupsSettingsCubit>().onClickCreateGroup,
+            child: const Icon(Icons.add),
+          );
+        }),
+        body: PrimaryScrollController(
+          controller: ScrollController(),
           child: BlocConsumer<GroupsSettingsCubit, AppState>(
             listenWhen: (previous, current) => current is GroupsSettingsListenState,
             listener: (context, state) {
               if (state is GroupsSettingsShowEditGroupState) {
                 showDialog<bool>(
                   context: context,
-                  builder: (BuildContext ctx) => SimpleDialog(
-                    title: const Text('Редактирование группы'),
-                    contentPadding: const EdgeInsets.all(26),
-                    children: [
-                      GroupUpdateWidget(
-                        state.group,
-                        widget.groupsCubit,
-                      ),
-                    ],
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<GroupsCubit>(),
+                    child: SimpleDialog(
+                      title: const Text('Редактирование группы'),
+                      contentPadding: const EdgeInsets.all(26),
+                      children: [
+                        GroupUpdateWidget(
+                          state.group,
+                        ),
+                      ],
+                    ),
                   ),
                 ).then((value) {
                   setState(() {});
@@ -53,12 +61,15 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
               } else if (state is GroupsSettingsShowCreateGroupState) {
                 showDialog<GroupModel?>(
                   context: context,
-                  builder: (BuildContext ctx) => SimpleDialog(
-                    title: const Text('Добавление новой группы'),
-                    contentPadding: const EdgeInsets.all(26),
-                    children: [
-                      GroupCreateWidget(widget.groupsCubit),
-                    ],
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<GroupsCubit>(),
+                    child: SimpleDialog(
+                      title: const Text('Добавление новой группы'),
+                      contentPadding: const EdgeInsets.all(26),
+                      children: [
+                        GroupCreateWidget(),
+                      ],
+                    ),
                   ),
                 ).then((group) {
                   if (group != null) {
@@ -80,17 +91,19 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
               } else if (state is GroupsDeleteSuccessState) {
                 widget.groups.remove(state.group);
                 setState(() {});
+              } else if (state is GroupsSettingsSuccessState) {
+                context.read<GroupsCubit>().updateSortGroups(state.groups, state.start);
               }
             },
             buildWhen: (previous, current) => current is GroupsSettingsBuildState,
             builder: (context, state) {
               return ReorderableListView(
-                header: Column(
+                header: const Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
                       child: Row(
-                        children: const [
+                        children: [
                           Icon(
                             Icons.info,
                             color: Color(0xffffc006),
@@ -104,16 +117,6 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    FilledButton(
-                      onPressed: () {
-                        context.read<GroupsSettingsCubit>().onClickCreateGroup();
-                      },
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 10,
-                        children: const [Icon(Icons.create), Text('Добавить группу')],
                       ),
                     ),
                   ],
@@ -132,10 +135,10 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
                                 onTap: () {
                                   context.read<GroupsSettingsCubit>().onClickEditGroup(item);
                                 },
-                                child: Wrap(
+                                child: const Wrap(
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   spacing: 10,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.edit),
                                     Text('Изменить'),
                                   ],
@@ -145,10 +148,10 @@ class GroupsSettingsDialogState extends State<GroupsSettingsDialog> {
                                 onTap: () {
                                   context.read<GroupsSettingsCubit>().onClickDeleteGroup(item);
                                 },
-                                child: Wrap(
+                                child: const Wrap(
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   spacing: 10,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.delete),
                                     Text('Удалить'),
                                   ],
