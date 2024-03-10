@@ -5,8 +5,7 @@ import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/data/repository/groups/models/group_create_request_model.dart';
 
 class GroupCreateWidget extends StatelessWidget {
-  final GroupsCubit groupsCubit;
-  GroupCreateWidget(this.groupsCubit, {super.key});
+  GroupCreateWidget({super.key});
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -14,7 +13,6 @@ class GroupCreateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<GroupsCubit, AppState>(
-      bloc: groupsCubit,
       listener: (context, state) {
         if (state is GroupCreateSuccessful) {
           Navigator.pop(context, state.newGroup);
@@ -66,7 +64,7 @@ class GroupCreateWidget extends StatelessWidget {
                       final body = GroupCreateRequestModel(
                         name: _nameController.text.trim(),
                       );
-                      groupsCubit.create(body);
+                      context.read<GroupsCubit>().create(body);
                     },
                   ),
                 ],

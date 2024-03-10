@@ -1,21 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/app_state_core.dart';
-import 'package:odo24_mobile/presentatin/car_screen/groups_cubit.dart';
 import 'package:odo24_mobile/domain/services/groups/groups_service.dart';
 import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 
 class GroupsSettingsCubit extends Cubit<AppState> {
-  final GroupsCubit carCubit;
   final _service = GroupsService();
 
-  GroupsSettingsCubit(this.carCubit) : super(AppStateDefault());
+  GroupsSettingsCubit() : super(AppStateDefault());
 
   void updateSortGroups(List<GroupModel> groups, int start) async {
     try {
       final groupIDS = groups.map((e) => e.groupID).toList();
       await _service.updateSortGroups(groupIDS);
-      carCubit.updateSortGroups(groups, start);
-      emit(GroupsSettingsSuccessState());
+      emit(GroupsSettingsSuccessState(
+        groups: groups,
+        start: start,
+      ));
     } catch (e) {
       emit(AppState.catchErrorHandler(e));
     }
@@ -47,7 +47,15 @@ class GroupsSettingsBuildState implements AppState {}
 
 class GroupsSettingsListenState implements AppState {}
 
-class GroupsSettingsSuccessState implements GroupsSettingsListenState {}
+class GroupsSettingsSuccessState implements GroupsSettingsListenState {
+  final List<GroupModel> groups;
+  final int start;
+
+  GroupsSettingsSuccessState({
+    required this.groups,
+    required this.start,
+  });
+}
 
 class GroupsDeleteSuccessState implements GroupsSettingsListenState {
   final GroupModel group;

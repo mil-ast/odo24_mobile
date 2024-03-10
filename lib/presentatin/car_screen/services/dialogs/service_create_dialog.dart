@@ -9,7 +9,6 @@ import 'package:odo24_mobile/domain/services/groups/models/group.model.dart';
 class ServiceRecCreateWidget extends StatelessWidget {
   final CarModel car;
   final GroupModel selectedGroup;
-  final ServicesCubit servicesCubit;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _odoController;
   late final TextEditingController _nextDistanceController;
@@ -17,8 +16,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
 
-  ServiceRecCreateWidget(
-    this.servicesCubit, {
+  ServiceRecCreateWidget({
     required this.car,
     required this.selectedGroup,
     super.key,
@@ -37,7 +35,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, AppState>(
-      bloc: servicesCubit,
+      bloc: context.read<ServicesCubit>(),
       listener: (context, state) {
         if (state is ServiceCreateSuccessful) {
           Navigator.pop(context);
@@ -147,7 +145,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
                       description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
                       price: _priceController.text.isNotEmpty ? int.parse(_priceController.text) : null,
                     );
-                    servicesCubit.create(car, selectedGroup.groupID, body);
+                    context.read<ServicesCubit>().create(car, selectedGroup.groupID, body);
                   },
                 ),
               ],

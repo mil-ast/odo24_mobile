@@ -5,14 +5,17 @@ class ServiceModel {
   final int serviceID;
   int? odo;
   int? nextDistance;
+  int? leftDistance;
   DateTime dt;
   String? description;
   int? price;
+  final _numberFormat = NumberFormat.decimalPattern();
 
   ServiceModel({
     required this.serviceID,
     required this.odo,
     required this.nextDistance,
+    this.leftDistance,
     required this.dt,
     required this.description,
     required this.price,
@@ -26,7 +29,14 @@ class ServiceModel {
     if (odo == null) {
       return null;
     }
-    return NumberFormat.decimalPattern().format(odo);
+    return _numberFormat.format(odo);
+  }
+
+  String? get formatLeftOdo {
+    if (leftDistance == null) {
+      return null;
+    }
+    return _numberFormat.format(leftDistance);
   }
 
   String? get formatPrice {
