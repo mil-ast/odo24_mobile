@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/main.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 
 class TitleToolBarWidget extends StatelessWidget {
   final String title;
@@ -14,9 +14,9 @@ class TitleToolBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      color: Odo24App.primaryColor,
+      color: ODO24Colors.primary,
       child: Padding(
-        padding: EdgeInsets.only(top: 10, right: 0, bottom: 10, left: 20),
+        padding: const EdgeInsets.only(top: 10, right: 0, bottom: 10, left: 20),
         child: Row(
           children: [
             Expanded(

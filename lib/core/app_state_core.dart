@@ -1,6 +1,20 @@
-abstract class AppState {}
+import 'package:dio/dio.dart';
 
-class AppStateError extends AppState {
+abstract class AppState {
+  static AppStateError catchErrorHandler(Object error, {String? details}) {
+    if (error is AppStateError) {
+      return error;
+    } else if (error is DioException) {
+      return AppStateError('DioException', error.message ?? error.toString(), details: details);
+    } else if (error is TypeError) {
+      return AppStateError('typeError', error.toString(), details: details);
+    }
+
+    return AppStateError('unidentified error', error.toString(), details: details);
+  }
+}
+
+class AppStateError implements AppState {
   String key;
   String error;
   String? details;
@@ -8,7 +22,7 @@ class AppStateError extends AppState {
   AppStateError(this.key, this.error, {this.details});
 }
 
-class AppStateSuccess<T> extends AppState {
+class AppStateSuccess<T> implements AppState {
   T? data;
 
   AppStateSuccess([this.data]);
@@ -18,6 +32,6 @@ class AppStateSuccess<T> extends AppState {
   }
 }
 
-class AppStateDefault extends AppState {}
+class AppStateDefault implements AppState {}
 
-class AppStateLoading extends AppState {}
+class AppStateLoading implements AppState {}
