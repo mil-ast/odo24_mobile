@@ -15,7 +15,9 @@ class ResponseHandler {
 
   static Future<List<Map<String, dynamic>>?> parseListJSON(Future<Response<dynamic>> api) async {
     final result = await _parse(api);
-    if (result is List) {
+    if (result == null) {
+      return [];
+    } else if (result is List) {
       return List.castFrom<dynamic, Map<String, dynamic>>(result);
     }
     return [result];
@@ -38,6 +40,12 @@ class ResponseHandler {
         throw AppStateError(
           'http.unauthorized',
           'Ошибка авторизации',
+          details: res.requestOptions.uri.toString(),
+        );
+      case HttpStatus.forbidden:
+        throw AppStateError(
+          'http.forbidden',
+          'Запрещено',
           details: res.requestOptions.uri.toString(),
         );
       case HttpStatus.notFound:

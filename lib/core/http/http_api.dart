@@ -1,17 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:odo24_mobile/domain/services/auth/auth_service.dart';
-import 'package:odo24_mobile/domain/services/auth/models/auth_token.dart';
+import 'package:odo24_mobile/data/auth/auth_repository.dart';
+import 'package:odo24_mobile/data/models/auth_token.dart';
 
 class HttpAPI {
-  static const String _baseURLHost = 'https://backend.odo24.ru';
+  static const String baseURLHost = 'https://backend.odo24.ru';
   //static const String _baseURLHost = 'http://0.0.0.0:8000';
   static bool _isRefresh = false;
 
   static Dio newDio({
+    required IAuthRepository authRepository,
     Duration receiveTimeout = const Duration(seconds: 5),
     Duration connectTimeout = const Duration(seconds: 10),
     Duration sendTimeout = const Duration(seconds: 5),
@@ -21,8 +21,11 @@ class HttpAPI {
     String? baseURL,
   }) {
     final options = BaseOptions(
-      baseUrl: baseURL ?? _baseURLHost,
+      baseUrl: baseURL ?? baseURLHost,
       contentType: 'application/json',
+      validateStatus: (status) {
+        return status != null;
+      },
     );
     options.receiveTimeout = receiveTimeout;
     options.connectTimeout = connectTimeout;
@@ -42,62 +45,72 @@ class HttpAPI {
 
     dio.interceptors.add(
       InterceptorsWrapper(
-        //Интерсептор подстановки авторизации
         onRequest: (
           RequestOptions options,
           RequestInterceptorHandler handler,
         ) async {
           try {
-            AuthToken? tokenInfo = await AuthService().getAuthToken();
-            if (tokenInfo != null) {
-              if (tokenInfo.isExpired() && !_isRefresh) {
+            //AuthData? authData = AuthService.instance.authData;
+            //final isAuth = await authRepository.isAuth;
+
+            final authData = await authRepository.getAuthData();
+
+            if (authData == null) {
+              if (kDebugMode) {
+                print('ODO24: tokenInfo is empty');
+              }
+              handler.reject(DioException(
+                requestOptions: options,
+                error: 'Token is empty',
+              ));
+              return;
+            }
+
+            if (authData.isAccessExpired()) {
+              if (!_isRefresh) {
                 _isRefresh = true;
 
                 if (kDebugMode) {
                   print('ODO24: tokenInfo expired');
                 }
 
-                final d = Dio(
+                final dio = Dio(
                   BaseOptions(
-                    baseUrl: _baseURLHost,
+                    baseUrl: baseURLHost,
                     headers: {
-                      'Authorization': 'Bearer ${tokenInfo.accessToken}',
+                      'Authorization': 'Bearer ${authData.accessToken}',
                     },
                   ),
                 );
-                final authResult = await d.post('/api/auth/refresh_token', data: {
-                  'refresh_token': tokenInfo.refreshToken,
-                }).whenComplete(() {
-                  _isRefresh = false;
+                final authResult = await dio.post('/api/auth/refresh_token', data: {
+                  'refresh_token': authData.refreshToken,
                 });
                 final Map<String, dynamic> data = authResult.data;
-                tokenInfo = AuthToken.fromStrings(data['access_token'], data['refresh_token']);
-                AuthService().saveAuthToken(tokenInfo);
-              }
+                final tokenInfo = AuthData.fromStrings(data['access_token'], data['refresh_token']);
+                await authRepository.updateAuthData(tokenInfo);
 
-              options.headers['Authorization'] = 'Bearer ${tokenInfo.accessToken}';
-              handler.next(options);
-              return;
-            } else {
-              handler.reject(DioException(
-                requestOptions: options,
-                error: 'Token is empty',
-              ));
+                _isRefresh = false;
+
+                options.headers['Authorization'] = 'Bearer ${tokenInfo.accessToken}';
+                handler.next(options);
+                return;
+              }
             }
 
-            AuthService().logout();
+            options.headers['Authorization'] = 'Bearer ${authData.accessToken}';
+            handler.next(options);
           } catch (e) {
             handler.reject(DioException(
               requestOptions: options,
               error: e.toString(),
             ));
-            AuthService().logout();
+            authRepository.logout();
             rethrow;
           }
         },
         onResponse: (response, handler) {
           if (response.statusCode == 401 && logoutOn401) {
-            AuthService().logout();
+            authRepository.logout();
             return handler.next(response);
           }
 
@@ -112,106 +125,17 @@ class HttpAPI {
           }
 
           if (e.response != null && e.response!.statusCode == 401) {
-            AuthService().logout();
+            authRepository.logout();
           }
           return handler.reject(e);
         },
       ),
     );
-
-    if (forceJsonContent) {
-      dio.interceptors.add(
-        //Чтобы парсилось в json даже если бэком не установлен хэдер application/json
-        InterceptorsWrapper(
-          onResponse: (response, handler) {
-            if (response.data.runtimeType == String) {
-              response.data = jsonDecode(response.data);
-            }
-            handler.next(response);
-          },
-        ),
-      );
-    }
 
     if (!kReleaseMode) {
       dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
     }
 
     return dio;
-  }
-
-  static Dio newDioWithoutAuth({
-    Duration receiveTimeout = const Duration(seconds: 5),
-    Duration connectTimeout = const Duration(seconds: 10),
-    Duration sendTimeout = const Duration(seconds: 5),
-    bool logoutOn401 = true,
-    bool forceJsonContent = false, // true - если в ответе нет хедера application/json
-    bool allowBadCertificate = false,
-    String? baseURL,
-  }) {
-    final options = BaseOptions(
-      baseUrl: baseURL ?? _baseURLHost,
-    );
-    options.validateStatus = (status) => status != null;
-
-    options.receiveTimeout = receiveTimeout;
-    options.connectTimeout = connectTimeout;
-    options.sendTimeout = sendTimeout;
-
-    final Dio d = Dio(options);
-    if (allowBadCertificate == true) {
-      d.httpClientAdapter = IOHttpClientAdapter(
-        createHttpClient: () {
-          final client = HttpClient();
-          client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-          return client;
-        },
-      )..validateCertificate = (cert, host, port) => cert != null;
-    }
-
-    d.interceptors.add(
-      InterceptorsWrapper(
-        onResponse: (response, handler) {
-          if (response.statusCode == 401 && logoutOn401) {
-            AuthService().logout();
-            return handler.next(response);
-          }
-
-          if (response.statusCode == 204 || (response.data.runtimeType == String && response.data == '')) {
-            response.data = {'data': null};
-          }
-          return handler.next(response);
-        },
-        onError: (DioException e, handler) async {
-          if (e.response == null) {
-            return handler.reject(e);
-          }
-          if (e.response != null && e.response!.statusCode == 401) {
-            AuthService().logout();
-          }
-          return handler.reject(e);
-        },
-      ),
-    );
-
-    if (forceJsonContent) {
-      d.interceptors.add(
-        //Чтобы парсилось в json даже если бэком не установлен хэдер application/json
-        InterceptorsWrapper(
-          onResponse: (response, handler) {
-            if (response.data.runtimeType == String) {
-              response.data = jsonDecode(response.data);
-            }
-            handler.next(response);
-          },
-        ),
-      );
-    }
-
-    if (!kReleaseMode) {
-      d.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
-    }
-
-    return d;
   }
 }

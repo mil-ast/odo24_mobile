@@ -8,7 +8,8 @@ class ODO24Theme {
       brightness: Brightness.light,
       primaryColor: ODO24Colors.primary,
       secondaryHeaderColor: ODO24Colors.secondary,
-      scaffoldBackgroundColor: const Color(0xfff9f9f9),
+      //scaffoldBackgroundColor: const Color(0xfff9f9f9),
+      scaffoldBackgroundColor: const Color(0xfff8f9fa),
       textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.black87)),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(color: Colors.white),

@@ -4,18 +4,77 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
-import 'package:odo24_mobile/routes.dart';
+import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
+import 'package:odo24_mobile/data/auth/auth_repository.dart';
+import 'package:odo24_mobile/features/cars/data/providers/cars_data_provider.dart';
+import 'package:odo24_mobile/features/cars/data/repository/cars_repository.dart';
+import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/services/groups/data/providers/groups_data_provider.dart';
+import 'package:odo24_mobile/features/services/groups/data/repository/groups_repository.dart';
+import 'package:odo24_mobile/features/splash/splash_screen.dart';
+import 'package:sentry/sentry_io.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 
-Future<void> main() async {
+class InitializationScreen extends StatelessWidget {
+  const InitializationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: RepaintBoundary(child: CircularProgressIndicator()),
+        ),
+      ),
+    );
+  }
+}
+
+void main() async {
+  await Sentry.init((options) {
+    options.dsn = 'https://1535d3545bdf3ee95fcdcc1305dcac3d@o4506994624888832.ingest.us.sentry.io/4506994630524929';
+    options.tracesSampleRate = 1.0;
+  });
   runZonedGuarded(
     () {
       Intl.defaultLocale = 'ru_RU';
-      runApp(const Odo24App());
+
+      final authRepository = AuthRepository(
+        authDataProvider: AuthDataProvider(),
+      );
+      final dio = HttpAPI.newDio(
+        authRepository: authRepository,
+      );
+      dio.addSentry();
+
+      final dependencies = Dependencies(
+        httpClient: HttpAPI.newDio(
+          authRepository: authRepository,
+        ),
+        authRepository: authRepository,
+        carsRepository: CarsRepository(
+          carsDataProvider: CarsDataProvider(httpClient: dio),
+        ),
+        groupsRepository: GroupsRepository(
+          groupsDataProvider: GroupsDataProvider(httpClient: dio),
+        ),
+      );
+
+      runApp(DependenciesScope(
+        dependencies: dependencies,
+        child: const Odo24App(),
+      ));
     },
-    (error, stack) {
+    (error, stack) async {
       if (kDebugMode) {
         print('Err: $error\r\n$stack');
+      } else {
+        await Sentry.captureException(
+          error,
+          stackTrace: stack,
+        );
       }
     },
   );
@@ -30,6 +89,7 @@ class Odo24App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ODO24.mobile',
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ODO24Theme.lightTheme,
       localizationsDelegates: const [
@@ -41,8 +101,7 @@ class Odo24App extends StatelessWidget {
         Locale('ru', ''),
       ],
       locale: const Locale('ru', ''),
-      initialRoute: '/',
-      routes: routes,
+      home: const SplashScreen(),
     );
   }
 }
