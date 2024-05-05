@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_cubit.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_states.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_create_request_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_create_request_model.dart';
 
 class GroupCreateWidget extends StatelessWidget {
   GroupCreateWidget({super.key});
@@ -55,7 +55,7 @@ class GroupCreateWidget extends StatelessWidget {
                         },
                         child: const Text('Отмена'),
                       ),
-                      ElevatedButton(
+                      FilledButton(
                         child: const Text('Добавить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {

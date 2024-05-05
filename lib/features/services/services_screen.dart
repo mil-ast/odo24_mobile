@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_cubit.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_states.dart';
-import 'package:odo24_mobile/features/services/groups/groups_selector_widget.dart';
-import 'package:odo24_mobile/features/services/groups/widgets/first_group_create/first_group_create_widget.dart';
-import 'package:odo24_mobile/features/services/groups/widgets/settings/groups_settings_screen.dart';
-import 'package:odo24_mobile/features/services/groups/widgets/settings/widgets/group_create_dialog.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/groups_selector_widget.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/widgets/first_group_create/first_group_create_widget.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/groups_settings_screen.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/widgets/group_create_dialog.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/widgets/group_update_dialog.dart';
 
 class ServicesScreen extends StatelessWidget {
   final CarModel selectedCar;
@@ -69,7 +70,15 @@ class ServicesScreen extends StatelessWidget {
                       ),
                     );
                   case GroupAction.update:
-                    break;
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog.fullscreen(
+                        child: BlocProvider.value(
+                          value: context.read<GroupsCubit>(),
+                          child: GroupUpdateWidget(state.group!),
+                        ),
+                      ),
+                    );
                   case GroupAction.delete:
                     showConfirmationDialog(
                       context,

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/repository/cars_repository.dart';
-import 'package:odo24_mobile/features/services/groups/data/repository/groups_repository.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/repository/groups_repository.dart';
 
 final class Dependencies {
   final Dio httpClient;

@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_states.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_create_request_model.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_model.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_update_request_model.dart';
-import 'package:odo24_mobile/features/services/groups/data/repository/groups_repository.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_create_request_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_update_request_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/repository/groups_repository.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
   final List<GroupModel> _groups = [];
@@ -64,11 +64,21 @@ class GroupsCubit extends Cubit<GroupsState> {
     }
   }
 
-  void update(GroupUpdateRequestModel body) async {
+  void update(GroupModel newGroup) async {
     try {
+      final body = GroupUpdateRequestModel(
+        groupID: newGroup.groupID,
+        name: newGroup.name,
+      );
       await _groupsRepository.update(body);
+
+      final index = _groups.indexWhere((g) => g.groupID == newGroup.groupID);
+      _groups.removeAt(index);
+      _groups.insert(index, newGroup);
+
       emit(GroupsState.updateSuccess());
       emit(GroupsState.message('Изменения успешно сохранены!'));
+      refresh();
     } catch (e) {
       emit(GroupsState.failure(e));
     }
@@ -120,6 +130,10 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   void onClickCreateGroup() {
     emit(GroupsState.action(GroupAction.create));
+  }
+
+  void onClickUpdateGroup(GroupModel group) {
+    emit(GroupsState.action(GroupAction.update, group: group));
   }
 
   void onClickDeleteGroup(GroupModel group) {

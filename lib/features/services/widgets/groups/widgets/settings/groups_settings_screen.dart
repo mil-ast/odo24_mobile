@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_cubit.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_states.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
 
 class GroupsSettingsScreen extends StatefulWidget {
   const GroupsSettingsScreen({super.key});
@@ -122,7 +122,7 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
                           return [
                             PopupMenuItem(
                               onTap: () {
-                                //context.read<GroupsSettingsCubit>().onClickEditGroup(item);
+                                context.read<GroupsCubit>().onClickUpdateGroup(item);
                               },
                               child: const Wrap(
                                 crossAxisAlignment: WrapCrossAlignment.center,

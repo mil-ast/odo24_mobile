@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_create_request_model.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_update_request_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_create_request_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_update_request_model.dart';
 
 abstract interface class IGroupsDataProvider {
   Future<Response<Object>> getAll();

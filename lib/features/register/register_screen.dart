@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/app_state_core.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/register/bloc/register_cubit.dart';
@@ -62,7 +61,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
                   );
                 }
               },
-              buildWhen: (previous, current) => current is AppStateDefault || current is AppStateLoading,
+              buildWhen: (previous, current) => current.isBuild,
               builder: (context, state) => Form(
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.always,

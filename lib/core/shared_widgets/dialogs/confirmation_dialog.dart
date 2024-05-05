@@ -52,7 +52,7 @@ class ConfirmationDialog extends StatelessWidget {
               child: Text(btnNoText ?? 'Нет'),
             ),
             const SizedBox(width: 20),
-            ElevatedButton(
+            FilledButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },

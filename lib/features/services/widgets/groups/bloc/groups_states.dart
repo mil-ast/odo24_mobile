@@ -1,4 +1,4 @@
-import 'package:odo24_mobile/features/services/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 
 enum GroupAction {
   openSettings,

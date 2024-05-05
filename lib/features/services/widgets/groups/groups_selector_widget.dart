@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/services/groups/bloc/groups_cubit.dart';
-import 'package:odo24_mobile/features/services/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 
 class GroupsSelectorWidget extends StatelessWidget {
   final List<GroupModel> groups;
