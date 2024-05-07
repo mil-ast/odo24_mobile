@@ -8,11 +8,13 @@ import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
-import 'package:odo24_mobile/features/cars/data/providers/cars_data_provider.dart';
-import 'package:odo24_mobile/features/cars/data/repository/cars_repository.dart';
+import 'package:odo24_mobile/features/cars/data/cars_data_provider.dart';
+import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/providers/groups_data_provider.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/repository/groups_repository.dart';
+import 'package:odo24_mobile/features/services/data/services_provider.dart';
+import 'package:odo24_mobile/features/services/data/services_repository.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/groups_data_provider.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/splash/splash_screen.dart';
 import 'package:sentry/sentry_io.dart';
 import 'package:sentry_dio/sentry_dio.dart';
@@ -59,6 +61,9 @@ void main() async {
         ),
         groupsRepository: GroupsRepository(
           groupsDataProvider: GroupsDataProvider(httpClient: dio),
+        ),
+        servicesRepository: ServicesRepository(
+          servicesDataProvider: ServicesDataProvider(httpClient: dio),
         ),
       );
 

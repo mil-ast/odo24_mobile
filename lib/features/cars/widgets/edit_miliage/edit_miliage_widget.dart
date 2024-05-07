@@ -80,7 +80,7 @@ class EditMiliageWidget extends StatelessWidget {
                         },
                         child: const Text('Закрыть'),
                       ),
-                      ElevatedButton(
+                      FilledButton(
                         child: const Text('Сохранить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {

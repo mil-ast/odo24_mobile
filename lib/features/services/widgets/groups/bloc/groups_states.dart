@@ -14,6 +14,7 @@ sealed class GroupsState {
   factory GroupsState.idle() = LoadingState;
   factory GroupsState.failure(Object err) = CarsErrorState;
   factory GroupsState.message(String message) = GroupsMessageState;
+  factory GroupsState.changeSelectedGroup(GroupModel? selectedGroup) = OnChangeSelectedGroupState;
   factory GroupsState.showGroups(List<GroupModel> groups, {GroupModel? selected}) = ShowGroupsState;
   factory GroupsState.createSuccess(GroupModel newGroup) = GroupsCreateSuccessState;
   factory GroupsState.updateSuccess() = GroupsUpdateSuccessState;
@@ -31,6 +32,11 @@ class ShowGroupsState extends GroupsState {
   final List<GroupModel> groups;
 
   ShowGroupsState(this.groups, {this.selected}) : super(true);
+}
+
+class OnChangeSelectedGroupState extends GroupsState {
+  final GroupModel? selected;
+  OnChangeSelectedGroupState(this.selected) : super(false);
 }
 
 class CarsErrorState extends GroupsState {

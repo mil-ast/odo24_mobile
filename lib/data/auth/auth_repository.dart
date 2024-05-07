@@ -98,8 +98,7 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<void> logout() async {
-    await removeTokens();
-    Odo24App.navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
+  Future<void> logout() {
+    return removeTokens();
   }
 }

@@ -3,7 +3,7 @@ import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_create_request_model.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_update_request_model.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/repository/groups_repository.dart';
+import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
   final List<GroupModel> _groups = [];
@@ -35,14 +35,14 @@ class GroupsCubit extends Cubit<GroupsState> {
       _groups.addAll(groups);
 
       GroupModel? selected;
-      if (groups.isNotEmpty) {
-        if (_selectedIndex > -1 && groups.length >= _selectedIndex + 1) {
-          selected = groups.elementAt(_selectedIndex);
+      if (_groups.isNotEmpty) {
+        if (_selectedIndex > -1 && _groups.length >= _selectedIndex + 1) {
+          selected = _groups.elementAt(_selectedIndex);
         } else {
-          _selectedIndex = 0;
-          selected = groups.first;
+          selected = _groups.first;
         }
       }
+      _onChangeSelectedGroup(selected);
 
       emit(GroupsState.showGroups(_groups, selected: selected));
     } catch (e) {
@@ -107,11 +107,30 @@ class GroupsCubit extends Cubit<GroupsState> {
   }
 
   void onChangeGroup(GroupModel? group) {
+    _onChangeSelectedGroup(group);
     if (group == null) {
       return;
     }
-    _selectedIndex = _groups.indexOf(group);
     refresh();
+  }
+
+  void _onChangeSelectedGroup(GroupModel? group) {
+    if (group == null) {
+      _selectedIndex = -1;
+      return;
+    }
+
+    if (_selectedIndex == -1) {
+      final index = _groups.indexOf(group);
+      _selectedIndex = index;
+      emit(GroupsState.changeSelectedGroup(group));
+      return;
+    }
+    final selectedGroup = _groups.elementAtOrNull(_selectedIndex);
+    if (selectedGroup?.groupID != group.groupID) {
+      _selectedIndex = _groups.indexOf(group);
+      emit(GroupsState.changeSelectedGroup(group));
+    }
   }
 
   void updateSortGroups(List<GroupModel> groups, int changedIndex) async {

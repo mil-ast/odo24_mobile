@@ -9,6 +9,7 @@ import 'package:odo24_mobile/features/cars/widgets/create/car_create_form_widget
 import 'package:odo24_mobile/features/cars/widgets/edit/car_edit_form_dialog.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit_miliage/edit_miliage_widget.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/profile/profile_screen.dart';
 import 'package:odo24_mobile/features/services/services_screen.dart';
 
 class CarsScreen extends StatelessWidget {
@@ -17,26 +18,33 @@ class CarsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final carsRepository = DependenciesScope.of(context).carsRepository;
+
     return BlocProvider(
       create: (context) => CarsCubit(carsRepository: carsRepository)..getAllCars(),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).primaryColor,
-          title: const Text('ODO24 Сервисная книжка авто'),
-          /* actions: [
-            IconButton(
-              onPressed: authRepository.logout(),
-              icon: const Icon(Icons.logout),
-            ),
-          ], */
-        ),
-        /* floatingActionButton: Builder(
-          builder: (context) => FloatingActionButton(
-            onPressed: context.read<CarsCubit>().onClickCreateCar,
-            child: const Icon(Icons.add),
+          //title: const Text('Сервисная книжка авто'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Сервисная книжка авто'),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.settings),
+                color: Colors.white,
+              ),
+            ],
           ),
-        ), */
+        ),
         floatingActionButton: BlocBuilder<CarsCubit, CarsState>(
           buildWhen: (previous, current) => current.needBuild,
           builder: (context, state) {
@@ -120,10 +128,10 @@ class CarsScreen extends StatelessWidget {
             }
             if (state is CarsLoadedState && state.cars.isNotEmpty) {
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
                     child: Text(
                       'Мои авто',
                       style: Theme.of(context).textTheme.titleLarge,
