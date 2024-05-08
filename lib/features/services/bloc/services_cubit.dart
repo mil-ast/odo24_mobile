@@ -51,7 +51,36 @@ class ServicesCubit extends Cubit<ServicesState> {
       }
     }
 
-    emit(ServicesState.showList(_services));
+    final nextOdoInform = _calcNextODOInformation();
+    emit(ServicesState.showList(_services, nextOdoInform));
+  }
+
+  NextODOInformation? _calcNextODOInformation() {
+    if (_services.isEmpty) {
+      return null;
+    }
+    final lastService = _services.first;
+    if (lastService.odo == null || lastService.nextDistance == null) {
+      return null;
+    }
+
+    final nextOdo = lastService.odo! + lastService.nextDistance!;
+
+    int leftDistance = nextOdo - _selectedCar.odo;
+    if (leftDistance < 0) {
+      leftDistance = 0;
+    }
+
+    NextODOInformationLevel level;
+    if (leftDistance <= NextODOInformationLevel.alarm.distance) {
+      level = NextODOInformationLevel.alarm;
+    } else if (leftDistance <= NextODOInformationLevel.warn.distance) {
+      level = NextODOInformationLevel.warn;
+    } else {
+      level = NextODOInformationLevel.normal;
+    }
+
+    return NextODOInformation(leftDistance, level);
   }
 
   void openFormCreateService() {

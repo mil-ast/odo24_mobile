@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
@@ -167,7 +168,7 @@ class ServicesScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(height: 2),
-                Text('${selectedCar.odo} км', style: const TextStyle(color: Colors.white60)),
+                Text('${selectedCar.odo.format()} км', style: const TextStyle(color: Colors.white60)),
               ],
             ),
           ),
@@ -212,19 +213,43 @@ class ServicesScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Center(
-                                child: Column(
-                              children: [
-                                const Text('Записей ещё нет'),
-                                const SizedBox(height: 20),
-                                TextButton.icon(
-                                  onPressed: context.read<ServicesCubit>().openFormCreateService,
-                                  icon: const Icon(Icons.add),
-                                  label: const Text('Добавить первую запись'),
-                                ),
-                              ],
-                            )),
-                            //child: FormServiceCreateWidget(car, selectedGroup),
+                              child: Column(
+                                children: [
+                                  const Text('Записей ещё нет'),
+                                  const SizedBox(height: 20),
+                                  TextButton.icon(
+                                    onPressed: context.read<ServicesCubit>().openFormCreateService,
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Добавить первую запись'),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
+                        );
+                      }
+                      if (state.inform != null) {
+                        return ListView.builder(
+                          itemCount: state.services.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              Color? tileColor;
+                              switch (state.inform!.level) {
+                                case NextODOInformationLevel.alarm:
+                                  tileColor = Colors.deepOrange[300];
+                                case NextODOInformationLevel.warn:
+                                  tileColor = Colors.orange[200];
+                                default:
+                                  tileColor = Colors.green[100];
+                              }
+                              return ListTile(
+                                tileColor: tileColor,
+                                title: Text('Осталось ${state.inform!.leftDistance.format()} км'),
+                                subtitle: const Text('До следующей замены'),
+                              );
+                            }
+                            return ServiceItemWidget(state.services[index - 1]);
+                          },
                         );
                       }
                       return ListView.builder(

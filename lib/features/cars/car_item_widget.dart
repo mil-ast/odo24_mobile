@@ -43,8 +43,6 @@ class CarItemWidget extends StatelessWidget {
                         style: theme.textTheme.titleMedium,
                       ),
                       PopupMenuButton(
-                        elevation: 10,
-                        shape: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black12, width: 1)),
                         icon: const Icon(Icons.more_vert),
                         itemBuilder: (ctx) => [
                           PopupMenuItem(

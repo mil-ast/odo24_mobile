@@ -122,8 +122,8 @@ class ServiceItemWidget extends StatelessWidget {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       spacing: 10,
                       children: [
-                        Icon(Icons.delete),
-                        Text('Удалить'),
+                        Icon(Icons.delete, color: Colors.red),
+                        Text('Удалить', style: TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),

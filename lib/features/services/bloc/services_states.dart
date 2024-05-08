@@ -1,5 +1,20 @@
 import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 
+enum NextODOInformationLevel {
+  normal(3000),
+  warn(2000),
+  alarm(1000);
+
+  final int distance;
+  const NextODOInformationLevel(this.distance);
+}
+
+class NextODOInformation {
+  final NextODOInformationLevel level;
+  final int leftDistance;
+  const NextODOInformation(this.leftDistance, this.level);
+}
+
 sealed class ServicesState {
   final bool needBuild;
   const ServicesState(this.needBuild);
@@ -7,7 +22,7 @@ sealed class ServicesState {
   factory ServicesState.ready() = ServicesReadyState;
   factory ServicesState.idle() = ServicesLoadingState;
   factory ServicesState.message(String message) = ServiceMessageState;
-  factory ServicesState.showList(List<ServiceModel> services) = ServicesShowListState;
+  factory ServicesState.showList(List<ServiceModel> services, NextODOInformation? inform) = ServicesShowListState;
   factory ServicesState.actionCreate() => ServiceActionState(ServiceAction.create);
   factory ServicesState.actionUpdate(ServiceModel service) => ServiceActionState(
         ServiceAction.update,
@@ -38,7 +53,8 @@ class ServicesLoadingState extends ServicesState {
 
 class ServicesShowListState extends ServicesState {
   final List<ServiceModel> services;
-  const ServicesShowListState(this.services) : super(true);
+  final NextODOInformation? inform;
+  const ServicesShowListState(this.services, this.inform) : super(true);
 }
 
 class ServiceActionState extends ServicesState {
