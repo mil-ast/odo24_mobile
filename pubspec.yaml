@@ -45,10 +45,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/engine_background.jpg
-    - assets/icons/google.png
-    - assets/icons/google_white.png
-    - assets/icons/yandex.png
-    - assets/icons/yandex_white.png
     - assets/logo.svg
 
 

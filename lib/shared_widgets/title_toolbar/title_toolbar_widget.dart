@@ -7,8 +7,8 @@ class TitleToolBarWidget extends StatelessWidget {
   const TitleToolBarWidget({
     required this.title,
     this.actionButton,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

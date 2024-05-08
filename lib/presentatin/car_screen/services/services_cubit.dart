@@ -91,15 +91,6 @@ class ServicesCubit extends Cubit<AppState> {
   void onClickDeleteService(ServiceModel service) {
     emit(ClickConfirmationDeleteServiceRec(service));
   }
-
-  void _sortServicesByOdo() {
-    _services.sort((a, b) {
-      if (a.odo != null && b.odo != null) {
-        return b.odo! - a.odo!;
-      }
-      return 0;
-    });
-  }
 }
 
 class BuildServiceState implements AppState {}

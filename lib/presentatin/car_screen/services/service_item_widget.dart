@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:odo24_mobile/presentatin/car_screen/services/services_cubit.dart';
 import 'package:odo24_mobile/domain/services/services/models/service_result_model.dart';
 
