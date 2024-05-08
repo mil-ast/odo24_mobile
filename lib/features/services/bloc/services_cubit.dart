@@ -72,9 +72,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     }
 
     NextODOInformationLevel level;
-    if (leftDistance <= NextODOInformationLevel.alarm.distance) {
+    if (leftDistance <= NextODOInformationLevel.warn.distance) {
       level = NextODOInformationLevel.alarm;
-    } else if (leftDistance <= NextODOInformationLevel.warn.distance) {
+    } else if (leftDistance <= NextODOInformationLevel.normal.distance) {
       level = NextODOInformationLevel.warn;
     } else {
       level = NextODOInformationLevel.normal;

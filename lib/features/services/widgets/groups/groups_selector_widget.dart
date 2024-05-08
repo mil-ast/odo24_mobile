@@ -29,17 +29,11 @@ class GroupsSelectorWidget extends StatelessWidget {
                   isExpanded: true,
                   items: groups.map((GroupModel group) {
                     return DropdownMenuItem<GroupModel>(
-                      key: UniqueKey(),
+                      key: ValueKey(group.groupID),
                       value: group,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(group.name),
-                            ),
-                          ],
-                        ),
+                      child: Text(
+                        group.name,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     );
                   }).toList(),
