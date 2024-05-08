@@ -8,7 +8,8 @@ class ODO24Theme {
       brightness: Brightness.light,
       primaryColor: ODO24Colors.primary,
       secondaryHeaderColor: ODO24Colors.secondary,
-      scaffoldBackgroundColor: const Color(0xfff9f9f9),
+      //scaffoldBackgroundColor: const Color(0xfff9f9f9),
+      scaffoldBackgroundColor: const Color(0xfff8f9fa),
       textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.black87)),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(color: Colors.white),
@@ -46,6 +47,9 @@ class ODO24Theme {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: ODO24Colors.primary,
         foregroundColor: Colors.white,
+      ),
+      popupMenuTheme: const PopupMenuThemeData(
+        color: Colors.white,
       ),
     );
   }
