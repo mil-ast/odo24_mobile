@@ -8,7 +8,10 @@
       "name": "odo24_mobile",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug"
+      "flutterMode": "debug",
+      "toolArgs": [
+        //"--dart-define=SENTRY_DSN=",
+      ]
     },
     {
       "name": "odo24_mobile (profile mode)",
@@ -21,6 +24,19 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
+    },
+    {
+      "name": "odo24_mobile (web)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "chrome",
+        "--web-browser-flag",
+        "--disable-web-security"
+      ]
     }
   ]
 }
