@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class ServiceModel {
   final int serviceID;
   final int? odo;
@@ -18,6 +16,22 @@ class ServiceModel {
     required this.description,
     required this.price,
   });
+
+  ServiceModel copyWith({
+    required DateTime dt,
+    int? odo,
+    int? price,
+    int? nextDistance,
+    String? description,
+  }) =>
+      ServiceModel(
+        serviceID: serviceID,
+        odo: odo,
+        dt: dt,
+        price: price,
+        nextDistance: nextDistance,
+        description: description,
+      );
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
     return ServiceModel(

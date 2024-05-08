@@ -12,8 +12,10 @@ sealed class CarsState {
   factory CarsState.actionCreate() => CarActionState(CarAction.create);
   factory CarsState.actionEdit(CarModel car) => CarActionState(CarAction.edit, car: car);
   factory CarsState.actionEditMiliage(CarModel car) => CarActionState(CarAction.editMiliage, car: car);
+  factory CarsState.actionDelete(CarModel car) => CarActionState(CarAction.delete, car: car);
   factory CarsState.createSuccess() = CarCreateSuccessState;
   factory CarsState.updateSuccess() = CarUpdateSuccessState;
+  factory CarsState.deleteSuccess() = CarDeleteSuccessState;
 }
 
 enum CarAction {
@@ -51,9 +53,13 @@ class CarActionState extends CarsState {
 }
 
 class CarCreateSuccessState extends CarsState {
-  CarCreateSuccessState() : super(false);
+  const CarCreateSuccessState() : super(false);
 }
 
 class CarUpdateSuccessState extends CarsState {
-  CarUpdateSuccessState() : super(false);
+  const CarUpdateSuccessState() : super(false);
+}
+
+class CarDeleteSuccessState extends CarsState {
+  const CarDeleteSuccessState() : super(false);
 }

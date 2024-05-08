@@ -48,6 +48,9 @@ class ODO24Theme {
         backgroundColor: ODO24Colors.primary,
         foregroundColor: Colors.white,
       ),
+      popupMenuTheme: const PopupMenuThemeData(
+        color: Colors.white,
+      ),
     );
   }
 }

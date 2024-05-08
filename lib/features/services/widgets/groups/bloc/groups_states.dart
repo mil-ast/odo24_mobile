@@ -73,26 +73,3 @@ class GroupsMessageState extends GroupsState {
   final String message;
   GroupsMessageState(this.message) : super(false);
 }
-
-
-
-/* abstract class BuildGroupsState extends AppState {}
-
-abstract class ListenGroupsState extends AppState {}
-
-class GroupsState implements BuildGroupsState {
-  final GroupModel? selected;
-  final List<GroupModel> groups;
-  const GroupsState(this.groups, this.selected);
-}
-
-class OpenGroupsSettingDialogState implements ListenGroupsState {
-  final List<GroupModel> groups;
-  const OpenGroupsSettingDialogState(this.groups);
-}
-
-class GroupCreateSuccessful implements ListenGroupsState {
-  final GroupModel newGroup;
-  const GroupCreateSuccessful(this.newGroup);
-}
- */

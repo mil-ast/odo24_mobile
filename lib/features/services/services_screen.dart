@@ -13,6 +13,8 @@ import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/g
 import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/widgets/group_create_dialog.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/widgets/settings/widgets/group_update_dialog.dart';
 import 'package:odo24_mobile/features/services/widgets/service/service_item_widget.dart';
+import 'package:odo24_mobile/features/services/widgets/service/widgets/create/service_create_dialog.dart';
+import 'package:odo24_mobile/features/services/widgets/service/widgets/update/service_update_dialog.dart';
 
 class ServicesScreen extends StatelessWidget {
   final CarModel selectedCar;
@@ -101,7 +103,57 @@ class ServicesScreen extends StatelessWidget {
             },
           ),
           BlocListener<ServicesCubit, ServicesState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state is ServiceMessageState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                  ),
+                );
+              } else if (state is ServiceActionState) {
+                switch (state.action) {
+                  case ServiceAction.create:
+                    final selectedGroup = context.read<GroupsCubit>().getSelected();
+                    if (selectedGroup == null) {
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog.fullscreen(
+                        child: BlocProvider.value(
+                          value: context.read<ServicesCubit>(),
+                          child: ServiceRecCreateWidget(
+                            car: selectedCar,
+                            selectedGroup: selectedGroup,
+                          ),
+                        ),
+                      ),
+                    );
+                  case ServiceAction.update:
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog.fullscreen(
+                        child: BlocProvider.value(
+                          value: context.read<ServicesCubit>(),
+                          child: ServiceUpdateDialog(
+                            service: state.service!,
+                          ),
+                        ),
+                      ),
+                    );
+                  case ServiceAction.delete:
+                    showConfirmationDialog(
+                      context,
+                      title: 'Удаление группы',
+                      message: 'Вы действительно хотите удалить запись?',
+                    ).then((bool? isOk) {
+                      if (isOk == true) {
+                        context.read<ServicesCubit>().delete(state.service!);
+                      }
+                    });
+                }
+              }
+            },
           ),
         ],
         child: Scaffold(
@@ -114,10 +166,19 @@ class ServicesScreen extends StatelessWidget {
                   selectedCar.name,
                   style: const TextStyle(fontSize: 22),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 2),
                 Text('${selectedCar.odo} км', style: const TextStyle(color: Colors.white60)),
               ],
             ),
+          ),
+          floatingActionButton: BlocBuilder<ServicesCubit, ServicesState>(
+            buildWhen: (previous, current) => current.needBuild,
+            builder: (context, state) {
+              return FloatingActionButton(
+                onPressed: context.read<ServicesCubit>().openFormCreateService,
+                child: const Icon(Icons.add),
+              );
+            },
           ),
           body: Column(
             children: [
@@ -146,6 +207,26 @@ class ServicesScreen extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       );
                     } else if (state is ServicesShowListState) {
+                      if (state.services.isEmpty) {
+                        return SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                                child: Column(
+                              children: [
+                                const Text('Записей ещё нет'),
+                                const SizedBox(height: 20),
+                                TextButton.icon(
+                                  onPressed: context.read<ServicesCubit>().openFormCreateService,
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Добавить первую запись'),
+                                ),
+                              ],
+                            )),
+                            //child: FormServiceCreateWidget(car, selectedGroup),
+                          ),
+                        );
+                      }
                       return ListView.builder(
                         itemCount: state.services.length,
                         itemBuilder: (context, index) {

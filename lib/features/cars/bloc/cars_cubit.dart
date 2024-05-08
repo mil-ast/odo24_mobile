@@ -44,6 +44,10 @@ class CarsCubit extends Cubit<CarsState> {
     emit(CarsState.actionEditMiliage(car));
   }
 
+  void onClickDeleteCar(CarModel car) {
+    emit(CarsState.actionDelete(car));
+  }
+
   Future<void> create(CarCreateRequestModel model) async {
     try {
       final newCar = await _carsRepository.create(model);
@@ -60,6 +64,17 @@ class CarsCubit extends Cubit<CarsState> {
     try {
       await _carsRepository.update(model);
       emit(CarsState.updateSuccess());
+      getAllCars();
+    } catch (e) {
+      emit(CarsState.failure(e));
+      rethrow;
+    }
+  }
+
+  Future<void> delete(CarModel car) async {
+    try {
+      await _carsRepository.delete(car);
+      emit(CarsState.deleteSuccess());
       getAllCars();
     } catch (e) {
       emit(CarsState.failure(e));

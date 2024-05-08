@@ -25,63 +25,7 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
       }),
       body: PrimaryScrollController(
         controller: ScrollController(),
-        child: BlocConsumer<GroupsCubit, GroupsState>(
-          listener: (context, state) {
-            /* if (state is GroupsSettingsShowEditGroupState) {
-              showDialog<bool>(
-                context: context,
-                builder: (_) => BlocProvider.value(
-                  value: context.read<GroupsCubit>(),
-                  child: SimpleDialog(
-                    title: const Text('Редактирование группы'),
-                    contentPadding: const EdgeInsets.all(26),
-                    children: [
-                      GroupUpdateWidget(
-                        state.group,
-                      ),
-                    ],
-                  ),
-                ),
-              ).then((value) {
-                setState(() {});
-              });
-            } else if (state is GroupsSettingsShowCreateGroupState) {
-              showDialog<GroupModel?>(
-                context: context,
-                builder: (_) => BlocProvider.value(
-                  value: context.read<GroupsCubit>(),
-                  child: SimpleDialog(
-                    title: const Text('Добавление новой группы'),
-                    contentPadding: const EdgeInsets.all(26),
-                    children: [
-                      GroupCreateWidget(),
-                    ],
-                  ),
-                ),
-              ).then((group) {
-                if (group != null) {
-                  setState(() {});
-                }
-              });
-            } else if (state is GroupsSettingsDeleteGroupConfirmationState) {
-              showConfirmationDialog(
-                context,
-                title: 'Удаление группы',
-                message: 'Удалить группу "${state.group.name}"?',
-                btnOkText: 'Удалить',
-                btnNoText: 'Отмена',
-              ).then((isOk) {
-                if (isOk == true) {
-                  context.read<GroupsSettingsCubit>().delete(state.group);
-                }
-              });
-            } else if (state is GroupsDeleteSuccessState) {
-              widget.groups.remove(state.group);
-              setState(() {});
-            } else if (state is GroupsSettingsSuccessState) {
-              context.read<GroupsCubit>().updateSortGroups(state.groups, state.start);
-            } */
-          },
+        child: BlocBuilder<GroupsCubit, GroupsState>(
           buildWhen: (previous, current) => current.needBuild,
           builder: (context, state) {
             final groups = context.read<GroupsCubit>().groups;

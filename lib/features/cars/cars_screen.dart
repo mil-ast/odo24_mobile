@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
@@ -25,7 +26,6 @@ class CarsScreen extends StatelessWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).primaryColor,
-          //title: const Text('Сервисная книжка авто'),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -101,7 +101,15 @@ class CarsScreen extends StatelessWidget {
                     ),
                   );
                 case CarAction.delete:
-                // TODO: Handle this case.
+                  showConfirmationDialog(
+                    context,
+                    title: 'Удаление авто',
+                    message: 'Вы действительно хотите удалить авто "${state.car!.name}" и все записи из неё?',
+                  ).then((bool? isOk) {
+                    if (isOk == true) {
+                      context.read<CarsCubit>().delete(state.car!);
+                    }
+                  });
               }
             } else if (state is CarCreateSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(

@@ -65,7 +65,7 @@ class CarItemWidget extends StatelessWidget {
                               ),
                             ),
                             onTap: () {
-                              //context.read<CarsCubit>().openFormEditODO(car);
+                              context.read<CarsCubit>().onClickDeleteCar(car);
                             },
                           )
                         ],
