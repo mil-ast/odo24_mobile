@@ -24,7 +24,7 @@ class AuthDataProvider implements IAuthDataProvider {
   static const _keyRefreshToken = 'auth_refresh_token';
 
   final _dio = Dio(BaseOptions(
-    baseUrl: HttpAPI.baseURLHost,
+    baseUrl: HttpAPI.getBaseURLHost(),
     contentType: 'application/json',
   ));
 
@@ -65,7 +65,7 @@ class AuthDataProvider implements IAuthDataProvider {
   Future<void> refreshToken(AuthData currentAuthData) async {
     final dio = Dio(
       BaseOptions(
-        baseUrl: HttpAPI.baseURLHost,
+        baseUrl: HttpAPI.getBaseURLHost(),
         headers: {
           'Authorization': 'Bearer ${currentAuthData.accessToken}',
         },
