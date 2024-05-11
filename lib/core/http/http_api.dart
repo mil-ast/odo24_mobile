@@ -8,8 +8,14 @@ import 'package:odo24_mobile/data/models/auth_token.dart';
 class HttpAPI {
   static const String baseURLHost = 'https://backend.odo24.ru';
   static const String staticBaseURLHost = 'https://odo24.ru';
-  //static const String _baseURLHost = 'http://0.0.0.0:8000';
   static bool _isRefresh = false;
+
+  static String getBaseURLHost() {
+    if (kIsWeb) {
+      return '';
+    }
+    return baseURLHost;
+  }
 
   static Dio newDio({
     required IAuthRepository authRepository,
@@ -22,7 +28,7 @@ class HttpAPI {
     String? baseURL,
   }) {
     final options = BaseOptions(
-      baseUrl: baseURL ?? baseURLHost,
+      baseUrl: !kIsWeb ? (baseURL ?? baseURLHost) : '',
       contentType: 'application/json',
       validateStatus: (status) {
         return status != null;
@@ -77,7 +83,7 @@ class HttpAPI {
 
                 final dio = Dio(
                   BaseOptions(
-                    baseUrl: baseURLHost,
+                    baseUrl: getBaseURLHost(),
                     headers: {
                       'Authorization': 'Bearer ${authData.accessToken}',
                     },
