@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-  compileSdkVersion 33
+  compileSdkVersion 34
   namespace "ru.odo24.mobile"
   ndkVersion flutter.ndkVersion
 
@@ -93,5 +93,5 @@ flutter {
 }
 
 dependencies {
-
+  implementation 'androidx.appcompat:appcompat:1.6.1'
 }

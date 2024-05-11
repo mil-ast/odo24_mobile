@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:odo24_mobile/features/cars/widgets/create/car_create_dialog.dart
 import 'package:odo24_mobile/features/cars/widgets/create/car_create_form_widget.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit/car_edit_form_dialog.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit_miliage/edit_miliage_widget.dart';
+import 'package:odo24_mobile/features/cars/widgets/new_version_information/new_version_information_widget.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/profile/profile_screen.dart';
 import 'package:odo24_mobile/features/services/services_screen.dart';
@@ -30,17 +32,27 @@ class CarsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Сервисная книжка авто'),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
+              Stack(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.settings),
+                    color: Colors.white,
+                  ),
+                  if (!kIsWeb)
+                    const Positioned(
+                      top: 0,
+                      right: 0,
+                      child: NewVersionInformationWidget(),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-                color: Colors.white,
+                ],
               ),
             ],
           ),

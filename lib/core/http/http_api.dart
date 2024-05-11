@@ -7,6 +7,7 @@ import 'package:odo24_mobile/data/models/auth_token.dart';
 
 class HttpAPI {
   static const String baseURLHost = 'https://backend.odo24.ru';
+  static const String staticBaseURLHost = 'https://odo24.ru';
   //static const String _baseURLHost = 'http://0.0.0.0:8000';
   static bool _isRefresh = false;
 

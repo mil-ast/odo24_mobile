@@ -1,6 +1,5 @@
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/models/auth_token.dart';
-import 'package:odo24_mobile/main.dart';
 
 abstract interface class IAuthRepository {
   Future<bool> get isAuth;
