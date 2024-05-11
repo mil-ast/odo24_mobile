@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
+import 'package:odo24_mobile/features/profile/app_version_information/app_version_information_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,21 +14,32 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Профиль'),
       ),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            title: const Text('Выйти из профиля'),
-            leading: const Icon(Icons.logout),
-            onTap: () {
-              authRepository.logout().then((_) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                    (route) => false);
-              });
-            },
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: AppVersionInformationWidget(),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text('Выйти из профиля'),
+                  leading: const Icon(Icons.logout),
+                  onTap: () {
+                    authRepository.logout().then((_) {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                          (route) => false);
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

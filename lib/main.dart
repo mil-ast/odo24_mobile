@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
+import 'package:odo24_mobile/core/updater/apk_updater.dart';
+import 'package:odo24_mobile/core/updater/data/updater_data_provider.dart';
+import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/cars_data_provider.dart';
@@ -55,7 +59,11 @@ void main() async {
         httpClient: HttpAPI.newDio(
           authRepository: authRepository,
         ),
+        apkUpdater: APKUpdater(),
         authRepository: authRepository,
+        updaterRepository: UpdaterRepository(
+          updaterDataProvider: UpdaterDataProvider(httpClient: Dio(BaseOptions(baseUrl: HttpAPI.staticBaseURLHost))),
+        ),
         carsRepository: CarsRepository(
           carsDataProvider: CarsDataProvider(httpClient: dio),
         ),
