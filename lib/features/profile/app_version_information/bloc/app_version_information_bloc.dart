@@ -23,17 +23,22 @@ class AppVersionInformationBloc extends Cubit<AppVersionState> {
   final IUpdaterRepository _updaterRepository;
 
   void checkVersion() async {
-    emit(AppVersionState.idle());
-
     final platform = await PackageInfo.fromPlatform();
-    final versionMeta = await _updaterRepository.getVersionMetadata();
-
     final currentVersion = APKVersionModel(
       versionCode: int.parse(platform.buildNumber),
       versionName: platform.version,
     );
 
-    if (kIsWeb || versionMeta.elements.isEmpty) {
+    if (kIsWeb) {
+      emit(AppVersionState.appVersionIsActual(currentVersion: currentVersion));
+      return;
+    }
+
+    emit(AppVersionState.idle());
+
+    final versionMeta = await _updaterRepository.getVersionMetadata();
+
+    if (versionMeta.elements.isEmpty) {
       emit(AppVersionState.appVersionIsActual(currentVersion: currentVersion));
       return;
     }

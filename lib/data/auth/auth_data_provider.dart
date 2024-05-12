@@ -17,16 +17,23 @@ abstract interface class IAuthDataProvider {
   Future<void> register(String email, String password, int code);
   Future<void> recoverSendEmailCodeConfirmation(String email);
   Future<void> recoverSaveNewPassword(String email, int code, String password);
+  Future<void> changePassword(String currentPassword, String newPassword);
 }
 
 class AuthDataProvider implements IAuthDataProvider {
   static const _keyAccessToken = 'auth_bearer_token';
   static const _keyRefreshToken = 'auth_refresh_token';
 
-  final _dio = Dio(BaseOptions(
-    baseUrl: HttpAPI.getBaseURLHost(),
-    contentType: 'application/json',
-  ));
+  late final Dio _dioWithoutAuth;
+  late final Dio _dio;
+
+  void setHttpClients({
+    required Dio dioWithoutAuth,
+    required Dio dioWithAuth,
+  }) {
+    _dioWithoutAuth = dioWithoutAuth;
+    _dio = dioWithAuth;
+  }
 
   @override
   Future<String?> getAccessToken() async {
@@ -85,7 +92,7 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<AuthResultModel> signInWithEmailAndPassword(String email, String password) async {
-    final api = _dio.post('/api/auth/login', data: {
+    final api = _dioWithoutAuth.post('/api/auth/login', data: {
       'login': email,
       'password': password,
     });
@@ -100,7 +107,7 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<void> registerSendConfirmationCode(String email) async {
-    final api = _dio.post('/api/register/register_send_code', data: {
+    final api = _dioWithoutAuth.post('/api/register/register_send_code', data: {
       'email': email,
     });
     await ResponseHandler.parseJSON(api);
@@ -108,7 +115,7 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<void> register(String email, String password, int code) async {
-    final api = _dio.post('/api/register/register_by_email', data: {
+    final api = _dioWithoutAuth.post('/api/register/register_by_email', data: {
       'email': email,
       'password': password,
       'code': code,
@@ -118,7 +125,7 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<void> recoverSendEmailCodeConfirmation(String email) async {
-    final api = _dio.post('/api/register/recover_send_code', data: {
+    final api = _dioWithoutAuth.post('/api/register/recover_send_code', data: {
       'email': email,
     });
     await ResponseHandler.parseJSON(api);
@@ -126,10 +133,19 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<void> recoverSaveNewPassword(String email, int code, String password) async {
-    final api = _dio.post('/api/register/recover_password', data: {
+    final api = _dioWithoutAuth.post('/api/register/recover_password', data: {
       'email': email,
       'code': code,
       'password': password,
+    });
+    await ResponseHandler.parseJSON(api);
+  }
+
+  @override
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    final api = _dio.post('/api/auth/change_password', data: {
+      'current_password': currentPassword,
+      'new_password': newPassword,
     });
     await ResponseHandler.parseJSON(api);
   }

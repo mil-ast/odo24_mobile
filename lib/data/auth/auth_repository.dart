@@ -12,6 +12,7 @@ abstract interface class IAuthRepository {
   Future<void> register(String email, String password, int code);
   Future<void> recoverSendEmailCodeConfirmation(String email);
   Future<void> recoverSaveNewPassword(String email, int code, String password);
+  Future<void> changePassword(String currentPassword, String newPassword);
   Future<void> logout();
 }
 
@@ -94,6 +95,11 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<void> recoverSaveNewPassword(String email, int code, String password) async {
     return _authDataProvider.recoverSaveNewPassword(email, code, password);
+  }
+
+  @override
+  Future<void> changePassword(String currentPassword, String newPassword) {
+    return _authDataProvider.changePassword(currentPassword, newPassword);
   }
 
   @override
