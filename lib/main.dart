@@ -47,18 +47,28 @@ void main() async {
     () {
       Intl.defaultLocale = 'ru_RU';
 
+      final authDataProvider = AuthDataProvider();
       final authRepository = AuthRepository(
-        authDataProvider: AuthDataProvider(),
+        authDataProvider: authDataProvider,
       );
       final dio = HttpAPI.newDio(
         authRepository: authRepository,
       );
       dio.addSentry();
 
+      final dioWithoutAuth = Dio(BaseOptions(
+        baseUrl: HttpAPI.getBaseURLHost(),
+        contentType: 'application/json',
+      ));
+      dioWithoutAuth.addSentry();
+
+      authDataProvider.setHttpClients(
+        dioWithoutAuth: dioWithoutAuth,
+        dioWithAuth: dio,
+      );
+
       final dependencies = Dependencies(
-        httpClient: HttpAPI.newDio(
-          authRepository: authRepository,
-        ),
+        httpClient: dio,
         apkUpdater: APKUpdater(),
         authRepository: authRepository,
         updaterRepository: UpdaterRepository(

@@ -29,7 +29,7 @@
       "name": "odo24_mobile (web)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release",
+      "flutterMode": "debug",
       "program": "lib/main.dart",
       "args": [
         "-d",

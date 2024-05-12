@@ -11,7 +11,7 @@ class HttpAPI {
   static bool _isRefresh = false;
 
   static String getBaseURLHost() {
-    if (kIsWeb) {
+    if (kIsWeb && kReleaseMode) {
       return '';
     }
     return baseURLHost;
@@ -57,9 +57,6 @@ class HttpAPI {
           RequestInterceptorHandler handler,
         ) async {
           try {
-            //AuthData? authData = AuthService.instance.authData;
-            //final isAuth = await authRepository.isAuth;
-
             final authData = await authRepository.getAuthData();
 
             if (authData == null) {
