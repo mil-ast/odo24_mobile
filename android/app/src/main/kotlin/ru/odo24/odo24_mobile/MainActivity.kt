@@ -79,6 +79,15 @@ class MainActivity: FlutterFragmentActivity() {
             appInstallResult = result
             installApk(filePathArg!!)
           }
+          "launchURL" -> {
+            val urlArg: String? = call.argument("url")
+            val urlIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(urlArg)
+            )
+            startActivity(urlIntent)
+            result.success(null);
+          }
           else -> result.notImplemented()
         }
     }
