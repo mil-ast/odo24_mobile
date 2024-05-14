@@ -7,6 +7,7 @@
         android:label="odo24_mobile"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
+        android:hasFragileUserData="false"
      >
         <activity
             android:name=".MainActivity"
