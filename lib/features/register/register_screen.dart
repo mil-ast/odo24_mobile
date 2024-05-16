@@ -164,8 +164,8 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: state is! RegisterWaitingState ? () => onRegister(context) : null,
+                    FilledButton(
+                      onPressed: () => onRegister(context),
                       child: const Text('Зарегистрироваться'),
                     ),
                     const SizedBox(height: 20),
