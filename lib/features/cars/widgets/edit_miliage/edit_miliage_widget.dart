@@ -4,19 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
-import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.dart';
 
 class EditMiliageWidget extends StatelessWidget {
   final CarModel car;
-  EditMiliageWidget(this.car, {super.key});
+  EditMiliageWidget(this.car, {super.key})
+      : _odoController = TextEditingController.fromValue(
+          TextEditingValue(text: car.odo.toString()),
+        );
 
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _odoController;
+  final TextEditingController _odoController;
 
   @override
   Widget build(BuildContext context) {
-    _odoController = TextEditingController.fromValue(TextEditingValue(text: car.odo.toString()));
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Изменить пробег'),
@@ -35,7 +35,7 @@ class EditMiliageWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(car.name),
+                  Text(car.name, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _odoController,
@@ -60,9 +60,11 @@ class EditMiliageWidget extends StatelessWidget {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 30),
                   Wrap(
+                    spacing: 20,
                     children: [10, 50, 100, 200, 500, 1000]
-                        .map((v) => TextButton(
+                        .map((v) => OutlinedButton(
                               onPressed: () {
                                 _addMiliage(v);
                               },
@@ -70,16 +72,15 @@ class EditMiliageWidget extends StatelessWidget {
                             ))
                         .toList(),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: Navigator.of(context).pop,
                         child: const Text('Закрыть'),
                       ),
+                      const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Сохранить'),
                         onPressed: () {

@@ -28,6 +28,7 @@ class FirstGroupCreateWidget extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextFormField(
                     controller: _nameController,
