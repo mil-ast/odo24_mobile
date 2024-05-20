@@ -30,9 +30,7 @@ class HttpAPI {
     final options = BaseOptions(
       baseUrl: !kIsWeb ? (baseURL ?? baseURLHost) : '',
       contentType: 'application/json',
-      validateStatus: (status) {
-        return status != null;
-      },
+      validateStatus: (status) => status != null,
     );
     options.receiveTimeout = receiveTimeout;
     options.connectTimeout = connectTimeout;
@@ -47,7 +45,7 @@ class HttpAPI {
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
           return client;
         },
-      )..validateCertificate = (cert, host, port) => cert != null;
+      )..validateCertificate = (cert, host, port) => true;
     }
 
     dio.interceptors.add(
@@ -135,6 +133,42 @@ class HttpAPI {
         },
       ),
     );
+
+    if (!kReleaseMode) {
+      dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+    }
+
+    return dio;
+  }
+
+  static Dio newDioWithoutAuth({
+    Duration receiveTimeout = const Duration(seconds: 5),
+    Duration connectTimeout = const Duration(seconds: 10),
+    Duration sendTimeout = const Duration(seconds: 5),
+    bool forceJsonContent = false, // true - если в ответе нет хедера application/json
+    bool allowBadCertificate = false,
+    String? baseURL,
+  }) {
+    final options = BaseOptions(
+      baseUrl: !kIsWeb ? (baseURL ?? baseURLHost) : '',
+      contentType: 'application/json',
+      validateStatus: (status) => true,
+    );
+    options.receiveTimeout = receiveTimeout;
+    options.connectTimeout = connectTimeout;
+    options.sendTimeout = sendTimeout;
+    options.validateStatus = (status) => status != null;
+    final dio = Dio(options);
+
+    if (allowBadCertificate == true) {
+      dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
+          client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      )..validateCertificate = (cert, host, port) => true;
+    }
 
     if (!kReleaseMode) {
       dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));

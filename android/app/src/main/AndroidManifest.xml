@@ -8,7 +8,7 @@
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
         android:hasFragileUserData="false"
-        android:usesCleartextTraffic="false"
+        android:usesCleartextTraffic="true"
      >
         <activity
             android:name=".MainActivity"
