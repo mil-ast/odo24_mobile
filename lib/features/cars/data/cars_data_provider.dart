@@ -8,6 +8,7 @@ abstract interface class ICarsDataProvider {
   Future<List<CarModel>> getMyCars();
   Future<CarModel?> create(CarCreateRequestModel body);
   Future<void> update(CarUpdateRequestModel body);
+  Future<void> updateODO(int carID, int odo);
   Future<void> delete(int carID);
 }
 
@@ -41,6 +42,13 @@ class CarsDataProvider implements ICarsDataProvider {
   @override
   Future<void> update(CarUpdateRequestModel body) async {
     await _httpClient.put('/api/cars/${body.carID}', data: body);
+  }
+
+  @override
+  Future<void> updateODO(int carID, int odo) async {
+    await _httpClient.put('/api/cars/$carID/update_odo', data: {
+      'odo': odo,
+    });
   }
 
   @override

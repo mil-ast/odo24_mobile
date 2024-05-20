@@ -92,13 +92,8 @@ class EditMiliageWidget extends StatelessWidget {
                             return;
                           }
 
-                          final body = CarUpdateRequestModel(
-                            carID: car.carID,
-                            name: car.name,
-                            odo: int.parse(_odoController.text),
-                            avatar: false,
-                          );
-                          context.read<CarsCubit>().edit(body);
+                          final newODO = int.parse(_odoController.text);
+                          context.read<CarsCubit>().updateODO(car.carID, newODO);
                         },
                       ),
                     ],
