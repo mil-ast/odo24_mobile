@@ -1,6 +1,3 @@
-# odo24_mobile
-Мобильное приложение проекта odo24.ru
+# ODO24 Сервисная книжа автомобиля
 
-flutter pub upgrade --major-versions
-
-keytool -list -v -alias odo24 -keystore ./android/app/keystore.jks
+Мобильное приложение проекта [odo24.ru](https://odo24.ru/)
