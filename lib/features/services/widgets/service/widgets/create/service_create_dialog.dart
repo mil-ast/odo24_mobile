@@ -7,6 +7,7 @@ import 'package:odo24_mobile/features/services/data/models/service_create_reques
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 
 class ServiceRecCreateWidget extends StatelessWidget {
+  static const _defaultNextDistanceValue = 10000;
   final CarModel car;
   final GroupModel selectedGroup;
   final _formKey = GlobalKey<FormState>();
@@ -25,7 +26,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
       TextEditingValue(text: car.odo.toString()),
     );
     _nextDistanceController = TextEditingController.fromValue(
-      TextEditingValue(text: 1000.toString()),
+      TextEditingValue(text: _defaultNextDistanceValue.toString()),
     );
     _dtController = TextEditingController.fromValue(
       TextEditingValue(text: DateTime.now().toIso8601String().substring(0, 10)),
@@ -124,14 +125,13 @@ class ServiceRecCreateWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: Navigator.of(context).pop,
                         child: const Text('Отмена'),
                       ),
+                      const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Добавить'),
                         onPressed: () {
@@ -153,7 +153,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
                             description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
                             price: _priceController.text.isNotEmpty ? int.parse(_priceController.text) : null,
                           );
-                          context.read<ServicesCubit>().create(car.carID, selectedGroup.groupID, body);
+                          context.read<ServicesCubit>().create(car, selectedGroup.groupID, body, isConfirmed: false);
                         },
                       ),
                     ],

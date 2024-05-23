@@ -53,13 +53,13 @@ void main() async {
       );
       final dio = HttpAPI.newDio(
         authRepository: authRepository,
+        allowBadCertificate: kDebugMode,
       );
       dio.addSentry();
 
-      final dioWithoutAuth = Dio(BaseOptions(
-        baseUrl: HttpAPI.getBaseURLHost(),
-        contentType: 'application/json',
-      ));
+      final dioWithoutAuth = HttpAPI.newDioWithoutAuth(
+        allowBadCertificate: kDebugMode,
+      );
       dioWithoutAuth.addSentry();
 
       authDataProvider.setHttpClients(

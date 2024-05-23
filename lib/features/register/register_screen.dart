@@ -4,6 +4,7 @@ import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/register/bloc/register_cubit.dart';
 import 'package:odo24_mobile/features/register/bloc/register_states.dart';
+import 'package:odo24_mobile/features/register/widgets/email_confirmation/email_confirmation_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,7 +18,6 @@ final class RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
-  final _codeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
           child: BlocProvider(
             create: (context) => RegisterCubit(authRepository: authProvider),
             child: BlocConsumer<RegisterCubit, RegisterState>(
+              listenWhen: (previous, current) => !current.isBuild,
               listener: (context, state) {
                 if (state is RegisterSuccessState) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -44,6 +45,19 @@ final class RegisterScreenState extends State<RegisterScreen> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
+                } else if (state is RegisterOpenEmailConfirmationState) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<RegisterCubit>(),
+                        child: EmailConfirmationScreen(
+                          email: state.email,
+                          password: state.password,
+                        ),
+                      ),
+                    ),
                   );
                 } else if (state is RegisterMessageState) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -64,8 +78,9 @@ final class RegisterScreenState extends State<RegisterScreen> {
               buildWhen: (previous, current) => current.isBuild,
               builder: (context, state) => Form(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.always,
+                autovalidateMode: AutovalidateMode.disabled,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 40),
                     const Text(
@@ -76,6 +91,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       autofocus: true,
                       decoration: const InputDecoration(
                         helperText: 'Email',
@@ -96,8 +112,9 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       decoration: const InputDecoration(
                         helperText: "Придумайте пароль",
                       ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (passwd) {
-                        if (passwd == null || passwd.isEmpty) {
+                        if (passwd == null || passwd.trim().isEmpty) {
                           return 'Введите пароль';
                         } else if (passwd.length < 6) {
                           return 'Пароль слишком короткий';
@@ -109,11 +126,12 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       controller: _passwordConfirmController,
                       obscureText: true,
                       keyboardType: TextInputType.visiblePassword,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: const InputDecoration(
                         helperText: "Повторите пароль",
                       ),
                       validator: (confirmPasswd) {
-                        if (confirmPasswd == null || confirmPasswd.isEmpty) {
+                        if (confirmPasswd == null || confirmPasswd.trim().isEmpty) {
                           return 'Повторите пароль';
                         } else if (_passwordController.text != confirmPasswd) {
                           return 'Пароль не совпадает';
@@ -122,53 +140,18 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 40),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _codeController,
-                            keyboardType: TextInputType.visiblePassword,
-                            decoration: const InputDecoration(
-                              helperText: "Код подтверждения",
-                            ),
-                            validator: (code) {
-                              if (code == null || code.isEmpty) {
-                                return 'Введите код из e-mail';
-                              } else if (code.length < 4) {
-                                return 'Слишком короткий';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        TextButton(
-                          onPressed: () => onSendRegisterCode(context),
-                          child: const Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            spacing: 10,
-                            children: [
-                              Icon(Icons.email_outlined),
-                              Text('Отправить код'),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child:
-                            Text('На указанный e-mail придёт код подтверждения. Введите его и завершите регистрацию.'),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                     FilledButton(
-                      onPressed: () => onRegister(context),
-                      child: const Text('Зарегистрироваться'),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) {
+                          return;
+                        }
+                        final email = _emailController.text.trim();
+                        final passwd = _passwordController.text.trim();
+                        context.read<RegisterCubit>().openEmailConfirmationScreen(email, passwd);
+                      },
+                      child: const Text('Далее'),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -177,23 +160,5 @@ final class RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
-  }
-
-  void onSendRegisterCode(BuildContext context) {
-    if (_emailController.text.isNotEmpty) {
-      context.read<RegisterCubit>().sendRegisterCode(_emailController.text);
-    }
-  }
-
-  void onRegister(BuildContext context) {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    final login = _emailController.text;
-    final password = _passwordController.text;
-    final code = _codeController.text;
-
-    context.read<RegisterCubit>().register(login, password, code);
   }
 }

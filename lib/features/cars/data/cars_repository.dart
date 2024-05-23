@@ -7,6 +7,7 @@ abstract interface class ICarsRepository {
   Future<List<CarModel>> getMyCars();
   Future<CarModel> create(CarCreateRequestModel body);
   Future<void> update(CarUpdateRequestModel body);
+  Future<void> updateODO(int carID, int odo);
   Future<void> delete(CarModel car);
 }
 
@@ -34,6 +35,11 @@ class CarsRepository implements ICarsRepository {
   @override
   Future<void> update(CarUpdateRequestModel body) {
     return _carsDataProvider.update(body);
+  }
+
+  @override
+  Future<void> updateODO(int carID, int odo) {
+    return _carsDataProvider.updateODO(carID, odo);
   }
 
   @override

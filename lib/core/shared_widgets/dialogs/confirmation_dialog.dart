@@ -43,7 +43,7 @@ class ConfirmationDialog extends StatelessWidget {
         Text(message),
         const SizedBox(height: 20),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
               onPressed: () {

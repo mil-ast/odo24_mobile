@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/services/bloc/services_states.dart';
 import 'package:odo24_mobile/features/services/data/models/service_create_request_model.dart';
@@ -6,26 +7,36 @@ import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 import 'package:odo24_mobile/features/services/data/models/service_update_request_model.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
+import 'package:sentry/sentry_io.dart';
 
 class ServicesCubit extends Cubit<ServicesState> {
+  static const _maxMilleageForAutoUpdateODO = 10000;
+
   final IServicesRepository _servicesRepository;
-  final CarModel _selectedCar;
+  final ICarsRepository _carsRepository;
+  CarModel _selectedCar;
   final List<ServiceModel> _services = [];
 
   ServicesCubit({
     required CarModel selectedCar,
     required IServicesRepository servicesRepository,
+    required ICarsRepository carsRepository,
   })  : _servicesRepository = servicesRepository,
+        _carsRepository = carsRepository,
         _selectedCar = selectedCar,
         super(ServicesState.ready());
 
   Future<void> onChangeSelectedGroup(GroupModel selectedGroup) async {
-    emit(ServicesState.idle());
+    try {
+      emit(ServicesState.idle());
 
-    final services = await _servicesRepository.getByCarAndGroup(_selectedCar.carID, selectedGroup.groupID);
-    _services.clear();
-    _services.addAll(services);
-    _refreshAndEmitServices();
+      final services = await _servicesRepository.getByCarAndGroup(_selectedCar.carID, selectedGroup.groupID);
+      _services.clear();
+      _services.addAll(services);
+      _refreshAndEmitServices();
+    } catch (e) {
+      emit(ServicesState.failure(e));
+    }
   }
 
   void _refreshAndEmitServices() {
@@ -95,41 +106,70 @@ class ServicesCubit extends Cubit<ServicesState> {
     emit(ServicesState.actionDelete(service));
   }
 
-  Future<void> create(int carID, int groupID, ServiceCreateRequestModel body) async {
-    final model = await _servicesRepository.create(carID, groupID, body);
-    _services.insert(0, model);
-    emit(ServicesState.createSuccess());
-    emit(ServicesState.message('Новая запись успешно добавлена!'));
-    _refreshAndEmitServices();
+  Future<void> create(CarModel car, int groupID, ServiceCreateRequestModel body, {bool isConfirmed = false}) async {
+    try {
+      final milleage = (body.odo ?? 0) - car.odo;
+      /* if (milleage > _maxMilleageForAutoUpdateODO) {
+        // добавить подтверждение
+        return;
+      } */
+
+      if (body.odo != null && milleage < _maxMilleageForAutoUpdateODO && body.odo! > car.odo) {
+        // обновить пробег авто
+        try {
+          await _carsRepository.updateODO(car.carID, body.odo!);
+          emit(ServicesState.onCarODOAutoUpdate(body.odo!));
+          _selectedCar = _selectedCar.copyWith(newOdo: body.odo!);
+        } catch (e) {
+          Sentry.captureException(e, stackTrace: StackTrace.current).ignore();
+        }
+      }
+
+      final model = await _servicesRepository.create(car.carID, groupID, body);
+      _services.insert(0, model);
+      emit(ServicesState.createSuccess());
+      emit(ServicesState.message('Новая запись успешно добавлена!'));
+      _refreshAndEmitServices();
+    } catch (e) {
+      emit(ServicesState.failure(e));
+    }
   }
 
   Future<void> update(ServiceModel service, ServiceUpdateRequestModel body) async {
-    await _servicesRepository.update(service.serviceID, body);
+    try {
+      await _servicesRepository.update(service.serviceID, body);
 
-    final newService = service.copyWith(
-      dt: DateTime.parse(body.dt),
-      odo: body.odo,
-      price: body.price,
-      nextDistance: body.nextDistance,
-      description: body.description,
-    );
+      final newService = service.copyWith(
+        dt: DateTime.parse(body.dt),
+        odo: body.odo,
+        price: body.price,
+        nextDistance: body.nextDistance,
+        description: body.description,
+      );
 
-    final index = _services.indexWhere((s) => s.serviceID == newService.serviceID);
-    _services.removeAt(index);
-    _services.insert(index, newService);
+      final index = _services.indexWhere((s) => s.serviceID == newService.serviceID);
+      _services.removeAt(index);
+      _services.insert(index, newService);
 
-    emit(ServicesState.updateSuccess());
-    emit(ServicesState.message('Новая запись успешно добавлена!'));
-    _refreshAndEmitServices();
+      emit(ServicesState.updateSuccess());
+      emit(ServicesState.message('Новая запись успешно добавлена!'));
+      _refreshAndEmitServices();
+    } catch (e) {
+      emit(ServicesState.failure(e));
+    }
   }
 
   Future<void> delete(ServiceModel service) async {
-    await _servicesRepository.delete(service);
+    try {
+      await _servicesRepository.delete(service);
 
-    _services.remove(service);
+      _services.remove(service);
 
-    emit(ServicesState.deleteSuccess());
-    emit(ServicesState.message('Запись успешно удалена!'));
-    _refreshAndEmitServices();
+      emit(ServicesState.deleteSuccess());
+      emit(ServicesState.message('Запись успешно удалена!'));
+      _refreshAndEmitServices();
+    } catch (e) {
+      emit(ServicesState.failure(e));
+    }
   }
 }

@@ -40,7 +40,7 @@ class CarItemWidget extends StatelessWidget {
                     children: [
                       Text(
                         car.name,
-                        style: theme.textTheme.titleMedium,
+                        style: theme.textTheme.titleLarge,
                       ),
                       PopupMenuButton(
                         icon: const Icon(Icons.more_vert),

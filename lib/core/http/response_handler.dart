@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:odo24_mobile/core/app_exception.dart';
+import 'package:odo24_mobile/core/http/models/error_data_model.dart';
 
 class ResponseHandler {
   static Future<Map<String, dynamic>?> parseJSON(Future<Response<dynamic>> api) async {
@@ -24,37 +25,45 @@ class ResponseHandler {
   }
 
   static Future<dynamic> _parse(Future<Response<dynamic>> api) async {
-    final res = await api;
-    switch (res.statusCode) {
-      case HttpStatus.ok:
-        return res.data;
-      case HttpStatus.noContent:
-        return null;
-      case HttpStatus.badRequest:
-        throw AppException(
-          'Неверный запрос',
-          details: res.requestOptions.uri.toString(),
-        );
-      case HttpStatus.unauthorized:
-        throw AppException(
-          'Ошибка авторизации',
-          details: res.requestOptions.uri.toString(),
-        );
-      case HttpStatus.forbidden:
-        throw AppException(
-          'Запрещено',
-          details: res.requestOptions.uri.toString(),
-        );
-      case HttpStatus.notFound:
-        throw AppException(
-          'Страница не найдена',
-          details: res.requestOptions.uri.toString(),
-        );
-      default:
-        throw AppException(
-          'Ошибка, ${res.statusCode}, ${res.statusMessage}',
-          details: res.statusMessage,
-        );
+    try {
+      final res = await api;
+      switch (res.statusCode) {
+        case HttpStatus.ok:
+          return res.data;
+        case HttpStatus.noContent:
+          return null;
+        default:
+          throw _handleErrorDataResponse(res);
+      }
+    } on DioException catch (e) {
+      throw AppNetworkException(
+        'HttpError',
+        e.message ?? '',
+      );
     }
+  }
+
+  static AppNetworkException _handleErrorDataResponse(Response<dynamic> res) {
+    if (res.data == null) {
+      return AppNetworkException(
+        'HttpResponseRrror',
+        res.statusMessage ?? '',
+        details: res.requestOptions.uri.toString(),
+      );
+    }
+    final data = res.data;
+    if (data is Map) {
+      final responseData = ErrorDataModel.fromJson(data.cast<String, dynamic>());
+      return AppNetworkException(
+        responseData.key,
+        responseData.message,
+      );
+    }
+
+    return AppNetworkException(
+      'HttpResponseRrror',
+      data.toString(),
+      details: res.requestOptions.uri.toString(),
+    );
   }
 }

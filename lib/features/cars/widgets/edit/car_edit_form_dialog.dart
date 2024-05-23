@@ -100,7 +100,7 @@ class _CarEditState extends State<CarEditDialog> {
                         child: const Text('Закрыть'),
                       ),
                       const SizedBox(width: 20),
-                      ElevatedButton(
+                      FilledButton(
                         child: const Text('Сохранить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {

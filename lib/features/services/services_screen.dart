@@ -19,26 +19,33 @@ import 'package:odo24_mobile/features/services/widgets/service/widgets/update/se
 
 class ServicesScreen extends StatelessWidget {
   final CarModel selectedCar;
-  const ServicesScreen({
+  final _currentCarODO = ValueNotifier<int>(0);
+
+  ServicesScreen({
     required this.selectedCar,
     super.key,
-  });
+  }) {
+    _currentCarODO.value = selectedCar.odo;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final dependencies = DependenciesScope.of(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => GroupsCubit(
-            groupsRepository: dependencies.groupsRepository,
+          create: (_) => GroupsCubit(
+            groupsRepository: DependenciesScope.of(context).groupsRepository,
           )..getAllGroups(),
         ),
         BlocProvider(
-          create: (context) => ServicesCubit(
-            selectedCar: selectedCar,
-            servicesRepository: dependencies.servicesRepository,
-          ),
+          create: (_) {
+            final dependencies = DependenciesScope.of(context);
+            return ServicesCubit(
+              selectedCar: selectedCar,
+              servicesRepository: dependencies.servicesRepository,
+              carsRepository: dependencies.carsRepository,
+            );
+          },
         ),
       ],
       child: MultiBlocListener(
@@ -111,6 +118,13 @@ class ServicesScreen extends StatelessWidget {
                     content: Text(state.message),
                   ),
                 );
+              } else if (state is ServiceErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                );
               } else if (state is ServiceActionState) {
                 switch (state.action) {
                   case ServiceAction.create:
@@ -153,6 +167,9 @@ class ServicesScreen extends StatelessWidget {
                       }
                     });
                 }
+              } else if (state is ServiceCarODOAutoUpdateState) {
+                // если автоматически обновили пробег авто
+                _currentCarODO.value = state.newODO;
               }
             },
           ),
@@ -168,7 +185,11 @@ class ServicesScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(height: 2),
-                Text('${selectedCar.odo.format()} км', style: const TextStyle(color: Colors.white60)),
+                ValueListenableBuilder(
+                  valueListenable: _currentCarODO,
+                  builder: (context, value, child) =>
+                      Text('${value.format()} км', style: const TextStyle(color: Colors.white60)),
+                ),
               ],
             ),
           ),
@@ -236,7 +257,7 @@ class ServicesScreen extends StatelessWidget {
                               Color? tileColor;
                               switch (state.inform!.level) {
                                 case NextODOInformationLevel.alarm:
-                                  tileColor = Colors.deepOrange[300];
+                                  tileColor = Colors.deepOrange[200];
                                 case NextODOInformationLevel.warn:
                                   tileColor = Colors.orange[200];
                                 default:

@@ -47,14 +47,13 @@ class GroupCreateWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: Navigator.of(context).pop,
                         child: const Text('Отмена'),
                       ),
+                      const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Добавить'),
                         onPressed: () {

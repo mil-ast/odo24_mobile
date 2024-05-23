@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ru.odo24.mobile">
-    <application android:label="odo24_mobile">
+    <application
+        tools:replace="android:label"
+        android:label="ODO24"
+    >
         <activity
             android:name=".MainActivity"
             android:exported="true">

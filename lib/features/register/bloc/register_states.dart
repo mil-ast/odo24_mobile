@@ -2,7 +2,8 @@ sealed class RegisterState {
   final bool isBuild;
   const RegisterState(this.isBuild);
   factory RegisterState.ready() = RegisterReadyState;
-  factory RegisterState.idle() = RegisterWaitingState;
+  factory RegisterState.waiting() = RegisterWaitingState;
+  factory RegisterState.openEmailConfirmation(String email, String password) = RegisterOpenEmailConfirmationState;
   factory RegisterState.success() = RegisterSuccessState;
   factory RegisterState.message(String message) = RegisterMessageState;
   factory RegisterState.failure(String message) = RegisterErrorState;
@@ -14,6 +15,12 @@ class RegisterReadyState extends RegisterState {
 
 class RegisterWaitingState extends RegisterState {
   const RegisterWaitingState() : super(true);
+}
+
+class RegisterOpenEmailConfirmationState extends RegisterState {
+  final String email;
+  final String password;
+  const RegisterOpenEmailConfirmationState(this.email, this.password) : super(false);
 }
 
 class RegisterSuccessState extends RegisterState {

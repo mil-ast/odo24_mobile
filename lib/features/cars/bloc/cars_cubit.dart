@@ -71,6 +71,17 @@ class CarsCubit extends Cubit<CarsState> {
     }
   }
 
+  Future<void> updateODO(int carID, int odo) async {
+    try {
+      await _carsRepository.updateODO(carID, odo);
+      emit(CarsState.updateSuccess());
+      getAllCars();
+    } catch (e) {
+      emit(CarsState.failure(e));
+      rethrow;
+    }
+  }
+
   Future<void> delete(CarModel car) async {
     try {
       await _carsRepository.delete(car);
