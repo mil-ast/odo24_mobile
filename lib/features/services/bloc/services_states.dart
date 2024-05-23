@@ -35,6 +35,8 @@ sealed class ServicesState {
   factory ServicesState.createSuccess() = ServiceCreateSuccessState;
   factory ServicesState.updateSuccess() = ServiceUpdateSuccessState;
   factory ServicesState.deleteSuccess() = ServiceDeleteSuccessState;
+  factory ServicesState.onCarODOAutoUpdate(int newODO) = ServiceCarODOAutoUpdateState;
+  factory ServicesState.failure(Object e) => ServiceErrorState(e.toString());
 }
 
 enum ServiceAction {
@@ -78,4 +80,14 @@ class ServiceDeleteSuccessState extends ServicesState {
 class ServiceMessageState extends ServicesState {
   final String message;
   ServiceMessageState(this.message) : super(false);
+}
+
+class ServiceCarODOAutoUpdateState extends ServicesState {
+  final int newODO;
+  ServiceCarODOAutoUpdateState(this.newODO) : super(false);
+}
+
+class ServiceErrorState extends ServicesState {
+  final String message;
+  ServiceErrorState(this.message) : super(false);
 }

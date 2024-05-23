@@ -42,6 +42,7 @@ app.*.map.json
 **/google-services.json
 
 # Android Studio will place build artifacts here
+/ansible
 /android/app/debug
 /android/app/profile
 /android/app/release

@@ -76,7 +76,7 @@ class CarsScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ServicesScreen(selectedCar: state.car!),
+                      builder: (_) => ServicesScreen(selectedCar: state.car!),
                     ),
                   ).then((_) {
                     context.read<CarsCubit>().getAllCars();
