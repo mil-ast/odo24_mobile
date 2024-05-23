@@ -7,13 +7,14 @@ import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 import 'package:odo24_mobile/features/services/data/models/service_update_request_model.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
+import 'package:sentry/sentry_io.dart';
 
 class ServicesCubit extends Cubit<ServicesState> {
   static const _maxMilleageForAutoUpdateODO = 10000;
 
   final IServicesRepository _servicesRepository;
   final ICarsRepository _carsRepository;
-  final CarModel _selectedCar;
+  CarModel _selectedCar;
   final List<ServiceModel> _services = [];
 
   ServicesCubit({
@@ -108,10 +109,20 @@ class ServicesCubit extends Cubit<ServicesState> {
   Future<void> create(CarModel car, int groupID, ServiceCreateRequestModel body, {bool isConfirmed = false}) async {
     try {
       final milleage = (body.odo ?? 0) - car.odo;
-
-      if (milleage > _maxMilleageForAutoUpdateODO) {
-        // confirm
+      /* if (milleage > _maxMilleageForAutoUpdateODO) {
+        // добавить подтверждение
         return;
+      } */
+
+      if (body.odo != null && milleage < _maxMilleageForAutoUpdateODO && body.odo! > car.odo) {
+        // обновить пробег авто
+        try {
+          await _carsRepository.updateODO(car.carID, body.odo!);
+          emit(ServicesState.onCarODOAutoUpdate(body.odo!));
+          _selectedCar = _selectedCar.copyWith(newOdo: body.odo!);
+        } catch (e) {
+          Sentry.captureException(e, stackTrace: StackTrace.current).ignore();
+        }
       }
 
       final model = await _servicesRepository.create(car.carID, groupID, body);
@@ -119,15 +130,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       emit(ServicesState.createSuccess());
       emit(ServicesState.message('Новая запись успешно добавлена!'));
       _refreshAndEmitServices();
-
-      if (body.odo != null && milleage < _maxMilleageForAutoUpdateODO && body.odo! > car.odo) {
-        // обновить пробег авто
-        _carsRepository.updateODO(car.carID, body.odo!).then((v) {
-          if (!isClosed) {
-            emit(ServicesState.onCarODOAutoUpdate(body.odo!));
-          }
-        }).ignore();
-      }
     } catch (e) {
       emit(ServicesState.failure(e));
     }

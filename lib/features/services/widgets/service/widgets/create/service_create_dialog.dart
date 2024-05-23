@@ -7,6 +7,7 @@ import 'package:odo24_mobile/features/services/data/models/service_create_reques
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 
 class ServiceRecCreateWidget extends StatelessWidget {
+  static const _defaultNextDistanceValue = 10000;
   final CarModel car;
   final GroupModel selectedGroup;
   final _formKey = GlobalKey<FormState>();
@@ -25,7 +26,7 @@ class ServiceRecCreateWidget extends StatelessWidget {
       TextEditingValue(text: car.odo.toString()),
     );
     _nextDistanceController = TextEditingController.fromValue(
-      TextEditingValue(text: 1000.toString()),
+      TextEditingValue(text: _defaultNextDistanceValue.toString()),
     );
     _dtController = TextEditingController.fromValue(
       TextEditingValue(text: DateTime.now().toIso8601String().substring(0, 10)),

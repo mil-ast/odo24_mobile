@@ -13,6 +13,17 @@ class CarModel {
     required this.servicesTotal,
   });
 
+  CarModel copyWith({
+    required int newOdo,
+  }) =>
+      CarModel(
+        carID: carID,
+        name: name,
+        odo: newOdo,
+        avatar: avatar,
+        servicesTotal: servicesTotal,
+      );
+
   factory CarModel.fromJson(Map<String, dynamic> json) {
     return CarModel(
       carID: json['car_id'] as int,
