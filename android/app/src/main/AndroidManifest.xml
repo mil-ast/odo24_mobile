@@ -4,11 +4,11 @@
   <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
   <application
-        android:label="odo24_mobile"
+        android:label="ODO24"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
         android:hasFragileUserData="false"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="false"
      >
         <activity
             android:name=".MainActivity"

@@ -45,7 +45,7 @@ class HttpAPI {
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
           return client;
         },
-      )..validateCertificate = (cert, host, port) => true;
+      )..validateCertificate = (cert, host, port) => cert != null;
     }
 
     dio.interceptors.add(
@@ -167,7 +167,7 @@ class HttpAPI {
           client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
           return client;
         },
-      )..validateCertificate = (cert, host, port) => true;
+      )..validateCertificate = (cert, host, port) => cert != null;
     }
 
     if (!kReleaseMode) {
