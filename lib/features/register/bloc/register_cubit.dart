@@ -18,8 +18,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       await _authRepository.registerSendConfirmationCode(email);
       emit(RegisterState.message('Проверочный код отправлен на $email'));
     } catch (e) {
-      emit(RegisterState.failure(e.toString()));
-      rethrow;
+      emit(RegisterState.failure(e));
     }
   }
 
@@ -27,11 +26,10 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegisterState.openEmailConfirmation(email, password));
   }
 
-  void register(String email, String password, String code) async {
+  Future<void> register(String email, String password, String code) async {
     try {
       emit(RegisterState.waiting());
-      // TODO
-      //await _authRepository.register(email, password, int.parse(code));
+      await _authRepository.register(email, password, int.parse(code));
       emit(RegisterState.success());
     } on DioException catch (e) {
       if (e.response?.statusCode == HttpStatus.forbidden) {
@@ -39,12 +37,10 @@ class RegisterCubit extends Cubit<RegisterState> {
       } else if (e.response?.statusCode == HttpStatus.conflict) {
         emit(RegisterState.failure('Такой email уже занят'));
       } else {
-        emit(RegisterState.failure(e.toString()));
+        emit(RegisterState.failure(e));
       }
-      rethrow;
     } catch (e) {
-      emit(RegisterState.failure(e.toString()));
-      rethrow;
+      emit(RegisterState.failure(e));
     }
   }
 }
