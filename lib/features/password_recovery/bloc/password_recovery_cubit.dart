@@ -9,15 +9,6 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
       : _authRepository = authRepository,
         super(PasswordRecoveryState.ready());
 
-  String? validatePin(String? pin) {
-    if (pin == null || pin.isEmpty) {
-      return 'Введите проверочный код';
-    } else if (pin.length < 3) {
-      return 'Неверный код';
-    }
-    return null;
-  }
-
   Future<bool> recoverSendEmailCodeConfirmation(String email) async {
     try {
       emit(PasswordRecoveryState.idle());
@@ -30,12 +21,14 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
     }
   }
 
-  Future<void> saveNewPassword(String email, int code, String newPassword) async {
+  Future<bool> saveNewPassword(String email, int code, String newPassword) async {
     try {
       await _authRepository.recoverSaveNewPassword(email, code, newPassword);
       emit(PasswordRecoveryState.success());
+      return true;
     } catch (e) {
-      emit(PasswordRecoveryState.failure(e.toString()));
+      emit(PasswordRecoveryState.failure(e));
+      return false;
     }
   }
 }

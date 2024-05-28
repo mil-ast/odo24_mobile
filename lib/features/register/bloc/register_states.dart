@@ -6,7 +6,7 @@ sealed class RegisterState {
   factory RegisterState.openEmailConfirmation(String email, String password) = RegisterOpenEmailConfirmationState;
   factory RegisterState.success() = RegisterSuccessState;
   factory RegisterState.message(String message) = RegisterMessageState;
-  factory RegisterState.failure(String message) = RegisterErrorState;
+  factory RegisterState.failure(Object message) => RegisterErrorState(message.toString());
 }
 
 class RegisterReadyState extends RegisterState {

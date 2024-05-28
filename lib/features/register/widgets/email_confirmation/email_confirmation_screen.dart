@@ -2,18 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/register/bloc/register_cubit.dart';
 
-class EmailConfirmationScreen extends StatelessWidget {
-  EmailConfirmationScreen({
+class EmailConfirmationScreen extends StatefulWidget {
+  final String email;
+  final String password;
+
+  const EmailConfirmationScreen({
     required this.email,
     required this.password,
     super.key,
   });
 
-  final String email;
-  final String password;
+  @override
+  State<StatefulWidget> createState() => _EmailConfirmationState();
+}
 
+class _EmailConfirmationState extends State<EmailConfirmationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
+
+  bool _sendCodeButtonEnabled = true;
+  bool _registerButtonEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,7 @@ class EmailConfirmationScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                     children: <TextSpan>[
                       TextSpan(
-                        text: email,
+                        text: widget.email,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -46,15 +54,23 @@ class EmailConfirmationScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Center(
                   child: OutlinedButton(
-                    onPressed: () {
-                      context.read<RegisterCubit>().sendRegisterCode(email);
-                    },
-                    child: const Wrap(
+                    onPressed: _sendCodeButtonEnabled
+                        ? () async {
+                            setState(() {
+                              _sendCodeButtonEnabled = false;
+                            });
+                            await context.read<RegisterCubit>().sendRegisterCode(widget.email);
+                            setState(() {
+                              _sendCodeButtonEnabled = true;
+                            });
+                          }
+                        : null,
+                    child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
                       spacing: 10,
                       children: [
-                        Icon(Icons.email_outlined),
-                        Text('Отправить код'),
+                        const Icon(Icons.email_outlined),
+                        _sendCodeButtonEnabled ? const Text('Отправить код') : const Text('Отправка...'),
                       ],
                     ),
                   ),
@@ -67,10 +83,17 @@ class EmailConfirmationScreen extends StatelessWidget {
                     helperText: "Код подтверждения",
                   ),
                   validator: (code) {
-                    if (code == null || code.trim().isEmpty) {
+                    if (code == null) {
                       return 'Введите код из e-mail';
-                    } else if (code.length < 4) {
+                    }
+
+                    final codeValue = int.tryParse(code);
+                    if (codeValue == null) {
+                      return 'Некорректный код';
+                    } else if (codeValue < 9999) {
                       return 'Слишком короткий';
+                    } else if (codeValue > 0xFFFF) {
+                      return 'Слишком большой';
                     }
                     return null;
                   },
@@ -78,13 +101,21 @@ class EmailConfirmationScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 Center(
                   child: FilledButton(
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-                      final code = _codeController.text.trim();
-                      context.read<RegisterCubit>().register(email, password, code);
-                    },
+                    onPressed: _registerButtonEnabled
+                        ? () async {
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+                            setState(() {
+                              _registerButtonEnabled = false;
+                            });
+                            final code = _codeController.text.trim();
+                            await context.read<RegisterCubit>().register(widget.email, widget.password, code);
+                            setState(() {
+                              _registerButtonEnabled = true;
+                            });
+                          }
+                        : null,
                     child: const Text('Завершить'),
                   ),
                 ),

@@ -35,10 +35,9 @@ class ErrorDialog extends StatelessWidget {
         Text(message),
         const SizedBox(height: 20),
         Align(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          alignment: Alignment.centerRight,
+          child: FilledButton(
+            onPressed: Navigator.of(context).pop,
             child: const Text('OK'),
           ),
         )
