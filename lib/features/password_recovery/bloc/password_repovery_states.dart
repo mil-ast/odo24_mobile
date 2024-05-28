@@ -2,7 +2,7 @@ sealed class PasswordRecoveryState {
   const PasswordRecoveryState();
   factory PasswordRecoveryState.ready() = PasswordRecoveryReadyState;
   factory PasswordRecoveryState.idle() = PasswordRecoveryWaitingState;
-  factory PasswordRecoveryState.failure(String message) = PasswordRecoveryErrorState;
+  factory PasswordRecoveryState.failure(Object message) => PasswordRecoveryErrorState(message.toString());
   factory PasswordRecoveryState.informMessage(String message) = PasswordRecoveryInformMessageState;
   factory PasswordRecoveryState.success() = PasswordRecoverySuccessState;
 }

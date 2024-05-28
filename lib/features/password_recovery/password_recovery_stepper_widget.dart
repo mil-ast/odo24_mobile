@@ -20,22 +20,16 @@ enum StepWidget {
 }
 
 class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperWidget> {
-  Timer? _timerCodeButton;
-  static const timerDuration = Duration(minutes: 10);
   final _formEmailKey = GlobalKey<FormState>();
   final _formPasswordKey = GlobalKey<FormState>();
+  final _formCodeKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _pinController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
   int _index = StepWidget.email.index;
   bool _sendCodeButtonEnabled = true;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timerCodeButton?.cancel();
-  }
+  bool _registerButtonEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +63,9 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                   ),
                 if (_index == StepWidget.emailConfirm.index)
                   FilledButton.icon(
-                    onPressed: _onComplete,
+                    onPressed: _registerButtonEnabled ? _onComplete : null,
                     icon: const Icon(Icons.flag),
-                    label: const Text('Сохранить'),
+                    label: _registerButtonEnabled ? const Text('Сохранить') : const Text('Сохранение...'),
                   )
               ],
             ),
@@ -119,7 +113,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
                     decoration: const InputDecoration(
-                      helperText: "Придумайте пароль",
+                      helperText: "Введите новый пароль",
                     ),
                     validator: (passwd) {
                       if (passwd == null || passwd.isEmpty) {
@@ -161,7 +155,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                 FilledButton.icon(
                   onPressed: _sendCodeButtonEnabled ? _onClickSendCode : null,
                   icon: const Icon(Icons.email),
-                  label: Text(_sendCodeButtonEnabled ? 'Отправить код на почту' : 'Код отправлен'),
+                  label: Text(_sendCodeButtonEnabled ? 'Отправить код на почту' : 'Отправка кода...'),
                 ),
                 const Card(
                   child: Padding(
@@ -170,13 +164,23 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                         'Для подтверждения почты необходимо отправить на неё проверочный код. После чего вставить код с e-mail в поле ниже.'),
                   ),
                 ),
-                TextFormField(
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    helperText: "Код подтверждения",
+                Form(
+                  key: _formCodeKey,
+                  child: TextFormField(
+                    controller: _pinController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      helperText: "Код подтверждения",
+                    ),
+                    validator: (String? pin) {
+                      if (pin == null || pin.isEmpty) {
+                        return 'Введите проверочный код';
+                      } else if (pin.length < 3) {
+                        return 'Неверный код';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: context.read<PasswordRecoveryCubit>().validatePin,
                 ),
               ],
             ),
@@ -201,21 +205,10 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
     if (isOk) {
       setState(
         () {
-          _timerCodeButton ??= Timer(
-            timerDuration,
-            _timerHandler,
-          );
           _sendCodeButtonEnabled = true;
         },
       );
     }
-  }
-
-  void _timerHandler() {
-    setState(() {
-      _sendCodeButtonEnabled = true;
-      _timerCodeButton = null;
-    });
   }
 
   void _onNext() {
@@ -234,13 +227,23 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
     }
   }
 
-  void _onComplete() {
-    if (!_formPasswordKey.currentState!.validate()) {
+  void _onComplete() async {
+    if (!_formPasswordKey.currentState!.validate() || !_formCodeKey.currentState!.validate()) {
       return;
     }
+
     final email = _emailController.text;
     final code = int.parse(_pinController.text);
     final password = _passwordController.text;
-    context.read<PasswordRecoveryCubit>().saveNewPassword(email, code, password);
+
+    setState(() {
+      _registerButtonEnabled = false;
+    });
+
+    await context.read<PasswordRecoveryCubit>().saveNewPassword(email, code, password);
+
+    setState(() {
+      _registerButtonEnabled = true;
+    });
   }
 }
