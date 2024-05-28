@@ -90,7 +90,7 @@ class _EmailConfirmationState extends State<EmailConfirmationScreen> {
                     final codeValue = int.tryParse(code);
                     if (codeValue == null) {
                       return 'Некорректный код';
-                    } else if (codeValue < 9999) {
+                    } else if (codeValue < 1000) {
                       return 'Слишком короткий';
                     } else if (codeValue > 0xFFFF) {
                       return 'Слишком большой';
