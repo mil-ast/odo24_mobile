@@ -5,6 +5,7 @@ import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/profile/app_version_information/app_version_information_widget.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -41,6 +42,13 @@ class ProfileScreen extends StatelessWidget {
                         builder: (context) => const ChangePasswordScreen(),
                       ),
                     );
+                  },
+                ),
+                ListTile(
+                  title: const Text('Поделиться приложением'),
+                  leading: const Icon(Icons.share),
+                  onTap: () {
+                    Share.shareUri(Uri.https('odo24.ru'));
                   },
                 ),
                 ListTile(
