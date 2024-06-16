@@ -83,13 +83,13 @@ class LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextFormField(
                                 decoration: const InputDecoration(
-                                  hintText: "Логин",
+                                  hintText: "Email",
                                 ),
                                 controller: _loginController,
                                 keyboardType: TextInputType.emailAddress,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Логин не указан';
+                                    return 'Email не указан';
                                   }
                                   return null;
                                 },
