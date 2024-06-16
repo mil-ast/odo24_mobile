@@ -61,6 +61,14 @@ class ServicesScreen extends StatelessWidget {
               } else if (state is OnChangeSelectedGroupState) {
                 // при изменении групп обновляем записи
                 context.read<ServicesCubit>().onChangeSelectedGroup(state.selected!);
+              } else if (state is GroupsDeleteSuccessState) {
+                // успешное удаление группы
+                final newSelectedGroup = context.read<GroupsCubit>().getSelectedGroup();
+                context.read<ServicesCubit>().onChangeSelectedGroup(newSelectedGroup);
+              } else if (state is GroupsCreateSuccessState) {
+                // успешное добавление группы
+                final newSelectedGroup = context.read<GroupsCubit>().getSelectedGroup();
+                context.read<ServicesCubit>().onChangeSelectedGroup(newSelectedGroup);
               } else if (state is GroupsActionState) {
                 switch (state.action) {
                   case GroupAction.openSettings:
@@ -128,7 +136,7 @@ class ServicesScreen extends StatelessWidget {
               } else if (state is ServiceActionState) {
                 switch (state.action) {
                   case ServiceAction.create:
-                    final selectedGroup = context.read<GroupsCubit>().getSelected();
+                    final selectedGroup = context.read<GroupsCubit>().getSelectedGroup();
                     if (selectedGroup == null) {
                       return;
                     }

@@ -26,8 +26,13 @@ class ServicesCubit extends Cubit<ServicesState> {
         _selectedCar = selectedCar,
         super(ServicesState.ready());
 
-  Future<void> onChangeSelectedGroup(GroupModel selectedGroup) async {
+  Future<void> onChangeSelectedGroup(GroupModel? selectedGroup) async {
     try {
+      if (selectedGroup == null) {
+        emit(ServicesState.ready());
+        return;
+      }
+
       emit(ServicesState.idle());
 
       final services = await _servicesRepository.getByCarAndGroup(_selectedCar.carID, selectedGroup.groupID);

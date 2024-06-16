@@ -15,7 +15,7 @@ class GroupsCubit extends Cubit<GroupsState> {
   })  : _groupsRepository = groupsRepository,
         super(GroupsState.idle());
 
-  GroupModel? getSelected() {
+  GroupModel? getSelectedGroup() {
     if (_selectedIndex == -1) {
       return null;
     }
@@ -88,10 +88,12 @@ class GroupsCubit extends Cubit<GroupsState> {
     try {
       await _groupsRepository.delete(body.groupID);
 
-      if (_groups.length > 1) {
+      if (_groups.isNotEmpty) {
         _groups.removeWhere((g) => g.groupID == body.groupID);
-        if (_selectedIndex > _groups.length - 1) {
+        if (_groups.isNotEmpty && _selectedIndex > _groups.length - 1) {
           _selectedIndex = _groups.length - 1;
+        } else {
+          _selectedIndex = -1;
         }
       } else {
         _selectedIndex = -1;
