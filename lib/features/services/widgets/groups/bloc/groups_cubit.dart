@@ -55,9 +55,9 @@ class GroupsCubit extends Cubit<GroupsState> {
       final group = await _groupsRepository.create(body);
 
       _groups.add(group);
+      _selectedIndex = _groups.length - 1;
       emit(GroupsState.createSuccess(group));
       emit(GroupsState.message('Группа успешно добавлена!'));
-      _selectedIndex = _groups.length - 1;
       refresh();
     } catch (e) {
       emit(GroupsState.failure(e));
@@ -160,6 +160,10 @@ class GroupsCubit extends Cubit<GroupsState> {
   }
 
   void refresh() {
+    if (_groups.isEmpty || _selectedIndex == -1) {
+      emit(GroupsState.showGroups(_groups, selected: null));
+      return;
+    }
     emit(GroupsState.showGroups(_groups, selected: _groups[_selectedIndex]));
   }
 
