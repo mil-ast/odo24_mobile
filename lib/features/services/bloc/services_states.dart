@@ -1,18 +1,11 @@
+import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 
-enum NextODOInformationLevel {
-  normal(3000),
-  warn(2000),
-  alarm(1000);
-
-  final int distance;
-  const NextODOInformationLevel(this.distance);
-}
-
 class NextODOInformation {
-  final NextODOInformationLevel level;
+  final double factor;
   final int leftDistance;
-  const NextODOInformation(this.leftDistance, this.level);
+  final NextODOInformationColorLevel colorLevel;
+  const NextODOInformation(this.leftDistance, this.factor, this.colorLevel);
 }
 
 sealed class ServicesState {

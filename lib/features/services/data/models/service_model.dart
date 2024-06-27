@@ -1,4 +1,4 @@
-class ServiceModel {
+class ServiceModel implements Comparable<ServiceModel> {
   final int serviceID;
   final int? odo;
   final int? nextDistance;
@@ -42,5 +42,13 @@ class ServiceModel {
       description: json['description'] as String?,
       price: json['price'] as int?,
     );
+  }
+
+  @override
+  int compareTo(ServiceModel other) {
+    if (odo != null && other.odo != null) {
+      return other.odo! - odo!;
+    }
+    return 0;
   }
 }

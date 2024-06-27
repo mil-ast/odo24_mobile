@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 
@@ -13,6 +14,8 @@ class CarItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final numberFmt = NumberFormat.decimalPattern();
+
+    final titleTextTheme = theme.textTheme.bodyMedium?.copyWith(color: Colors.black54);
 
     return InkWell(
       onTap: () {
@@ -125,6 +128,44 @@ class CarItemWidget extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (car.carExtraDataModel.isNotEmpty) ...[
+                    const Text('До ближайшего обслуживания:'),
+                    const SizedBox(height: 10),
+                    ListView.separated(
+                      itemBuilder: (context, index) {
+                        final e = car.carExtraDataModel[index];
+                        final nextOdoInfo = e.calculateLeftODO(car.odo);
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                e.groupName,
+                                style: titleTextTheme,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: nextOdoInfo.colorLevel.color,
+                                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 40, right: 10),
+                                  child: Text('${nextOdoInfo.leftDistance.format()} км'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(height: 8),
+                      itemCount: car.carExtraDataModel.length,
+                      shrinkWrap: true,
+                    ),
+                  ]
                 ],
               ),
             ),

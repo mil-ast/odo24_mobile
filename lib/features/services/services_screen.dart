@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
+import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
@@ -254,18 +255,16 @@ class ServicesScreen extends StatelessWidget {
                           itemCount: state.services.length + 1,
                           itemBuilder: (context, index) {
                             if (index == 0) {
-                              Color? tileColor;
-                              switch (state.inform!.level) {
-                                case NextODOInformationLevel.alarm:
-                                  tileColor = Colors.deepOrange[200];
-                                case NextODOInformationLevel.warn:
-                                  tileColor = Colors.orange[200];
-                                default:
-                                  tileColor = Colors.green[100];
-                              }
+                              final factor = state.inform!.factor;
                               return ListTile(
-                                tileColor: tileColor,
-                                title: Text('Осталось ${state.inform!.leftDistance.format()} км'),
+                                tileColor: state.inform!.colorLevel.color,
+                                title: Row(
+                                  children: [
+                                    Text('Осталось ${state.inform!.leftDistance.format()} км'),
+                                    const Spacer(),
+                                    Text('${(factor * 100).round()}%'),
+                                  ],
+                                ),
                                 subtitle: const Text('До следующей замены'),
                               );
                             }
