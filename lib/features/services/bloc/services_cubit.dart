@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/services/bloc/services_states.dart';
@@ -40,14 +41,7 @@ class ServicesCubit extends Cubit<ServicesState> {
   }
 
   void _refreshAndEmitServices() {
-    _services.sort(
-      (a, b) {
-        if (a.odo != null && b.odo != null) {
-          return b.odo! - a.odo!;
-        }
-        return 0;
-      },
-    );
+    _services.sort();
 
     for (int i = 0; i < _services.length; i++) {
       if (i != _services.length - 1) {
@@ -71,7 +65,10 @@ class ServicesCubit extends Cubit<ServicesState> {
       return null;
     }
     final lastService = _services.first;
-    if (lastService.odo == null || lastService.nextDistance == null) {
+    if (lastService.odo == null ||
+        lastService.nextDistance == null ||
+        lastService.odo == 0 ||
+        lastService.nextDistance == 0) {
       return null;
     }
 
@@ -82,16 +79,29 @@ class ServicesCubit extends Cubit<ServicesState> {
       leftDistance = 0;
     }
 
-    NextODOInformationLevel level;
-    if (leftDistance <= NextODOInformationLevel.warn.distance) {
-      level = NextODOInformationLevel.alarm;
-    } else if (leftDistance <= NextODOInformationLevel.normal.distance) {
-      level = NextODOInformationLevel.warn;
-    } else {
-      level = NextODOInformationLevel.normal;
+    double factor = 0;
+
+    final mileageFromStart = _selectedCar.odo - lastService.odo!;
+
+    factor = mileageFromStart / lastService.nextDistance!;
+
+    if (factor > 1) {
+      factor = 1;
+    } else if (factor < 0) {
+      factor = 0;
     }
 
-    return NextODOInformation(leftDistance, level);
+    NextODOInformationColorLevel colorLevel;
+    final rFactor = 1 - factor;
+    if (rFactor <= NextODOInformationColorLevel.alarm.factor) {
+      colorLevel = NextODOInformationColorLevel.alarm;
+    } else if (rFactor <= NextODOInformationColorLevel.warn.factor) {
+      colorLevel = NextODOInformationColorLevel.warn;
+    } else {
+      colorLevel = NextODOInformationColorLevel.normal;
+    }
+
+    return NextODOInformation(leftDistance, factor, colorLevel);
   }
 
   void openFormCreateService() {

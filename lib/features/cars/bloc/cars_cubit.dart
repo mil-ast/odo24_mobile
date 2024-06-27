@@ -20,10 +20,12 @@ class CarsCubit extends Cubit<CarsState> {
       final cars = await _carsRepository.getMyCars();
       _cars.clear();
       _cars.addAll(cars);
-      _cars.sort((a, b) => b.carID - a.carID);
+      _cars.sort();
+
       emit(CarsState.loaded(_cars));
     } catch (e) {
       emit(CarsState.failure(e));
+      emit(CarsState.ready());
       rethrow;
     }
   }
