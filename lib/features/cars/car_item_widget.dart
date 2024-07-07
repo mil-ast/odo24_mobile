@@ -76,14 +76,14 @@ class CarItemWidget extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        flex: 1,
+                        flex: 4,
                         child: Text(
                           'Записей в книжке',
                           style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54),
                         ),
                       ),
                       Expanded(
-                        flex: 1,
+                        flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 40),
                           child: Text(
@@ -98,12 +98,14 @@ class CarItemWidget extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
+                        flex: 4,
                         child: Text(
                           'Пробег',
                           style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54),
                         ),
                       ),
                       Expanded(
+                        flex: 3,
                         child: Wrap(
                           spacing: 10,
                           children: [
@@ -139,14 +141,14 @@ class CarItemWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              flex: 1,
+                              flex: 4,
                               child: Text(
                                 e.groupName,
                                 style: titleTextTheme,
                               ),
                             ),
                             Expanded(
-                              flex: 1,
+                              flex: 3,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: nextOdoInfo.colorLevel.color,
