@@ -5,7 +5,7 @@ class ServiceCreateRequestModel {
   final String? description;
   final int? price;
 
-  ServiceCreateRequestModel({
+  const ServiceCreateRequestModel({
     this.odo,
     this.nextDistance,
     required this.dt,

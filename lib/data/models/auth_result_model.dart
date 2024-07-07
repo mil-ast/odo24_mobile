@@ -2,7 +2,7 @@ class AuthResultModel {
   final String accessToken;
   final String refreshToken;
 
-  AuthResultModel({
+  const AuthResultModel({
     required this.accessToken,
     required this.refreshToken,
   });

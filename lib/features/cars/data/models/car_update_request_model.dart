@@ -4,7 +4,7 @@ class CarUpdateRequestModel {
   final int odo;
   final bool avatar;
 
-  CarUpdateRequestModel({
+  const CarUpdateRequestModel({
     required this.carID,
     required this.name,
     required this.odo,

@@ -3,7 +3,7 @@ class CarCreateRequestModel {
   final int odo;
   final bool avatar;
 
-  CarCreateRequestModel({
+  const CarCreateRequestModel({
     required this.name,
     required this.odo,
     this.avatar = false,

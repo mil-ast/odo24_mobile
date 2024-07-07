@@ -29,7 +29,7 @@ class CarItemWidget extends StatelessWidget {
           ),
           color: Colors.white,
         ),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
         margin: const EdgeInsets.all(10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,6 +152,7 @@ class CarItemWidget extends StatelessWidget {
                                   color: nextOdoInfo.colorLevel.color,
                                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                 ),
+                                padding: const EdgeInsets.symmetric(vertical: 2),
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 40, right: 10),
                                   child: Text('${nextOdoInfo.leftDistance.format()} км'),
