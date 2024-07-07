@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
-import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';

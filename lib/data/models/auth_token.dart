@@ -8,7 +8,7 @@ final class AuthData {
   final DateTime accessTokenExpires;
   final DateTime refreshTokenExpires;
 
-  AuthData({
+  const AuthData({
     required this.userID,
     required this.accessToken,
     required this.refreshToken,

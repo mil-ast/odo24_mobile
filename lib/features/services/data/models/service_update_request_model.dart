@@ -5,7 +5,7 @@ class ServiceUpdateRequestModel {
   final String? description;
   final int? price;
 
-  ServiceUpdateRequestModel({
+  const ServiceUpdateRequestModel({
     this.odo,
     this.nextDistance,
     required this.dt,

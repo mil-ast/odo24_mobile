@@ -13,7 +13,7 @@ class CarModel implements Comparable<CarModel> {
   final int servicesTotal;
   final List<CarExtraDataModel> carExtraDataModel;
 
-  CarModel({
+  const CarModel({
     required this.carID,
     required this.name,
     required this.odo,
