@@ -82,7 +82,7 @@ class ServiceUpdateDialog extends StatelessWidget {
                     controller: _dtController,
                     keyboardType: TextInputType.datetime,
                     decoration: const InputDecoration(
-                      helperText: "Дата обслуживания",
+                      helperText: 'Дата обслуживания',
                       icon: Icon(Icons.date_range),
                     ),
                     onTap: () async {

@@ -111,7 +111,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
                     decoration: const InputDecoration(
-                      helperText: "Введите новый пароль",
+                      helperText: 'Введите новый пароль',
                     ),
                     validator: (passwd) {
                       if (passwd == null || passwd.isEmpty) {
@@ -127,7 +127,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
                     decoration: const InputDecoration(
-                      helperText: "Повторите пароль",
+                      helperText: 'Повторите пароль',
                     ),
                     validator: (String? confirmPasswd) {
                       if (confirmPasswd == null) {
@@ -168,7 +168,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
                     controller: _pinController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      helperText: "Код подтверждения",
+                      helperText: 'Код подтверждения',
                     ),
                     validator: (String? pin) {
                       if (pin == null || pin.isEmpty) {
