@@ -81,7 +81,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
                           decoration: const InputDecoration(
-                            helperText: "Придумайте новый пароль",
+                            helperText: 'Придумайте новый пароль',
                           ),
                           validator: _passwordValidate,
                         ),
@@ -90,7 +90,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
                           decoration: const InputDecoration(
-                            helperText: "Подтвердите новый пароль",
+                            helperText: 'Подтвердите новый пароль',
                           ),
                           validator: (String? passwd) {
                             if (passwd != null && passwd.isNotEmpty) {

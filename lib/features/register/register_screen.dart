@@ -110,7 +110,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       obscureText: true,
                       keyboardType: TextInputType.visiblePassword,
                       decoration: const InputDecoration(
-                        helperText: "Придумайте пароль",
+                        helperText: 'Придумайте пароль',
                       ),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (passwd) {
@@ -128,7 +128,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: const InputDecoration(
-                        helperText: "Повторите пароль",
+                        helperText: 'Повторите пароль',
                       ),
                       validator: (confirmPasswd) {
                         if (confirmPasswd == null || confirmPasswd.trim().isEmpty) {

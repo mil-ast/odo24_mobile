@@ -80,7 +80,7 @@ class _EmailConfirmationState extends State<EmailConfirmationScreen> {
                   keyboardType: TextInputType.visiblePassword,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: const InputDecoration(
-                    helperText: "Код подтверждения",
+                    helperText: 'Код подтверждения',
                   ),
                   validator: (code) {
                     if (code == null) {

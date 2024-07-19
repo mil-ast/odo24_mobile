@@ -83,7 +83,7 @@ class LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextFormField(
                                 decoration: const InputDecoration(
-                                  hintText: "Логин",
+                                  hintText: 'Логин',
                                 ),
                                 controller: _loginController,
                                 keyboardType: TextInputType.emailAddress,
@@ -97,7 +97,7 @@ class LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 20),
                               TextFormField(
                                 decoration: const InputDecoration(
-                                  hintText: "Пароль",
+                                  hintText: 'Пароль',
                                 ),
                                 controller: _passwordController,
                                 obscureText: true,
