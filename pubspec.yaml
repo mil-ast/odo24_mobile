@@ -13,6 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  google_sign_in: ^6.2.1
   sentry: ^8.3.0
   sentry_dio: ^8.3.0
   flutter_bloc: ^8.1.6

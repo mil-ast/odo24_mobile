@@ -23,7 +23,8 @@
       "name": "odo24_mobile (release mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release"
+      "flutterMode": "release",
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "name": "odo24_mobile (web)",

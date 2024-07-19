@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:odo24_mobile/features/cars/cars_screen.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/bloc/login_cubit.dart';
@@ -108,6 +109,37 @@ class LoginScreenState extends State<LoginScreen> {
                                   }
                                   return null;
                                 },
+                              ),
+                              FilledButton(
+                                onPressed: () async {
+                                  try {
+                                    const List<String> scopes = <String>[
+                                      'email',
+                                    ];
+
+                                    GoogleSignIn googleSignIn = GoogleSignIn(
+                                      scopes: scopes,
+                                    );
+
+                                    final account = await googleSignIn.signIn();
+                                    print(account);
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(account.toString()),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print(e.toString());
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Theme.of(context).colorScheme.error,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text('Google'),
                               ),
                               const SizedBox(height: 20),
                               Wrap(
