@@ -31,7 +31,6 @@ if (keystorePropertiesFile.exists()) {
 android {
   compileSdkVersion 34
   namespace "ru.odo24.mobile"
-  ndkVersion flutter.ndkVersion
 
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
