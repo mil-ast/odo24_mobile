@@ -69,18 +69,19 @@ class CarsScreen extends StatelessWidget {
           },
         ),
         body: BlocConsumer<CarsCubit, CarsState>(
-          listener: (BuildContext context, CarsState state) {
+          listener: (BuildContext context, CarsState state) async {
             if (state is CarActionState) {
               switch (state.action) {
                 case CarAction.select:
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ServicesScreen(selectedCar: state.car!),
                     ),
-                  ).then((_) {
+                  );
+                  if (context.mounted) {
                     context.read<CarsCubit>().getAllCars();
-                  });
+                  }
                 case CarAction.create:
                   showDialog(
                     context: context,
@@ -112,15 +113,14 @@ class CarsScreen extends StatelessWidget {
                     ),
                   );
                 case CarAction.delete:
-                  showConfirmationDialog(
+                  final isOk = await showConfirmationDialog(
                     context,
                     title: 'Удаление авто',
                     message: 'Вы действительно хотите удалить авто "${state.car!.name}" и все записи из неё?',
-                  ).then((bool? isOk) {
-                    if (isOk == true) {
-                      context.read<CarsCubit>().delete(state.car!);
-                    }
-                  });
+                  );
+                  if ((isOk ?? false) && context.mounted) {
+                    context.read<CarsCubit>().delete(state.car!);
+                  }
               }
             } else if (state is CarCreateSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(

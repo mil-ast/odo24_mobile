@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
-import 'package:odo24_mobile/core/updater/apk_updater.dart';
 import 'package:odo24_mobile/core/updater/data/updater_data_provider.dart';
 import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
@@ -68,8 +68,9 @@ void main() async {
       );
 
       final dependencies = Dependencies(
+        siteURL: 'https://odo24.ru',
         httpClient: dio,
-        apkUpdater: APKUpdater(),
+        methodChannel: const MethodChannel('odo24/channel'),
         authRepository: authRepository,
         updaterRepository: UpdaterRepository(
           updaterDataProvider: UpdaterDataProvider(httpClient: Dio(BaseOptions(baseUrl: HttpAPI.staticBaseURLHost))),

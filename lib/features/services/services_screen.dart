@@ -51,7 +51,7 @@ class ServicesScreen extends StatelessWidget {
       child: MultiBlocListener(
         listeners: [
           BlocListener<GroupsCubit, GroupsState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is GroupsMessageState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -64,7 +64,8 @@ class ServicesScreen extends StatelessWidget {
               } else if (state is GroupsActionState) {
                 switch (state.action) {
                   case GroupAction.openSettings:
-                    Navigator.push(
+                    final cb = context.read<GroupsCubit>().refresh;
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => BlocProvider.value(
@@ -73,9 +74,8 @@ class ServicesScreen extends StatelessWidget {
                         ),
                         fullscreenDialog: false,
                       ),
-                    ).then((_) {
-                      context.read<GroupsCubit>().refresh();
-                    });
+                    );
+                    cb.call();
                   case GroupAction.create:
                     showDialog(
                       context: context,
@@ -97,21 +97,21 @@ class ServicesScreen extends StatelessWidget {
                       ),
                     );
                   case GroupAction.delete:
-                    showConfirmationDialog(
+                    final cb = context.read<GroupsCubit>().delete;
+                    final isOk = await showConfirmationDialog(
                       context,
                       title: 'Удаление группы',
                       message: 'Вы действительно хотите удалить группу "${state.group?.name}" и все записи из неё?',
-                    ).then((bool? isOk) {
-                      if (isOk == true) {
-                        context.read<GroupsCubit>().delete(state.group!);
-                      }
-                    });
+                    );
+                    if (isOk == true) {
+                      cb.call(state.group!);
+                    }
                 }
               }
             },
           ),
           BlocListener<ServicesCubit, ServicesState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is ServiceMessageState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -157,15 +157,14 @@ class ServicesScreen extends StatelessWidget {
                       ),
                     );
                   case ServiceAction.delete:
-                    showConfirmationDialog(
+                    final isOk = await showConfirmationDialog(
                       context,
                       title: 'Удаление группы',
                       message: 'Вы действительно хотите удалить запись?',
-                    ).then((bool? isOk) {
-                      if (isOk == true) {
-                        context.read<ServicesCubit>().delete(state.service!);
-                      }
-                    });
+                    );
+                    if ((isOk ?? false) && context.mounted) {
+                      context.read<ServicesCubit>().delete(state.service!);
+                    }
                 }
               } else if (state is ServiceCarODOAutoUpdateState) {
                 // если автоматически обновили пробег авто
