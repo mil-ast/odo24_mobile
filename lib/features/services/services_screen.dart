@@ -111,7 +111,7 @@ class ServicesScreen extends StatelessWidget {
             },
           ),
           BlocListener<ServicesCubit, ServicesState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is ServiceMessageState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -157,15 +157,14 @@ class ServicesScreen extends StatelessWidget {
                       ),
                     );
                   case ServiceAction.delete:
-                    showConfirmationDialog(
+                    final isOk = await showConfirmationDialog(
                       context,
                       title: 'Удаление группы',
                       message: 'Вы действительно хотите удалить запись?',
-                    ).then((bool? isOk) {
-                      if (isOk == true) {
-                        context.read<ServicesCubit>().delete(state.service!);
-                      }
-                    });
+                    );
+                    if ((isOk ?? false) && context.mounted) {
+                      context.read<ServicesCubit>().delete(state.service!);
+                    }
                 }
               } else if (state is ServiceCarODOAutoUpdateState) {
                 // если автоматически обновили пробег авто

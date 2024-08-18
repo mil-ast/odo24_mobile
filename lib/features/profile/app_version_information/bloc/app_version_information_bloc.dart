@@ -1,11 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/file_loader/file_loader.dart';
-import 'package:odo24_mobile/core/http/http_api.dart';
-import 'package:odo24_mobile/core/updater/apk_updater.dart';
-import 'package:odo24_mobile/core/updater/data/models/abis_model.dart';
 import 'package:odo24_mobile/core/updater/data/models/apk_version.dart';
 import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/features/profile/app_version_information/bloc/app_version_information_states.dart';
@@ -13,13 +7,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class AppVersionInformationBloc extends Cubit<AppVersionState> {
   AppVersionInformationBloc({
-    required APKUpdater apkUpdater,
+    //required APKUpdater apkUpdater,
     required IUpdaterRepository updaterRepository,
-  })  : _apkUpdater = apkUpdater,
+  })  : //_apkUpdater = apkUpdater,
         _updaterRepository = updaterRepository,
         super(AppVersionState.idle());
 
-  final APKUpdater _apkUpdater;
+  //final APKUpdater _apkUpdater;
   final IUpdaterRepository _updaterRepository;
 
   void checkVersion() async {
@@ -58,7 +52,7 @@ class AppVersionInformationBloc extends Cubit<AppVersionState> {
     emit(AppVersionState.appVersionIsActual(currentVersion: currentVersion));
   }
 
-  void clickInstallNewVersion({
+  /* void clickInstallNewVersion({
     required APKVersionModel currentVersion,
     required APKVersionModel availableVrsion,
   }) async {
@@ -88,12 +82,12 @@ class AppVersionInformationBloc extends Cubit<AppVersionState> {
     } catch (e) {
       emit(AppVersionState.failure(e));
     }
-  }
+  } */
 
-  String _getFileUrlByABIs(List<SupportedABIs> abis) {
+  /* String _getFileUrlByABIs(List<SupportedABIs> abis) {
     if (abis.isEmpty) {
       return 'app-universal-release.apk';
     }
     return 'app-${abis.first.value}-release.apk';
-  }
+  } */
 }

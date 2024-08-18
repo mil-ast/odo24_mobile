@@ -52,15 +52,15 @@ class ProfileScreen extends StatelessWidget {
                     Icons.logout,
                     color: Colors.red,
                   ),
-                  onTap: () {
-                    authRepository.logout().then((_) {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                          (route) => false);
-                    });
+                  onTap: () async {
+                    authRepository.logout().ignore();
+
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                        (route) => false);
                   },
                 ),
               ],

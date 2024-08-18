@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/core/updater/apk_updater.dart';
 import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
@@ -11,7 +10,6 @@ final class Dependencies {
   final Dio httpClient;
   final IAuthRepository authRepository;
   final IUpdaterRepository updaterRepository;
-  final APKUpdater apkUpdater;
   final ICarsRepository carsRepository;
   final IGroupsRepository groupsRepository;
   final IServicesRepository servicesRepository;
@@ -20,7 +18,6 @@ final class Dependencies {
     required this.httpClient,
     required this.authRepository,
     required this.updaterRepository,
-    required this.apkUpdater,
     required this.carsRepository,
     required this.groupsRepository,
     required this.servicesRepository,
