@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/profile/app_version_information/bloc/app_version_information_bloc.dart';
 import 'package:odo24_mobile/features/profile/app_version_information/bloc/app_version_information_states.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class AppVersionInformationWidget extends StatelessWidget {
   const AppVersionInformationWidget({super.key});
@@ -77,11 +76,13 @@ class AppVersionInformationWidget extends StatelessWidget {
                         style: textTheme.bodyMedium,
                       ),
                       TextSpan(
-                        text: 'https://odo24.ru',
+                        text: dependencies.siteURL,
                         style: textTheme.bodyMedium?.copyWith(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
-                            await launchUrlString('https://odo24.ru');
+                            dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
+                              'url': dependencies.siteURL,
+                            });
                           },
                       )
                     ],

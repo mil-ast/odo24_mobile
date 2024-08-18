@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/profile/app_version_information/app_version_information_widget.dart';
@@ -8,12 +7,10 @@ import 'package:odo24_mobile/features/profile/change_password/change_password_sc
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-  static const siteURL = 'https://odo24.ru';
-  final _methodChannel = const MethodChannel('odo24/channel');
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = DependenciesScope.of(context).authRepository;
+    final dependencies = DependenciesScope.of(context);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -53,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.red,
                   ),
                   onTap: () async {
-                    authRepository.logout().ignore();
+                    dependencies.authRepository.logout().ignore();
 
                     Navigator.pushAndRemoveUntil(
                         context,
@@ -75,12 +72,12 @@ class ProfileScreen extends StatelessWidget {
                   Icon(Icons.launch_outlined, color: theme.colorScheme.primary),
                   InkWell(
                     onTap: () {
-                      _methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
-                        'url': siteURL,
+                      dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
+                        'url': dependencies.siteURL,
                       });
                     },
                     child: Text(
-                      siteURL,
+                      dependencies.siteURL,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.primary,
                       ),
