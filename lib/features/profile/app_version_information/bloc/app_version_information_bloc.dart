@@ -7,13 +7,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class AppVersionInformationBloc extends Cubit<AppVersionState> {
   AppVersionInformationBloc({
-    //required APKUpdater apkUpdater,
     required IUpdaterRepository updaterRepository,
-  })  : //_apkUpdater = apkUpdater,
-        _updaterRepository = updaterRepository,
+  })  : _updaterRepository = updaterRepository,
         super(AppVersionState.idle());
 
-  //final APKUpdater _apkUpdater;
   final IUpdaterRepository _updaterRepository;
 
   void checkVersion() async {
@@ -51,43 +48,4 @@ class AppVersionInformationBloc extends Cubit<AppVersionState> {
 
     emit(AppVersionState.appVersionIsActual(currentVersion: currentVersion));
   }
-
-  /* void clickInstallNewVersion({
-    required APKVersionModel currentVersion,
-    required APKVersionModel availableVrsion,
-  }) async {
-    try {
-      final abis = await _apkUpdater.getSupportedAbis();
-      final fileUrl = _getFileUrlByABIs(abis);
-      final saveToPath = await _apkUpdater.getLocalAPKFilePath();
-
-      final fileLoader = FileLoader(
-        fileURL: '${HttpAPI.staticBaseURLHost}/apk/$fileUrl',
-        saveToPath: saveToPath,
-      );
-      emit(AppVersionState.appVersionDownload(
-        currentVersion: currentVersion,
-        downloadableVersion: availableVrsion,
-        fileLoader: fileLoader,
-      ));
-      await fileLoader.loadFile();
-
-      final file = File(fileLoader.saveToPath);
-      await _apkUpdater.installAppFromFile(file);
-
-      emit(AppVersionState.appVersionInstalling(
-        currentVersion: currentVersion,
-        installingVersion: availableVrsion,
-      ));
-    } catch (e) {
-      emit(AppVersionState.failure(e));
-    }
-  } */
-
-  /* String _getFileUrlByABIs(List<SupportedABIs> abis) {
-    if (abis.isEmpty) {
-      return 'app-universal-release.apk';
-    }
-    return 'app-${abis.first.value}-release.apk';
-  } */
 }

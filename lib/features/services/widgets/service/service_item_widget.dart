@@ -17,7 +17,7 @@ class ServiceItemWidget extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(6)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 3,
             blurRadius: 5,
             offset: Offset.zero, // changes position of shadow

@@ -44,6 +44,7 @@ class CarCreateDialogState extends State<CarCreateDialog> {
             child: Form(
               key: _formKey,
               child: Column(
+                spacing: 20,
                 children: [
                   TextFormField(
                     controller: _nameController,
@@ -62,7 +63,6 @@ class CarCreateDialogState extends State<CarCreateDialog> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _odoController,
                     keyboardType: TextInputType.number,
@@ -86,7 +86,6 @@ class CarCreateDialogState extends State<CarCreateDialog> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

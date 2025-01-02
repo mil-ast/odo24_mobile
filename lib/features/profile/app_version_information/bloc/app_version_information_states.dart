@@ -1,4 +1,3 @@
-import 'package:odo24_mobile/core/file_loader/file_loader.dart';
 import 'package:odo24_mobile/core/updater/data/models/apk_version.dart';
 
 sealed class AppVersionState {
@@ -17,7 +16,6 @@ sealed class AppVersionState {
   factory AppVersionState.appVersionDownload({
     required APKVersionModel currentVersion,
     required APKVersionModel downloadableVersion,
-    required FileLoader fileLoader,
   }) = AppVersionDownloadState;
   factory AppVersionState.appVersionInstalling({
     required APKVersionModel currentVersion,
@@ -63,11 +61,9 @@ final class AppVersionDownloadState extends AppVersionState {
   const AppVersionDownloadState({
     required this.currentVersion,
     required this.downloadableVersion,
-    required this.fileLoader,
   });
   final APKVersionModel currentVersion;
   final APKVersionModel downloadableVersion;
-  final FileLoader fileLoader;
 }
 
 final class AppVersionInstallingState extends AppVersionState {

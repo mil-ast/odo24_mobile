@@ -39,10 +39,11 @@ class ConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 20,
       children: [
         Text(message),
-        const SizedBox(height: 20),
         Row(
+          spacing: 20,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
@@ -51,7 +52,6 @@ class ConfirmationDialog extends StatelessWidget {
               },
               child: Text(btnNoText ?? 'Нет'),
             ),
-            const SizedBox(width: 20),
             FilledButton(
               onPressed: () {
                 Navigator.pop(context, true);

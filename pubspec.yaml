@@ -13,20 +13,19 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
-  sentry: ^8.7.0
-  sentry_dio: ^8.7.0
+  sentry: ^8.12.0
+  sentry_dio: ^8.12.0
   flutter_bloc: ^8.1.6
-  package_info_plus: ^8.0.2
-  dio: ^5.6.0
-  shared_preferences: ^2.3.2
-  flutter_svg: ^2.0.10+1
-  path_provider: ^2.1.4
+  package_info_plus: ^8.1.2
+  dio: ^5.7.0
+  shared_preferences: ^2.3.5
+  flutter_svg: ^2.0.16
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  analyzer: ^6.4.1
-  flutter_lints: ^4.0.0
+  analyzer: ^7.1.0
+  flutter_lints: ^5.0.0
 
 # The following section is specific to Flutter.
 flutter:
