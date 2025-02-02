@@ -17,7 +17,7 @@ class ServiceItemWidget extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(6)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 3,
             blurRadius: 5,
             offset: Offset.zero, // changes position of shadow
@@ -70,17 +70,22 @@ class ServiceItemWidget extends StatelessWidget {
                       child: service.price != null
                           ? Align(
                               alignment: Alignment.centerRight,
-                              child: Text(service.price!.currency(), style: const TextStyle(color: Colors.green)),
+                              child: Text(service.price!.currency(),
+                                  style: const TextStyle(color: Colors.green)),
                             )
                           : const SizedBox.shrink(),
                     ),
                   ],
                 ),
-                if (service.description != null && service.description!.isNotEmpty) ...[
+                if (service.description != null &&
+                    service.description!.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Text(
                     service.description!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.black54),
                   ),
                 ],
                 if (service.leftDistance != null) ...[
@@ -103,7 +108,9 @@ class ServiceItemWidget extends StatelessWidget {
                 return [
                   PopupMenuItem(
                     onTap: () {
-                      context.read<ServicesCubit>().openFormUpdateService(service);
+                      context
+                          .read<ServicesCubit>()
+                          .openFormUpdateService(service);
                     },
                     child: const Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -116,7 +123,9 @@ class ServiceItemWidget extends StatelessWidget {
                   ),
                   PopupMenuItem(
                     onTap: () {
-                      context.read<ServicesCubit>().onClickDeleteService(service);
+                      context
+                          .read<ServicesCubit>()
+                          .onClickDeleteService(service);
                     },
                     child: const Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
