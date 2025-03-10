@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/cars/widgets/new_version_information/bloc/new_version_information_cubit.dart';
+import 'package:odo24_mobile/features/profile/new_version_information/bloc/new_version_information_cubit.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 
 class NewVersionInformationWidget extends StatefulWidget {

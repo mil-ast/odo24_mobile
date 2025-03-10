@@ -10,7 +10,7 @@ import 'package:odo24_mobile/features/cars/widgets/create/car_create_dialog.dart
 import 'package:odo24_mobile/features/cars/widgets/create/car_create_form_widget.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit/car_edit_form_dialog.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit_miliage/edit_miliage_widget.dart';
-import 'package:odo24_mobile/features/cars/widgets/new_version_information/new_version_information_widget.dart';
+import 'package:odo24_mobile/features/profile/new_version_information/new_version_information_widget.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/profile/profile_screen.dart';
 import 'package:odo24_mobile/features/services/services_screen.dart';
@@ -160,6 +160,7 @@ class CarsScreen extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: state.cars.length,
                       itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
+                      padding: const EdgeInsets.only(bottom: 30),
                     ),
                   ),
                 ],

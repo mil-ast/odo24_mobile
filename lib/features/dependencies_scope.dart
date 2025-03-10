@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
@@ -9,6 +10,7 @@ import 'package:odo24_mobile/features/services/widgets/groups/data/groups_reposi
 
 final class Dependencies {
   final String siteURL;
+  final ThemePreferences themePreferences;
   final Dio httpClient;
   final MethodChannel methodChannel;
   final IAuthRepository authRepository;
@@ -18,6 +20,7 @@ final class Dependencies {
   final IServicesRepository servicesRepository;
 
   const Dependencies({
+    required this.themePreferences,
     required this.siteURL,
     required this.httpClient,
     required this.methodChannel,

@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
+import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/core/updater/data/updater_data_provider.dart';
 import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
@@ -68,6 +69,7 @@ void main() async {
       );
 
       final dependencies = Dependencies(
+        themePreferences: ThemePreferences(),
         siteURL: 'https://odo24.ru',
         httpClient: dio,
         methodChannel: const MethodChannel('odo24/channel'),
@@ -105,27 +107,48 @@ void main() async {
 }
 
 class Odo24App extends StatelessWidget {
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final navigatorKey = GlobalKey<NavigatorState>();
 
   const Odo24App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ODO24.mobile',
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      theme: ODO24Theme.lightTheme,
-      localizationsDelegates: const [
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ru', ''),
-      ],
-      locale: const Locale('ru', ''),
-      home: const SplashScreen(),
+    final themePreferences = DependenciesScope.of(context).themePreferences;
+
+    return FutureBuilder(
+      future: themePreferences.getTheme(),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.done) {
+          return ValueListenableBuilder(
+            valueListenable: themePreferences.brightness,
+            builder: (context, brightness, _) {
+              return MaterialApp(
+                title: 'ODO24.mobile',
+                navigatorKey: navigatorKey,
+                debugShowCheckedModeBanner: false,
+                theme: brightness == Brightness.dark ? ODO24Theme.darkTheme : ODO24Theme.lightTheme,
+                debugShowMaterialGrid: false,
+                localizationsDelegates: const [
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('ru', 'RU'),
+                ],
+                locale: const Locale('ru', 'RU'),
+                home: const SplashScreen(),
+              );
+            },
+          );
+        }
+
+        return const MaterialApp(
+          home: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
     );
   }
 }

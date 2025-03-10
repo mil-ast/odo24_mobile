@@ -20,34 +20,35 @@ class AppVersionInformationWidget extends StatelessWidget {
           final textTheme = Theme.of(context).textTheme;
 
           if (state is AppVersionIsActualState) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text('Установлена актуальная версия'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${state.currentVersion.versionName}+${state.currentVersion.versionCode}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    IconButton(
-                      onPressed: context.read<AppVersionInformationBloc>().checkVersion,
-                      icon: const Icon(Icons.refresh),
-                    ),
-                  ],
-                ),
-              ],
+            return ListTile(
+              title: Text('${state.currentVersion.versionName}+${state.currentVersion.versionCode}'),
+              subtitle: const Text('Установлена актуальная версия'),
+              trailing: IconButton(
+                onPressed: context.read<AppVersionInformationBloc>().checkVersion,
+                icon: const Icon(Icons.refresh),
+              ),
             );
           } else if (state is AppVersionIsAvailableNewState) {
-            return Column(
+            return ListTile(
+              leading: const Icon(Icons.system_update_outlined),
+              title: Text(
+                'Доступна новая версия ${state.availableVersion.versionName}',
+              ),
+              subtitle: const Text('Обновите через магазин приложений'),
+              trailing: const Icon(Icons.open_in_browser_outlined),
+              onTap: () async {
+                dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
+                  'url': dependencies.siteURL,
+                });
+              },
+            );
+            /* return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Stack(
                   children: [
-                    Text('Доступна новая версия'),
+                    Text('Доступна новая версия '),
                     Positioned(
                       top: 0,
                       right: 0,
@@ -89,7 +90,7 @@ class AppVersionInformationWidget extends StatelessWidget {
                   ),
                 ),
               ],
-            );
+            ); */
           }
 
           return const Center(

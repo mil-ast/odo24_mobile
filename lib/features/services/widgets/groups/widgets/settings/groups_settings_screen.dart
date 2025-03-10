@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
 
@@ -33,23 +34,26 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
             return ReorderableListView(
               header: const Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info,
-                          color: Color(0xffffc006),
-                          size: 36,
-                        ),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Text(
-                            'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
-                            style: TextStyle(color: Colors.black54),
+                  Card(
+                    color: ODO24Colors.actions,
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        spacing: 20,
+                        children: [
+                          Icon(
+                            Icons.info,
+                            color: ODO24Colors.inverseTextColor,
+                            size: 36,
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: Text(
+                              'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
+                              style: TextStyle(color: ODO24Colors.inverseTextColor),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

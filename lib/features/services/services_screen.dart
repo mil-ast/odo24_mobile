@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
@@ -254,16 +255,30 @@ class ServicesScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             if (index == 0) {
                               final factor = state.inform!.factor;
-                              return ListTile(
-                                tileColor: state.inform!.colorLevel.color,
-                                title: Row(
-                                  children: [
-                                    Text('Осталось ${state.inform!.leftDistance.format()} км'),
-                                    const Spacer(),
-                                    Text('${(factor * 100).round()}%'),
-                                  ],
+                              final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: ODO24Colors.inverseTextColor,
+                                  );
+                              return Card(
+                                color: state.inform!.colorLevel.color,
+                                child: ListTile(
+                                  title: Row(
+                                    children: [
+                                      Text(
+                                        'Осталось ${state.inform!.leftDistance.format()} км',
+                                        style: textStyle,
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        '${(factor * 100).round()}%',
+                                        style: textStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Text(
+                                    'До следующей замены',
+                                    style: textStyle,
+                                  ),
                                 ),
-                                subtitle: const Text('До следующей замены'),
                               );
                             }
                             return ServiceItemWidget(state.services[index - 1]);

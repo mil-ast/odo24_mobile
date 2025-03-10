@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
@@ -90,7 +91,10 @@ class CarCreateDialogState extends State<CarCreateDialog> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
+                      FilledButton(
+                        style: Theme.of(context).filledButtonTheme.style?.copyWith(
+                              backgroundColor: WidgetStateProperty.all(ODO24Colors.alarm),
+                            ),
                         onPressed: Navigator.of(context).pop,
                         child: const Text('Закрыть'),
                       ),

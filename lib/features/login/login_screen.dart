@@ -42,17 +42,20 @@ class LoginScreenState extends State<LoginScreen> {
                   if (state is LoginSuccessState) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const CarsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const CarsScreen()),
                     );
                   } else if (state is LoginGoToRegisterState) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterScreen()),
                     );
                   } else if (state is LoginGoToPasswordRecoveryState) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const PasswordRecoveryScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const PasswordRecoveryScreen()),
                     );
                   } else if (state is LoginErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +66,8 @@ class LoginScreenState extends State<LoginScreen> {
                     );
                   }
                 },
-                buildWhen: (previous, state) => state is LoginWaitingState || state is LoginReadyState,
+                buildWhen: (previous, state) =>
+                    state is LoginWaitingState || state is LoginReadyState,
                 builder: (BuildContext context, LoginState state) {
                   return Padding(
                     padding: const EdgeInsets.all(20),
@@ -79,6 +83,7 @@ class LoginScreenState extends State<LoginScreen> {
                         Form(
                           key: _formKey,
                           child: Column(
+                            spacing: 20,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               TextFormField(
@@ -94,7 +99,6 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 20),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   hintText: 'Пароль',
@@ -109,33 +113,33 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 20),
                               Wrap(
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 alignment: WrapAlignment.spaceBetween,
                                 children: [
                                   TextButton(
-                                    onPressed: context.read<LoginCubit>().onClickRegister,
+                                    onPressed: context
+                                        .read<LoginCubit>()
+                                        .onClickRegister,
                                     child: const Text('Регистрация'),
                                   ),
                                   TextButton(
-                                    onPressed: context.read<LoginCubit>().onClickPasswordRecovery,
+                                    onPressed: context
+                                        .read<LoginCubit>()
+                                        .onClickPasswordRecovery,
                                     child: const Wrap(
                                       children: [Text('Забыли пароль?')],
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 40),
                               Row(
                                 children: [
                                   Expanded(
                                     child: FilledButton(
                                       onPressed: state is LoginWaitingState
                                           ? null
-                                          : () {
-                                              _onLogin(context);
-                                            },
+                                          : () => _onLogin(context),
                                       child: const Text('Войти'),
                                     ),
                                   ),

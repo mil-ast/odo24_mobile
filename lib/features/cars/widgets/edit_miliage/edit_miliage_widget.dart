@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
@@ -33,10 +34,10 @@ class EditMiliageWidget extends StatelessWidget {
             child: Form(
               key: _formKey,
               child: Column(
+                spacing: 20,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(car.name, style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _odoController,
                     keyboardType: TextInputType.number,
@@ -60,29 +61,33 @@ class EditMiliageWidget extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 30),
                   Wrap(
                     spacing: 20,
                     children: [10, 50, 100, 200, 500, 1000]
-                        .map((v) => OutlinedButton(
-                              onPressed: () {
-                                _addMiliage(v);
-                              },
-                              child: Text('+$vкм'),
-                            ))
+                        .map(
+                          (v) => OutlinedButton(
+                            onPressed: () {
+                              _addMiliage(v);
+                            },
+                            child: Text('+$vкм'),
+                          ),
+                        )
                         .toList(),
                   ),
-                  const SizedBox(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
+                      FilledButton(
+                        style: Theme.of(context).filledButtonTheme.style?.copyWith(
+                              backgroundColor: WidgetStateProperty.all(ODO24Colors.alarm),
+                            ),
                         onPressed: Navigator.of(context).pop,
                         child: const Text('Закрыть'),
                       ),
                       const SizedBox(width: 20),
-                      FilledButton(
-                        child: const Text('Сохранить'),
+                      FilledButton.icon(
+                        icon: const Icon(Icons.save_outlined),
+                        label: const Text('Сохранить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {
                             ScaffoldMessenger.of(context).showSnackBar(

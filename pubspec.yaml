@@ -1,6 +1,6 @@
 name: odo24_mobile
 description: ODO24 Mobile
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 2.8.0+16
 

@@ -1,0 +1,2 @@
+/home/pavel/Repos/github.com/mil-ast/odo24_mobile/android/app/.cxx/Debug/5w6f5z4f/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/pavel/Repos/github.com/mil-ast/odo24_mobile/android/app/.cxx/Debug/5w6f5z4f/armeabi-v7a/CMakeFiles/rebuild_cache.dir

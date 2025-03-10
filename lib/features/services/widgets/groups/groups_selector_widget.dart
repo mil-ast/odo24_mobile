@@ -10,17 +10,50 @@ class GroupsSelectorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      height: 80,
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, top: 20, bottom: 10),
       child: Row(
         children: [
-          const SizedBox(width: 20),
           Expanded(
-            child: DecoratedBox(
+            child: DropdownButtonFormField<GroupModel>(
+              focusColor: theme.dropdownMenuTheme.inputDecorationTheme?.fillColor,
+              dropdownColor: theme.dropdownMenuTheme.inputDecorationTheme?.fillColor,
+              iconEnabledColor: theme.colorScheme.primary,
+              style: theme.dropdownMenuTheme.textStyle,
+              decoration: InputDecoration(
+                fillColor: theme.dropdownMenuTheme.inputDecorationTheme?.fillColor,
+                enabledBorder: theme.dropdownMenuTheme.inputDecorationTheme?.border,
+                focusedBorder: theme.dropdownMenuTheme.inputDecorationTheme?.border,
+              ),
+              value: selected,
+              isExpanded: true,
+              items: groups.map((GroupModel group) {
+                return DropdownMenuItem<GroupModel>(
+                  key: ValueKey(group.groupID),
+                  value: group,
+                  child: Text(
+                    group.name,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              onChanged: BlocProvider.of<GroupsCubit>(context).onChangeGroup,
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Icon(
+                  Icons.arrow_drop_down_outlined,
+                  size: 24,
+                  color: theme.dropdownMenuTheme.textStyle?.color,
+                ),
+              ),
+              //iconEnabledColor: theme.colorScheme.inversePrimary,
+              //underline: const SizedBox.shrink(), //remove underline
+            ),
+            /* child: DecoratedBox(
               decoration: BoxDecoration(
-                color: const Color(0xfff9f9f9),
-                borderRadius: BorderRadius.circular(20),
+                color: theme.colorScheme.tertiary,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
@@ -38,29 +71,28 @@ class GroupsSelectorWidget extends StatelessWidget {
                     );
                   }).toList(),
                   onChanged: BlocProvider.of<GroupsCubit>(context).onChangeGroup,
-                  icon: const Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: Icon(Icons.arrow_drop_down_outlined, color: Colors.black87),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Icon(
+                      Icons.arrow_drop_down_outlined,
+                      color: theme.colorScheme.inversePrimary,
+                    ),
                   ),
-                  iconEnabledColor: Colors.black87,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                  ),
+                  iconEnabledColor: theme.colorScheme.inversePrimary,
                   underline: const SizedBox.shrink(), //remove underline
                 ),
               ),
-            ),
+            ), */
           ),
-          const SizedBox(width: 20),
           SizedBox(
-            width: 40,
-            child: IconButton(
-              onPressed: context.read<GroupsCubit>().onClickOpenGroupsSettingsScreen,
-              icon: const Icon(Icons.settings),
+            width: 60,
+            child: Center(
+              child: IconButton(
+                onPressed: context.read<GroupsCubit>().onClickOpenGroupsSettingsScreen,
+                icon: const Icon(Icons.settings),
+              ),
             ),
           ),
-          const SizedBox(width: 20),
         ],
       ),
     );
