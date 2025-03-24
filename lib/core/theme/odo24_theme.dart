@@ -106,7 +106,7 @@ abstract class ODO24Theme {
         floatingLabelStyle: TextStyle(color: ODO24Colors.inverseTextColor),
         labelStyle: TextStyle(color: ODO24Colors.inverseTextColor),
         hintStyle: TextStyle(color: ODO24Colors.inverseTextColor),
-        helperStyle: TextStyle(color: ODO24LightThemeColors.tertiary),
+        helperStyle: TextStyle(color: ODO24LightThemeColors.primary),
         prefixStyle: TextStyle(color: ODO24LightThemeColors.tertiary),
         alignLabelWithHint: true,
         counterStyle: TextStyle(color: ODO24LightThemeColors.primary),
@@ -230,7 +230,7 @@ abstract class ODO24Theme {
         style: ButtonStyle(
           iconSize: const WidgetStatePropertyAll(24),
           backgroundColor: const WidgetStatePropertyAll(ODO24DarkThemeColors.tertiary),
-          foregroundColor: const WidgetStatePropertyAll(ODO24Colors.inverseTextColor),
+          foregroundColor: const WidgetStatePropertyAll(Colors.white),
           overlayColor: WidgetStatePropertyAll(ODO24DarkThemeColors.primary.withValues(alpha: 200)),
         ),
       ),
@@ -277,10 +277,6 @@ abstract class ODO24Theme {
         ),
       ),
       dropdownMenuTheme: const DropdownMenuThemeData(
-        menuStyle: MenuStyle(
-            //shadowColor: WidgetStatePropertyAll(Colors.amber),
-            //backgroundColor: WidgetStatePropertyAll(Colors.amber),
-            ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: ODO24DarkThemeColors.secondary,

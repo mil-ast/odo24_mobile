@@ -20,6 +20,14 @@ final class RegisterScreenState extends State<RegisterScreen> {
   final _passwordConfirmController = TextEditingController();
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = DependenciesScope.of(context).authRepository;
 
@@ -80,6 +88,7 @@ final class RegisterScreenState extends State<RegisterScreen> {
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.disabled,
                 child: Column(
+                  spacing: 20,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 40),
@@ -87,7 +96,6 @@ final class RegisterScreenState extends State<RegisterScreen> {
                       'Регистрация',
                       style: TextStyle(fontSize: 26),
                     ),
-                    const SizedBox(height: 20),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -139,7 +147,6 @@ final class RegisterScreenState extends State<RegisterScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 40),
                     FilledButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) {

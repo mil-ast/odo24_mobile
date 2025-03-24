@@ -21,8 +21,8 @@ import 'package:odo24_mobile/features/services/data/services_repository.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/groups_data_provider.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/splash/splash_screen.dart';
-import 'package:sentry/sentry_io.dart';
-import 'package:sentry_dio/sentry_dio.dart';
+//import 'package:sentry/sentry_io.dart';
+//import 'package:sentry_dio/sentry_dio.dart';
 
 class InitializationScreen extends StatelessWidget {
   const InitializationScreen({super.key});
@@ -40,10 +40,6 @@ class InitializationScreen extends StatelessWidget {
 }
 
 void main() async {
-  await Sentry.init((options) {
-    options.dsn = 'https://1535d3545bdf3ee95fcdcc1305dcac3d@o4506994624888832.ingest.us.sentry.io/4506994630524929';
-    options.tracesSampleRate = 1.0;
-  });
   runZonedGuarded(
     () {
       Intl.defaultLocale = 'ru_RU';
@@ -56,12 +52,10 @@ void main() async {
         authRepository: authRepository,
         allowBadCertificate: kDebugMode,
       );
-      dio.addSentry();
 
       final dioWithoutAuth = HttpAPI.newDioWithoutAuth(
         allowBadCertificate: kDebugMode,
       );
-      dioWithoutAuth.addSentry();
 
       authDataProvider.setHttpClients(
         dioWithoutAuth: dioWithoutAuth,
@@ -97,10 +91,7 @@ void main() async {
       if (kDebugMode) {
         print('Err: $error\r\n$stack');
       } else {
-        await Sentry.captureException(
-          error,
-          stackTrace: stack,
-        );
+        ///Sentry
       }
     },
   );
