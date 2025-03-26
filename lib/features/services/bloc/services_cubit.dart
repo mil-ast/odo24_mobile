@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
@@ -8,7 +9,6 @@ import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 import 'package:odo24_mobile/features/services/data/models/service_update_request_model.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
-import 'package:sentry/sentry_io.dart';
 
 class ServicesCubit extends Cubit<ServicesState> {
   static const _maxMilleageForAutoUpdateODO = 10000;
@@ -131,7 +131,10 @@ class ServicesCubit extends Cubit<ServicesState> {
           emit(ServicesState.onCarODOAutoUpdate(body.odo!));
           _selectedCar = _selectedCar.copyWith(newOdo: body.odo!);
         } catch (e) {
-          Sentry.captureException(e, stackTrace: StackTrace.current).ignore();
+          if (kDebugMode) {
+            print(e);
+          }
+          //Sentry.captureException(e, stackTrace: StackTrace.current).ignore();
         }
       }
 

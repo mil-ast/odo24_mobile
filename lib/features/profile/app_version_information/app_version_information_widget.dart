@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
@@ -17,8 +16,6 @@ class AppVersionInformationWidget extends StatelessWidget {
       )..checkVersion(),
       child: BlocBuilder<AppVersionInformationBloc, AppVersionState>(
         builder: (context, state) {
-          final textTheme = Theme.of(context).textTheme;
-
           if (state is AppVersionIsActualState) {
             return ListTile(
               title: Text('${state.currentVersion.versionName}+${state.currentVersion.versionCode}'),
@@ -42,55 +39,6 @@ class AppVersionInformationWidget extends StatelessWidget {
                 });
               },
             );
-            /* return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Stack(
-                  children: [
-                    Text('Доступна новая версия '),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Icon(
-                        Icons.circle,
-                        size: 16,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${state.availableVersion.versionName}+${state.availableVersion.versionCode}',
-                      style: textTheme.headlineMedium,
-                    ),
-                  ],
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Обновите через магазин приложений или на сайте ',
-                        style: textTheme.bodyMedium,
-                      ),
-                      TextSpan(
-                        text: dependencies.siteURL,
-                        style: textTheme.bodyMedium?.copyWith(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
-                              'url': dependencies.siteURL,
-                            });
-                          },
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ); */
           }
 
           return const Center(
