@@ -2,19 +2,18 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:odo24_mobile/core/configs/configs.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/data/models/auth_token.dart';
 
 class HttpAPI {
-  static const String baseURLHost = 'https://backend.1427507-cd27842.tw1.ru'; // https://backend.1427507-cd27842.tw1.ru
-  static const String staticBaseURLHost = 'https://odo24.ru';
   static bool _isRefresh = false;
 
-  static String getBaseURLHost() {
+  static String get baseHost {
     if (kIsWeb && kReleaseMode) {
       return '';
     }
-    return baseURLHost;
+    return Configs.baseHost;
   }
 
   static Dio newDio({
@@ -28,14 +27,15 @@ class HttpAPI {
     String? baseURL,
   }) {
     final options = BaseOptions(
-      baseUrl: !kIsWeb ? (baseURL ?? baseURLHost) : '',
+      baseUrl: baseHost,
       contentType: 'application/json',
       validateStatus: (status) => status != null,
-    );
-    options.receiveTimeout = receiveTimeout;
-    options.connectTimeout = connectTimeout;
-    options.sendTimeout = sendTimeout;
-    options.validateStatus = (status) => status != null;
+    )
+      ..receiveTimeout = receiveTimeout
+      ..connectTimeout = connectTimeout
+      ..sendTimeout = sendTimeout;
+    //..validateStatus = (status) => status != null;
+
     final dio = Dio(options);
 
     if (allowBadCertificate == true) {
@@ -78,7 +78,7 @@ class HttpAPI {
 
                 final dio = Dio(
                   BaseOptions(
-                    baseUrl: getBaseURLHost(),
+                    baseUrl: baseHost,
                     headers: {
                       'Authorization': 'Bearer ${authData.accessToken}',
                     },
@@ -150,7 +150,7 @@ class HttpAPI {
     String? baseURL,
   }) {
     final options = BaseOptions(
-      baseUrl: !kIsWeb ? (baseURL ?? baseURLHost) : '',
+      baseUrl: baseHost,
       contentType: 'application/json',
       validateStatus: (status) => true,
     );

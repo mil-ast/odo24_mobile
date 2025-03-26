@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:odo24_mobile/core/configs/configs.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/data/models/auth_result_model.dart';
@@ -72,7 +73,7 @@ class AuthDataProvider implements IAuthDataProvider {
   Future<void> refreshToken(AuthData currentAuthData) async {
     final dio = Dio(
       BaseOptions(
-        baseUrl: HttpAPI.getBaseURLHost(),
+        baseUrl: Configs.baseHost,
         headers: {
           'Authorization': 'Bearer ${currentAuthData.accessToken}',
         },

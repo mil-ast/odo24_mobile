@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:odo24_mobile/core/configs/configs.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
 import 'package:odo24_mobile/core/theme/theme_preferences.dart';
@@ -64,12 +65,18 @@ void main() async {
 
       final dependencies = Dependencies(
         themePreferences: ThemePreferences(),
-        siteURL: 'https://odo24.ru',
+        siteURL: Configs.siteURL,
         httpClient: dio,
         methodChannel: const MethodChannel('odo24/channel'),
         authRepository: authRepository,
         updaterRepository: UpdaterRepository(
-          updaterDataProvider: UpdaterDataProvider(httpClient: Dio(BaseOptions(baseUrl: HttpAPI.staticBaseURLHost))),
+          updaterDataProvider: UpdaterDataProvider(
+            httpClient: Dio(
+              BaseOptions(
+                baseUrl: Configs.baseHost,
+              ),
+            ),
+          ),
         ),
         carsRepository: CarsRepository(
           carsDataProvider: CarsDataProvider(httpClient: dio),
