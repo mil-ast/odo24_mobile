@@ -33,8 +33,8 @@ class HttpAPI {
     )
       ..receiveTimeout = receiveTimeout
       ..connectTimeout = connectTimeout
-      ..sendTimeout = sendTimeout;
-    //..validateStatus = (status) => status != null;
+      ..sendTimeout = sendTimeout
+      ..validateStatus = (status) => status != null;
 
     final dio = Dio(options);
 
