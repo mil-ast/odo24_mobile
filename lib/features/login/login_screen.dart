@@ -65,13 +65,16 @@ class LoginScreenState extends State<LoginScreen> {
                 },
                 buildWhen: (previous, state) => state is LoginWaitingState || state is LoginReadyState,
                 builder: (BuildContext context, LoginState state) {
+                  final themePreferences = DependenciesScope.of(context).themePreferences;
                   return Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
                         Center(
                           child: SvgPicture.asset(
-                            'assets/logo.svg',
+                            themePreferences.brightness.value == Brightness.dark
+                                ? 'assets/logo.svg'
+                                : 'assets/logo_dark.svg',
                             width: 80,
                             height: 80,
                           ),

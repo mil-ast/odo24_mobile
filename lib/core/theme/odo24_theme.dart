@@ -254,7 +254,7 @@ abstract class ODO24Theme {
         filled: true,
         floatingLabelStyle: TextStyle(color: ODO24Colors.inverseTextColor),
         labelStyle: TextStyle(color: ODO24Colors.inverseTextColor),
-        hintStyle: TextStyle(color: ODO24Colors.inverseTextColor),
+        hintStyle: TextStyle(color: ODO24DarkThemeColors.tertiary),
         helperStyle: TextStyle(color: ODO24DarkThemeColors.tertiary),
         prefixStyle: TextStyle(color: ODO24DarkThemeColors.tertiary),
         alignLabelWithHint: true,
@@ -263,7 +263,7 @@ abstract class ODO24Theme {
         focusColor: ODO24DarkThemeColors.primary,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Color.fromARGB(255, 14, 15, 20),
+            color: Color(0xFF0E0F14),
             width: 1,
           ),
           borderRadius: BorderRadius.all(Radius.circular(4.0)),

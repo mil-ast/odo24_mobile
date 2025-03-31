@@ -16,7 +16,7 @@ abstract class ODO24LightThemeColors {
 }
 
 abstract class ODO24DarkThemeColors {
-  static const primary = Color(0xff222531);
+  static const primary = Color(0xFF222531);
   static const secondary = Color(0xff323645);
   static const tertiary = Color(0xFF787f9a);
   static const link = Color(0xFF109BD6);
