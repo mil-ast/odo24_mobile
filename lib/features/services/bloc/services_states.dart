@@ -6,6 +6,10 @@ class NextODOInformation {
   final int leftDistance;
   final NextODOInformationColorLevel colorLevel;
   const NextODOInformation(this.leftDistance, this.factor, this.colorLevel);
+
+  String toStringLeftDistancePercent() {
+    return '${(factor * 100).round()}%';
+  }
 }
 
 sealed class ServicesState {

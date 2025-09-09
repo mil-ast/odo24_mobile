@@ -21,6 +21,7 @@ class ServiceItemWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
+                spacing: 6,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -56,21 +57,11 @@ class ServiceItemWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (service.description != null && service.description!.isNotEmpty) ...[
-                    const SizedBox(height: 6),
+                  if (service.description != null && service.description!.isNotEmpty)
                     Text(
                       service.description!,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54),
                     ),
-                  ],
-                  if (service.leftDistance != null) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      'Пройдено ${service.leftDistance!.format()} км',
-                      textScaler: const TextScaler.linear(0.9),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -113,6 +104,30 @@ class ServiceItemWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ServiceItemSeparatorWidget extends StatelessWidget {
+  final int? leftDistance;
+  const ServiceItemSeparatorWidget({required this.leftDistance, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (leftDistance == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, bottom: 10),
+      child: Row(
+        children: [
+          Text(
+            'Пройдено ${leftDistance!.format()} км',
+            textScaler: const TextScaler.linear(0.9),
+            style: Theme.of(context).textTheme.bodyMedium,
+          )
+        ],
       ),
     );
   }

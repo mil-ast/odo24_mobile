@@ -54,7 +54,7 @@ abstract class ODO24Theme {
         shadowColor: const Color.fromARGB(255, 250, 250, 250),
         margin: const EdgeInsets.all(12),
         surfaceTintColor: ODO24LightThemeColors.secondary,
-        elevation: 8,
+        elevation: 6,
         shape: RoundedRectangleBorder(
           side: const BorderSide(
             color: Color.fromARGB(255, 231, 231, 231),
@@ -63,7 +63,7 @@ abstract class ODO24Theme {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
         labelStyle: const TextStyle(color: Colors.white),
         labelColor: Colors.white,
         dividerColor: Colors.white,
@@ -206,7 +206,7 @@ abstract class ODO24Theme {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
         labelStyle: const TextStyle(color: Colors.white),
         labelColor: Colors.white,
         dividerColor: Colors.white,

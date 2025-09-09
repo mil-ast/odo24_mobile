@@ -7,6 +7,8 @@ import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
 import 'package:odo24_mobile/features/services/bloc/services_states.dart';
+import 'package:odo24_mobile/features/services/data/models/service_model.dart';
+import 'package:odo24_mobile/features/services/widgets/empty_services_widget.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/groups_selector_widget.dart';
@@ -229,70 +231,14 @@ class ServicesScreen extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       );
                     } else if (state is ServicesShowListState) {
-                      if (state.services.isEmpty) {
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  const Text('Записей ещё нет'),
-                                  const SizedBox(height: 20),
-                                  TextButton.icon(
-                                    onPressed: context.read<ServicesCubit>().openFormCreateService,
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Добавить первую запись'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                      if (state.services.isNotEmpty) {
+                        return ListServicesWidget(
+                          inform: state.inform,
+                          services: state.services,
                         );
                       }
-                      if (state.inform != null) {
-                        return ListView.builder(
-                          itemCount: state.services.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              final factor = state.inform!.factor;
-                              final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: ODO24Colors.inverseTextColor,
-                                  );
-                              return Card(
-                                color: state.inform!.colorLevel.color,
-                                child: ListTile(
-                                  title: Row(
-                                    children: [
-                                      Text(
-                                        'Осталось ${state.inform!.leftDistance.format()} км',
-                                        style: textStyle,
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        '${(factor * 100).round()}%',
-                                        style: textStyle,
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Text(
-                                    'До следующей замены',
-                                    style: textStyle,
-                                  ),
-                                ),
-                              );
-                            }
-                            return ServiceItemWidget(state.services[index - 1]);
-                          },
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: state.services.length,
-                        itemBuilder: (context, index) {
-                          return ServiceItemWidget(state.services[index]);
-                        },
-                      );
                     }
-                    return const SizedBox.shrink();
+                    return const EmptyServicesWidget();
                   },
                 ),
               ),
@@ -300,6 +246,62 @@ class ServicesScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ListServicesWidget extends StatelessWidget {
+  final List<ServiceModel> services;
+  final NextODOInformation? inform;
+  const ListServicesWidget({
+    required this.services,
+    this.inform,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: ODO24Colors.inverseTextColor,
+        );
+    return Column(
+      children: [
+        if (inform != null)
+          ColoredBox(
+            color: inform!.colorLevel.color,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Text(
+                      'Осталось ${inform!.leftDistance.format()} км',
+                      style: textStyle,
+                    ),
+                    const Spacer(),
+                    Text(
+                      inform!.toStringLeftDistancePercent(),
+                      style: textStyle,
+                    ),
+                  ],
+                ),
+                subtitle: Text(
+                  'До следующей замены',
+                  style: textStyle,
+                ),
+              ),
+            ),
+          ),
+        Expanded(
+          child: ListView.separated(
+            itemCount: services.length,
+            itemBuilder: (context, index) => ServiceItemWidget(services[index]),
+            separatorBuilder: (BuildContext context, int index) => ServiceItemSeparatorWidget(
+              leftDistance: services[index].leftDistance,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

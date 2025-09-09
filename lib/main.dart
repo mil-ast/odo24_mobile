@@ -114,7 +114,7 @@ class Odo24App extends StatelessWidget {
     final themePreferences = DependenciesScope.of(context).themePreferences;
 
     return FutureBuilder(
-      future: themePreferences.getTheme(),
+      future: themePreferences.fetchBrightness(),
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.done) {
           return ValueListenableBuilder(
