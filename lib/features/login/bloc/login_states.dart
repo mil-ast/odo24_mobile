@@ -6,11 +6,18 @@ sealed class LoginState {
   factory LoginState.failure(String message) = LoginErrorState;
   factory LoginState.goToRegister() = LoginGoToRegisterState;
   factory LoginState.goToPasswordRecovery() = LoginGoToPasswordRecoveryState;
+
+  bool get isWaiting => this is LoginWaitingState;
+  bool get isReady => this is LoginReadyState;
 }
 
-class LoginReadyState extends LoginState {}
+class LoginReadyState extends LoginState {
+  const LoginReadyState();
+}
 
-class LoginWaitingState extends LoginState {}
+class LoginWaitingState extends LoginState {
+  const LoginWaitingState();
+}
 
 class LoginSuccessState extends LoginState {
   final String email;
@@ -22,6 +29,10 @@ class LoginErrorState extends LoginState {
   const LoginErrorState(this.message);
 }
 
-class LoginGoToRegisterState extends LoginState {}
+class LoginGoToRegisterState extends LoginState {
+  const LoginGoToRegisterState();
+}
 
-class LoginGoToPasswordRecoveryState extends LoginState {}
+class LoginGoToPasswordRecoveryState extends LoginState {
+  const LoginGoToPasswordRecoveryState();
+}

@@ -199,7 +199,7 @@ class _PasswordRecoveryStepperWidgetState extends State<PasswordRecoveryStepperW
       },
     );
 
-    final isOk = await context.read<PasswordRecoveryCubit>().recoverSendEmailCodeConfirmation(_emailController.text);
+    final isOk = await context.read<PasswordRecoveryCubit>().sendCodeConfirmation(_emailController.text);
     if (isOk) {
       setState(
         () {

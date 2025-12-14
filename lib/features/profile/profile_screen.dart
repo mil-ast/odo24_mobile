@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
-import 'package:odo24_mobile/features/profile/app_version_information/app_version_information_widget.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -20,7 +19,6 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          const AppVersionInformationWidget(),
           SwitchThemeWidget(
             themePreferences: dependencies.themePreferences,
           ),

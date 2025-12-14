@@ -10,7 +10,7 @@ class ThemePreferences {
   Future<void> setTheme(Brightness value) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setInt(_key, value.index);
-    _brightness.value = value;
+    //_brightness.value = value;
   }
 
   Future<Brightness> fetchBrightness() async {
@@ -19,7 +19,7 @@ class ThemePreferences {
 
     final value = Brightness.values.elementAt(indexBrightness);
     if (_brightness.value != value) {
-      _brightness.value = value;
+      //_brightness.value = value;
     }
     return value;
   }

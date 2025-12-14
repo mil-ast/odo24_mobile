@@ -48,6 +48,7 @@ android {
   defaultConfig {
     applicationId = "ru.odo24.mobile"
     minSdk = flutter.minSdkVersion
+    compileSdk = 36
     targetSdk = 35
     versionCode = flutter.versionCode
     versionName = flutter.versionName

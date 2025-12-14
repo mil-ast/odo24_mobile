@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +9,6 @@ import 'package:odo24_mobile/core/configs/configs.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
 import 'package:odo24_mobile/core/theme/theme_preferences.dart';
-import 'package:odo24_mobile/core/updater/data/updater_data_provider.dart';
-import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/cars_data_provider.dart';
@@ -22,6 +19,7 @@ import 'package:odo24_mobile/features/services/data/services_repository.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/groups_data_provider.dart';
 import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/splash/splash_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:sentry/sentry_io.dart';
 //import 'package:sentry_dio/sentry_dio.dart';
 
@@ -42,7 +40,9 @@ class InitializationScreen extends StatelessWidget {
 
 void main() async {
   runZonedGuarded(
-    () {
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
       Intl.defaultLocale = 'ru_RU';
 
       final authDataProvider = AuthDataProvider();
@@ -63,21 +63,15 @@ void main() async {
         dioWithAuth: dio,
       );
 
+      final sp = await SharedPreferences.getInstance();
+
       final dependencies = Dependencies(
         themePreferences: ThemePreferences(),
         siteURL: Configs.siteURL,
         httpClient: dio,
+        sharedPreferences: sp,
         methodChannel: const MethodChannel('odo24/channel'),
         authRepository: authRepository,
-        updaterRepository: UpdaterRepository(
-          updaterDataProvider: UpdaterDataProvider(
-            httpClient: Dio(
-              BaseOptions(
-                baseUrl: Configs.baseHost,
-              ),
-            ),
-          ),
-        ),
         carsRepository: CarsRepository(
           carsDataProvider: CarsDataProvider(httpClient: dio),
         ),
@@ -94,7 +88,7 @@ void main() async {
         child: const Odo24App(),
       ));
     },
-    (error, stack) async {
+    (error, stack) {
       if (kDebugMode) {
         print('Err: $error\r\n$stack');
       } else {

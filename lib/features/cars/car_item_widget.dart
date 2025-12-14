@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
+import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
@@ -11,12 +13,38 @@ class CarItemWidget extends StatelessWidget {
 
   const CarItemWidget({required this.car, super.key});
 
+  NextODOInformationColorLevel _accentColor(List<CarExtraDataModel> carExtraDataModel) {
+    NextODOInformationColorLevel warnLevel = NextODOInformationColorLevel.normal;
+
+    if (car.carExtraDataModel.isNotEmpty) {
+      for (final item in car.carExtraDataModel) {
+        final nextOdoInfo = item.calculateLeftODO(car.odo);
+        if (nextOdoInfo.colorLevel < warnLevel) {
+          warnLevel = nextOdoInfo.colorLevel;
+        }
+      }
+    }
+    return warnLevel;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final numberFmt = NumberFormat.decimalPattern();
 
     final titleTextTheme = theme.textTheme.bodyMedium;
+
+    final accentColor = _accentColor(car.carExtraDataModel);
+    //final titleColor = accentColor == NextODOInformationColorLevel.alarm ? Colors.white : theme.colorScheme.primary;
+
+    return AppCard(
+      title: AppCardTitle(
+        title: 'Test',
+        //titleColor: titleColor,
+        backgroundColor: accentColor.color,
+      ),
+      child: Text('Text'),
+    );
 
     return InkWell(
       onTap: () {

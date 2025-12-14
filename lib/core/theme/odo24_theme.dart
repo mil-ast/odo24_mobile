@@ -11,17 +11,19 @@ abstract class ODO24Theme {
         secondary: ODO24LightThemeColors.secondary,
         inversePrimary: Colors.white,
         tertiary: ODO24LightThemeColors.tertiary,
+        error: ODO24Colors.alarm,
       ),
       primaryColor: ODO24LightThemeColors.primary,
       secondaryHeaderColor: const Color(0xff2d3036),
-      scaffoldBackgroundColor: const Color(0xfff8f9fa),
+      scaffoldBackgroundColor: ODO24LightThemeColors.primary,
       textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.black87)),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(color: Colors.white),
         backgroundColor: ODO24LightThemeColors.primary,
         toolbarTextStyle: TextStyle(color: Colors.white),
         foregroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        centerTitle: true,
+        toolbarHeight: 80,
         actionsIconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -42,25 +44,27 @@ abstract class ODO24Theme {
           primary: ODO24LightThemeColors.primary,
         ),
       ),
-      textButtonTheme: const TextButtonThemeData(
+      /* textButtonTheme: const TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: WidgetStatePropertyAll(ODO24LightThemeColors.link),
-          textStyle: WidgetStatePropertyAll(TextStyle(color: ODO24LightThemeColors.link)),
-          iconColor: WidgetStatePropertyAll(ODO24LightThemeColors.link),
+          foregroundColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          textStyle: WidgetStatePropertyAll(TextStyle(color: ODO24LightThemeColors.active)),
+          iconColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          
         ),
-      ),
+      ), */
+
       cardTheme: CardThemeData(
         color: ODO24LightThemeColors.secondary,
-        shadowColor: const Color.fromARGB(255, 250, 250, 250),
+        shadowColor: Colors.transparent,
         margin: const EdgeInsets.all(12),
         surfaceTintColor: ODO24LightThemeColors.secondary,
-        elevation: 6,
+        elevation: 10,
         shape: RoundedRectangleBorder(
           side: const BorderSide(
-            color: Color.fromARGB(255, 231, 231, 231),
+            color: Color(0xFFE7E7E7),
             width: 1,
           ),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       tabBarTheme: TabBarThemeData(
@@ -76,6 +80,17 @@ abstract class ODO24Theme {
       ),
       popupMenuTheme: const PopupMenuThemeData(
         color: Colors.white,
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color.fromARGB(255, 255, 106, 69),
+          disabledIconColor: const Color.fromARGB(255, 201, 201, 201),
+          disabledBackgroundColor: const Color.fromARGB(255, 131, 100, 92),
+          textStyle: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       outlinedButtonTheme: const OutlinedButtonThemeData(
         style: ButtonStyle(
@@ -93,11 +108,11 @@ abstract class ODO24Theme {
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
-        style: ButtonStyle(
-          iconSize: const WidgetStatePropertyAll(24),
-          backgroundColor: const WidgetStatePropertyAll(ODO24LightThemeColors.tertiary),
-          foregroundColor: const WidgetStatePropertyAll(ODO24Colors.inverseTextColor),
-          overlayColor: WidgetStatePropertyAll(ODO24LightThemeColors.primary.withValues(alpha: 200)),
+        style: TextButton.styleFrom(
+          backgroundColor: ODO24LightThemeColors.active,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color.fromARGB(255, 131, 100, 92),
+          iconSize: 24,
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -112,6 +127,15 @@ abstract class ODO24Theme {
         counterStyle: TextStyle(color: ODO24LightThemeColors.primary),
         suffixStyle: TextStyle(color: ODO24LightThemeColors.primary),
         focusColor: ODO24LightThemeColors.primary,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+        isDense: false,
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Color.fromARGB(255, 192, 192, 192),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Color(0xFF858585),
@@ -122,6 +146,13 @@ abstract class ODO24Theme {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Color.fromARGB(255, 192, 192, 192),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Color.fromARGB(255, 248, 96, 96),
             width: 1,
           ),
           borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -229,18 +260,18 @@ abstract class ODO24Theme {
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           iconSize: const WidgetStatePropertyAll(24),
-          backgroundColor: const WidgetStatePropertyAll(ODO24DarkThemeColors.tertiary),
-          foregroundColor: const WidgetStatePropertyAll(Colors.white),
+          backgroundColor: const WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          foregroundColor: const WidgetStatePropertyAll(ODO24LightThemeColors.active),
           overlayColor: WidgetStatePropertyAll(ODO24DarkThemeColors.primary.withValues(alpha: 200)),
         ),
       ),
       outlinedButtonTheme: const OutlinedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(ODO24DarkThemeColors.primary),
-          foregroundColor: WidgetStatePropertyAll(Colors.white),
-          overlayColor: WidgetStatePropertyAll(ODO24DarkThemeColors.secondary),
-          shadowColor: WidgetStatePropertyAll(ODO24DarkThemeColors.secondary),
-          surfaceTintColor: WidgetStatePropertyAll(ODO24DarkThemeColors.secondary),
+          backgroundColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          foregroundColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          overlayColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          shadowColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
+          surfaceTintColor: WidgetStatePropertyAll(ODO24LightThemeColors.active),
           side: WidgetStatePropertyAll(
             BorderSide(
               color: ODO24DarkThemeColors.tertiary,

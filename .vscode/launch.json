@@ -11,7 +11,10 @@
       "flutterMode": "debug",
       "toolArgs": [
         //"--dart-define=SENTRY_DSN=",
-      ]
+      ],
+      "args": [
+        //"--no-enable-impeller"
+      ],
     },
     {
       "name": "odo24_mobile (profile mode)",
