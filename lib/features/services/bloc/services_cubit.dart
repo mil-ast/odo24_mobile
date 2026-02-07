@@ -22,10 +22,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     required CarModel selectedCar,
     required IServicesRepository servicesRepository,
     required ICarsRepository carsRepository,
-  })  : _servicesRepository = servicesRepository,
-        _carsRepository = carsRepository,
-        _selectedCar = selectedCar,
-        super(ServicesState.ready());
+  }) : _servicesRepository = servicesRepository,
+       _carsRepository = carsRepository,
+       _selectedCar = selectedCar,
+       super(ServicesState.ready());
 
   Future<void> onChangeSelectedGroup(GroupModel selectedGroup) async {
     try {

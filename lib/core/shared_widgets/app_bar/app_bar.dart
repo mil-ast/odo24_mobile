@@ -5,22 +5,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
 
-  const CustomAppBar({
-    super.key,
-    required this.automaticallyImplyLeading,
-    required this.title,
-    this.actions,
-  });
+  const CustomAppBar({super.key, required this.automaticallyImplyLeading, required this.title, this.actions});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
       automaticallyImplyLeading: automaticallyImplyLeading,
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
-      ),
+      title: Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
       actions: actions,
     );
   }

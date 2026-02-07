@@ -19,9 +19,7 @@ abstract interface class IAuthRepository {
 class AuthRepository implements IAuthRepository {
   final IAuthDataProvider _authDataProvider;
 
-  AuthRepository({
-    required IAuthDataProvider authDataProvider,
-  }) : _authDataProvider = authDataProvider;
+  AuthRepository({required IAuthDataProvider authDataProvider}) : _authDataProvider = authDataProvider;
 
   @override
   Future<bool> get isAuth async {

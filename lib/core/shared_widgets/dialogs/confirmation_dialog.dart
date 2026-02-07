@@ -13,13 +13,7 @@ Future<bool?> showConfirmationDialog(
       insetPadding: const EdgeInsets.all(20),
       contentPadding: const EdgeInsets.all(20),
       title: Text(title),
-      children: [
-        ConfirmationDialog(
-          message: message,
-          btnOkText: btnOkText,
-          btnNoText: btnNoText,
-        ),
-      ],
+      children: [ConfirmationDialog(message: message, btnOkText: btnOkText, btnNoText: btnNoText)],
     ),
   );
 }
@@ -29,12 +23,7 @@ class ConfirmationDialog extends StatelessWidget {
   final String? btnOkText;
   final String? btnNoText;
 
-  const ConfirmationDialog({
-    super.key,
-    required this.message,
-    this.btnOkText,
-    this.btnNoText,
-  });
+  const ConfirmationDialog({super.key, required this.message, this.btnOkText, this.btnNoText});
 
   @override
   Widget build(BuildContext context) {

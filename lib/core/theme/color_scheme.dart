@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class ODO24Colors {
-  static const actions = Color(0xFFfdde67);
+  static const actions = Color.fromARGB(255, 255, 237, 164);
   static const success = Color(0xFF88d8a7);
   static const warning = Color.fromARGB(255, 243, 165, 49);
   static const alarm = Color.fromARGB(255, 243, 97, 61);

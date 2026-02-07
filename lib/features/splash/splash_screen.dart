@@ -13,13 +13,11 @@ class SplashScreen extends StatelessWidget {
       future: authRepository.isAuth,
       builder: (context, snap) {
         if (!snap.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snap.data == true) {
-          return const CarsScreen();
+          return CarsScreen.carsScreenScope();
         }
         return const LoginScreen();
       },

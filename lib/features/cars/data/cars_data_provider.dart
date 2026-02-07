@@ -15,9 +15,7 @@ abstract interface class ICarsDataProvider {
 class CarsDataProvider implements ICarsDataProvider {
   final Dio _httpClient;
 
-  CarsDataProvider({
-    required Dio httpClient,
-  }) : _httpClient = httpClient;
+  CarsDataProvider({required Dio httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<CarModel>> getMyCars() async {
@@ -46,9 +44,7 @@ class CarsDataProvider implements ICarsDataProvider {
 
   @override
   Future<void> updateODO(int carID, int odo) async {
-    await _httpClient.put('/api/cars/$carID/update_odo', data: {
-      'odo': odo,
-    });
+    await _httpClient.put('/api/cars/$carID/update_odo', data: {'odo': odo});
   }
 
   @override

@@ -34,18 +34,12 @@ class ServiceItemWidget extends StatelessWidget {
                                 spacing: 6,
                                 children: [
                                   const Icon(Icons.speed_outlined),
-                                  Text(
-                                    '${(service.odo ?? 0).format()} км',
-                                    style: theme.textTheme.titleSmall,
-                                  ),
+                                  Text('${(service.odo ?? 0).format()} км', style: theme.textTheme.titleSmall),
                                 ],
                               )
                             : const SizedBox.shrink(),
                       ),
-                      Expanded(
-                        flex: 7,
-                        child: Text(service.dt.yMMMMd()),
-                      ),
+                      Expanded(flex: 7, child: Text(service.dt.yMMMMd())),
                       Expanded(
                         flex: 3,
                         child: service.price != null
@@ -79,10 +73,7 @@ class ServiceItemWidget extends StatelessWidget {
                       child: const Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
-                        children: [
-                          Icon(Icons.edit),
-                          Text('Изменить'),
-                        ],
+                        children: [Icon(Icons.edit), Text('Изменить')],
                       ),
                     ),
                     PopupMenuItem(
@@ -126,7 +117,7 @@ class ServiceItemSeparatorWidget extends StatelessWidget {
             'Пройдено ${leftDistance!.format()} км',
             textScaler: const TextScaler.linear(0.9),
             style: Theme.of(context).textTheme.bodyMedium,
-          )
+          ),
         ],
       ),
     );

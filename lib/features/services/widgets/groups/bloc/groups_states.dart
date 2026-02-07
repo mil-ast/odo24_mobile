@@ -1,11 +1,6 @@
 import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
 
-enum GroupAction {
-  openSettings,
-  create,
-  update,
-  delete,
-}
+enum GroupAction { openSettings, create, update, delete }
 
 sealed class GroupsState {
   final bool needBuild;
@@ -41,9 +36,7 @@ class OnChangeSelectedGroupState extends GroupsState {
 
 class CarsErrorState extends GroupsState {
   final String message;
-  CarsErrorState(Object err)
-      : message = err.toString(),
-        super(false);
+  CarsErrorState(Object err) : message = err.toString(), super(false);
 }
 
 class GroupsCreateSuccessState extends GroupsState {

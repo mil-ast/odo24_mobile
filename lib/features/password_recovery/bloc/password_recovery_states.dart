@@ -10,7 +10,6 @@ sealed class PasswordRecoveryState {
       PasswordRecoveryFormCodeSentSuccessfullyState;
 
   const factory PasswordRecoveryState.successfully() = PasswordRecoveryFormSuccessfullState;
-  
 
   const factory PasswordRecoveryState.failure(AppException error) = PasswordRecoveryFailureState;
 
@@ -29,10 +28,7 @@ final class PasswordRecoveryReadyState extends PasswordRecoveryState {
 final class PasswordRecoveryFormCodeSentSuccessfullyState extends PasswordRecoveryState {
   final String email;
   final String password;
-  const PasswordRecoveryFormCodeSentSuccessfullyState({
-    required this.email,
-    required this.password,
-  });
+  const PasswordRecoveryFormCodeSentSuccessfullyState({required this.email, required this.password});
 }
 
 // восстановление пароля успешно

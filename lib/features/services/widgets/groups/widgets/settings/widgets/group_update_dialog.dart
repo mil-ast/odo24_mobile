@@ -16,9 +16,7 @@ class GroupUpdateWidget extends StatelessWidget {
     _nameController = TextEditingController.fromValue(TextEditingValue(text: group.name));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Изменить группу'),
-      ),
+      appBar: AppBar(title: const Text('Изменить группу')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: BlocListener<GroupsCubit, GroupsState>(
@@ -35,10 +33,7 @@ class GroupUpdateWidget extends StatelessWidget {
                   TextFormField(
                     controller: _nameController,
                     keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                      helperText: 'Название группы',
-                      icon: Icon(Icons.title),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Название группы', icon: Icon(Icons.title)),
                     validator: (String? name) {
                       if (name == null || name.length < 3) {
                         return 'Название слишком короткое';
@@ -52,20 +47,15 @@ class GroupUpdateWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: Navigator.of(context).pop,
-                        child: const Text('Закрыть'),
-                      ),
+                      TextButton(onPressed: Navigator.of(context).pop, child: const Text('Закрыть')),
                       const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Сохранить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Проверьте правильность заполнения формы'),
-                              ),
-                            );
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(const SnackBar(content: Text('Проверьте правильность заполнения формы')));
                             return;
                           }
 

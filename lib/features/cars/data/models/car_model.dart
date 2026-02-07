@@ -22,31 +22,29 @@ class CarModel implements Comparable<CarModel> {
     required this.carExtraDataModel,
   });
 
-  CarModel copyWith({
-    required int newOdo,
-  }) =>
-      CarModel(
-        carID: carID,
-        name: name,
-        odo: newOdo,
-        avatar: avatar,
-        servicesTotal: servicesTotal,
-        carExtraDataModel: carExtraDataModel,
-      );
+  CarModel copyWith({required int newOdo}) => CarModel(
+    carID: carID,
+    name: name,
+    odo: newOdo,
+    avatar: avatar,
+    servicesTotal: servicesTotal,
+    carExtraDataModel: carExtraDataModel,
+  );
 
   factory CarModel.fromJson(Map<String, dynamic> json) => CarModel(
-        carID: json['car_id'] as int,
-        name: json['name'] as String,
-        odo: json['odo'] as int,
-        avatar: json['avatar'] as bool,
-        servicesTotal: json['services_total'] as int,
-        carExtraDataModel: json['car_ext_data'] == null
-            ? []
-            : cutCarExtDataList((json['car_ext_data'] as List<dynamic>).cast<Map<String, dynamic>>())
-                .map((e) => CarExtraDataModel.fromJson(e))
-                .toList()
+    carID: json['car_id'] as int,
+    name: json['name'] as String,
+    odo: json['odo'] as int,
+    avatar: json['avatar'] as bool,
+    servicesTotal: json['services_total'] as int,
+    carExtraDataModel:
+        json['car_ext_data'] == null
+              ? []
+              : cutCarExtDataList(
+                  (json['car_ext_data'] as List<dynamic>).cast<Map<String, dynamic>>(),
+                ).map((e) => CarExtraDataModel.fromJson(e)).toList()
           ..sort(),
-      );
+  );
 
   static List<Map<String, dynamic>> cutCarExtDataList(List<Map<String, dynamic>> list) {
     return list.sublist(0, [list.length, _maxExtDataLength].reduce(min));
@@ -61,17 +59,13 @@ class CarExtraDataModel implements Comparable<CarExtraDataModel> {
   final int nextOdo;
   final String groupName;
 
-  const CarExtraDataModel({
-    required this.odo,
-    required this.nextOdo,
-    required this.groupName,
-  });
+  const CarExtraDataModel({required this.odo, required this.nextOdo, required this.groupName});
 
   factory CarExtraDataModel.fromJson(Map<String, dynamic> json) => CarExtraDataModel(
-        odo: json['odo'] as int,
-        nextOdo: json['next_odo'] as int,
-        groupName: json['group_name'] as String,
-      );
+    odo: json['odo'] as int,
+    nextOdo: json['next_odo'] as int,
+    groupName: json['group_name'] as String,
+  );
 
   NextODOInformation calculateLeftODO(int carODO) {
     double factor = 0;

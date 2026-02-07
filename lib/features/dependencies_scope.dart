@@ -4,12 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
+import 'package:odo24_mobile/features/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final class Dependencies {
-  final String siteURL;
   final ThemePreferences themePreferences;
   final Dio httpClient;
   final MethodChannel methodChannel;
@@ -21,7 +20,6 @@ final class Dependencies {
 
   const Dependencies({
     required this.themePreferences,
-    required this.siteURL,
     required this.httpClient,
     required this.sharedPreferences,
     required this.methodChannel,
@@ -33,11 +31,7 @@ final class Dependencies {
 }
 
 class DependenciesScope extends InheritedWidget {
-  const DependenciesScope({
-    required super.child,
-    required this.dependencies,
-    super.key,
-  });
+  const DependenciesScope({required super.child, required this.dependencies, super.key});
 
   final Dependencies dependencies;
 

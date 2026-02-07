@@ -8,7 +8,7 @@ class AppScaffold extends StatelessWidget {
   final List<Widget>? appBarActions;
   final Widget? floatingActionButton;
   final List<Widget>? persistentFooterButtons;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry padding;
 
   const AppScaffold({
     super.key,
@@ -18,25 +18,47 @@ class AppScaffold extends StatelessWidget {
     this.appBarActions,
     this.floatingActionButton,
     this.persistentFooterButtons,
+    //this.padding,
     this.padding = const EdgeInsets.all(20),
   });
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: title != null
-            ? CustomAppBar(
-                automaticallyImplyLeading: automaticallyImplyLeading,
-                title: title!,
-                actions: appBarActions,
-              )
-            : null,
-        persistentFooterButtons: persistentFooterButtons,
-        persistentFooterAlignment: AlignmentDirectional.center,
-        floatingActionButton: floatingActionButton,
-        body: padding != null
+    return Scaffold(
+      appBar: title != null
+          ? CustomAppBar(automaticallyImplyLeading: automaticallyImplyLeading, title: title!, actions: appBarActions)
+          : null,
+      persistentFooterButtons: persistentFooterButtons,
+      persistentFooterAlignment: AlignmentDirectional.center,
+      floatingActionButton: floatingActionButton,
+      body: Padding(
+        padding: padding,
+        child: ClipRRect(
+          borderRadius: title != null
+              ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              : BorderRadius.zero,
+          child: body,
+        ),
+      ),
+      /* body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: ClipRRect(
+                borderRadius: title != null
+                    ? const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )
+                    : BorderRadius.zero,
+                child: body,
+              ),
+            ),
+          ),
+        ],
+      ), */
+      /* body: SingleChildScrollView(
+        child: padding != null
             ? Padding(
                 padding: padding!,
                 child: ClipRRect(
@@ -46,11 +68,7 @@ class AppScaffold extends StatelessWidget {
                           topRight: Radius.circular(20),
                         )
                       : BorderRadius.zero,
-                  child: Column(
-                    children: [
-                      Expanded(child: SingleChildScrollView(child: body)),
-                    ],
-                  ),
+                  child: body,
                 ),
               )
             : ClipRRect(
@@ -60,13 +78,9 @@ class AppScaffold extends StatelessWidget {
                         topRight: Radius.circular(20),
                       )
                     : BorderRadius.zero,
-                child: Column(
-                  children: [
-                    Expanded(child: SingleChildScrollView(child: body)),
-                  ],
-                ),
+                child: body,
               ),
-      ),
+      ), */
     );
   }
 }

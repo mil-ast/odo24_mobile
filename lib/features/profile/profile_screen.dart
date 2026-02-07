@@ -14,61 +14,29 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Профиль'),
-      ),
+      appBar: AppBar(title: const Text('Профиль')),
       body: ListView(
         children: [
-          SwitchThemeWidget(
-            themePreferences: dependencies.themePreferences,
-          ),
+          SwitchThemeWidget(themePreferences: dependencies.themePreferences),
           ListTile(
             title: const Text('Изменить пароль'),
             leading: const Icon(Icons.password_outlined),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChangePasswordScreen(),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()));
             },
             trailing: const Icon(Icons.chevron_right),
           ),
-          if (!kIsWeb)
-            ListTile(
-              title: const Text('Перейти на сайт'),
-              onTap: () {
-                dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
-                  'url': dependencies.siteURL,
-                });
-              },
-              subtitle: Text(
-                dependencies.siteURL,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-            ),
           ListTile(
-            title: Text(
-              'Выйти из профиля',
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            leading: Icon(
-              Icons.logout,
-              color: theme.colorScheme.error,
-            ),
+            title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
+            leading: Icon(Icons.logout, color: theme.colorScheme.error),
             onTap: () async {
               dependencies.authRepository.logout().ignore();
 
               Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                  (route) => false);
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false,
+              );
             },
           ),
         ],
@@ -80,10 +48,7 @@ class ProfileScreen extends StatelessWidget {
 class SwitchThemeWidget extends StatelessWidget {
   final ThemePreferences themePreferences;
 
-  const SwitchThemeWidget({
-    required this.themePreferences,
-    super.key,
-  });
+  const SwitchThemeWidget({required this.themePreferences, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +62,7 @@ class SwitchThemeWidget extends StatelessWidget {
           },
           trailing: Switch(
             value: value == Brightness.dark,
-            activeColor: Colors.black,
+            activeThumbColor: Colors.black,
             onChanged: (bool isDark) {
               themePreferences.setTheme(isDark ? Brightness.dark : Brightness.light);
             },

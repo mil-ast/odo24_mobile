@@ -26,15 +26,12 @@ class HttpAPI {
     bool allowBadCertificate = false,
     String? baseURL,
   }) {
-    final options = BaseOptions(
-      baseUrl: baseHost,
-      contentType: 'application/json',
-      validateStatus: (status) => status != null,
-    )
-      ..receiveTimeout = receiveTimeout
-      ..connectTimeout = connectTimeout
-      ..sendTimeout = sendTimeout
-      ..validateStatus = (status) => status != null;
+    final options =
+        BaseOptions(baseUrl: baseHost, contentType: 'application/json', validateStatus: (status) => status != null)
+          ..receiveTimeout = receiveTimeout
+          ..connectTimeout = connectTimeout
+          ..sendTimeout = sendTimeout
+          ..validateStatus = (status) => status != null;
 
     final dio = Dio(options);
 
@@ -50,10 +47,7 @@ class HttpAPI {
 
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (
-          RequestOptions options,
-          RequestInterceptorHandler handler,
-        ) async {
+        onRequest: (RequestOptions options, RequestInterceptorHandler handler) async {
           try {
             final authData = await authRepository.getAuthData();
 
@@ -61,10 +55,7 @@ class HttpAPI {
               if (kDebugMode) {
                 print('ODO24: tokenInfo is empty');
               }
-              handler.reject(DioException(
-                requestOptions: options,
-                error: 'Token is empty',
-              ));
+              handler.reject(DioException(requestOptions: options, error: 'Token is empty'));
               return;
             }
 
@@ -77,16 +68,12 @@ class HttpAPI {
                 }
 
                 final dio = Dio(
-                  BaseOptions(
-                    baseUrl: baseHost,
-                    headers: {
-                      'Authorization': 'Bearer ${authData.accessToken}',
-                    },
-                  ),
+                  BaseOptions(baseUrl: baseHost, headers: {'Authorization': 'Bearer ${authData.accessToken}'}),
                 );
-                final authResult = await dio.post('/api/auth/refresh_token', data: {
-                  'refresh_token': authData.refreshToken,
-                });
+                final authResult = await dio.post(
+                  '/api/auth/refresh_token',
+                  data: {'refresh_token': authData.refreshToken},
+                );
                 final Map<String, dynamic> data = authResult.data;
                 final tokenInfo = AuthData.fromStrings(data['access_token'], data['refresh_token']);
                 await authRepository.updateAuthData(tokenInfo);
@@ -102,10 +89,7 @@ class HttpAPI {
             options.headers['Authorization'] = 'Bearer ${authData.accessToken}';
             handler.next(options);
           } catch (e) {
-            handler.reject(DioException(
-              requestOptions: options,
-              error: e.toString(),
-            ));
+            handler.reject(DioException(requestOptions: options, error: e.toString()));
             authRepository.logout();
             rethrow;
           }
@@ -149,11 +133,7 @@ class HttpAPI {
     bool allowBadCertificate = false,
     String? baseURL,
   }) {
-    final options = BaseOptions(
-      baseUrl: baseHost,
-      contentType: 'application/json',
-      validateStatus: (status) => true,
-    );
+    final options = BaseOptions(baseUrl: baseHost, contentType: 'application/json', validateStatus: (status) => true);
     options.receiveTimeout = receiveTimeout;
     options.connectTimeout = connectTimeout;
     options.sendTimeout = sendTimeout;

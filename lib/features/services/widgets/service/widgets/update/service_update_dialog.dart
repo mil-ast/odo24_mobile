@@ -14,33 +14,20 @@ class ServiceUpdateDialog extends StatelessWidget {
   late final TextEditingController _descriptionController;
   late final TextEditingController _priceController;
 
-  ServiceUpdateDialog({
-    required this.service,
-    super.key,
-  }) {
-    _odoController = TextEditingController.fromValue(
-      TextEditingValue(text: service.odo.toString()),
-    );
-    _nextDistanceController = TextEditingController.fromValue(
-      TextEditingValue(text: '${service.nextDistance ?? ''}'),
-    );
+  ServiceUpdateDialog({required this.service, super.key}) {
+    _odoController = TextEditingController.fromValue(TextEditingValue(text: service.odo.toString()));
+    _nextDistanceController = TextEditingController.fromValue(TextEditingValue(text: '${service.nextDistance ?? ''}'));
     _dtController = TextEditingController.fromValue(
       TextEditingValue(text: service.dt.toIso8601String().substring(0, 10)),
     );
-    _descriptionController = TextEditingController.fromValue(
-      TextEditingValue(text: service.description ?? ''),
-    );
-    _priceController = TextEditingController.fromValue(
-      TextEditingValue(text: '${service.price ?? ''}'),
-    );
+    _descriptionController = TextEditingController.fromValue(TextEditingValue(text: service.description ?? ''));
+    _priceController = TextEditingController.fromValue(TextEditingValue(text: '${service.price ?? ''}'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Изменить запись'),
-      ),
+      appBar: AppBar(title: const Text('Изменить запись')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -57,10 +44,7 @@ class ServiceUpdateDialog extends StatelessWidget {
                   TextFormField(
                     controller: _odoController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      helperText: 'Пробег, км',
-                      icon: Icon(Icons.speed),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Пробег, км', icon: Icon(Icons.speed)),
                     validator: (String? name) {
                       return null;
                     },
@@ -81,10 +65,7 @@ class ServiceUpdateDialog extends StatelessWidget {
                   TextFormField(
                     controller: _dtController,
                     keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      helperText: 'Дата обслуживания',
-                      icon: Icon(Icons.date_range),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Дата обслуживания', icon: Icon(Icons.date_range)),
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
 
@@ -103,10 +84,7 @@ class ServiceUpdateDialog extends StatelessWidget {
                   TextFormField(
                     controller: _descriptionController,
                     keyboardType: TextInputType.multiline,
-                    decoration: const InputDecoration(
-                      helperText: 'Комментарий',
-                      icon: Icon(Icons.comment),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Комментарий', icon: Icon(Icons.comment)),
                     validator: (String? name) {
                       return null;
                     },
@@ -115,10 +93,7 @@ class ServiceUpdateDialog extends StatelessWidget {
                   TextFormField(
                     controller: _priceController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      helperText: 'Стоимость',
-                      icon: Icon(Icons.money),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Стоимость', icon: Icon(Icons.money)),
                     validator: (String? name) {
                       return null;
                     },
@@ -127,20 +102,15 @@ class ServiceUpdateDialog extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: Navigator.of(context).pop,
-                        child: const Text('Отмена'),
-                      ),
+                      TextButton(onPressed: Navigator.of(context).pop, child: const Text('Отмена')),
                       const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Сохранить'),
                         onPressed: () {
                           if (!_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Проверьте правильность заполнения формы'),
-                              ),
-                            );
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(const SnackBar(content: Text('Проверьте правильность заполнения формы')));
                             return;
                           }
 

@@ -30,101 +30,91 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
     return BlocProvider(
       create: (context) => ChangePasswordCubit(authRepository: authRepository),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Изменить пароль'),
-        ),
+        appBar: AppBar(title: const Text('Изменить пароль')),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Builder(builder: (context) {
-              return BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
-                listener: (context, state) {
-                  switch (state) {
-                    case ChangePasswordState.error:
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Произошла ошибка при изменении пароля'),
-                        ),
-                      );
-                    case ChangePasswordState.successful:
-                      _formKey.currentState!.reset();
+            child: Builder(
+              builder: (context) {
+                return BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
+                  listener: (context, state) {
+                    switch (state) {
+                      case ChangePasswordState.error:
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('Произошла ошибка при изменении пароля')));
+                      case ChangePasswordState.successful:
+                        _formKey.currentState!.reset();
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Пароль успешно изменён!'),
-                        ),
-                      );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('Пароль успешно изменён!')));
 
-                      Navigator.pop(context);
-                    default:
-                  }
-                },
-                buildWhen: (previous, current) => current == ChangePasswordState.ready,
-                builder: (context, state) {
-                  return Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: _oldPasswordController,
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          autofocus: true,
-                          decoration: const InputDecoration(
-                            helperText: 'Текущий пароль',
+                        Navigator.pop(context);
+                      default:
+                    }
+                  },
+                  buildWhen: (previous, current) => current == ChangePasswordState.ready,
+                  builder: (context, state) {
+                    return Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _oldPasswordController,
+                            obscureText: true,
+                            keyboardType: TextInputType.visiblePassword,
+                            autofocus: true,
+                            decoration: const InputDecoration(helperText: 'Текущий пароль'),
+                            validator: _passwordValidate,
                           ),
-                          validator: _passwordValidate,
-                        ),
-                        TextFormField(
-                          controller: _newPasswordController,
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration: const InputDecoration(
-                            helperText: 'Придумайте новый пароль',
+                          TextFormField(
+                            controller: _newPasswordController,
+                            obscureText: true,
+                            keyboardType: TextInputType.visiblePassword,
+                            decoration: const InputDecoration(helperText: 'Придумайте новый пароль'),
+                            validator: _passwordValidate,
                           ),
-                          validator: _passwordValidate,
-                        ),
-                        TextFormField(
-                          controller: _newPasswordConfirmController,
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration: const InputDecoration(
-                            helperText: 'Подтвердите новый пароль',
-                          ),
-                          validator: (String? passwd) {
-                            if (passwd != null && passwd.isNotEmpty) {
-                              if (passwd != _newPasswordController.text) {
-                                return 'Пароли не совпадают!';
+                          TextFormField(
+                            controller: _newPasswordConfirmController,
+                            obscureText: true,
+                            keyboardType: TextInputType.visiblePassword,
+                            decoration: const InputDecoration(helperText: 'Подтвердите новый пароль'),
+                            validator: (String? passwd) {
+                              if (passwd != null && passwd.isNotEmpty) {
+                                if (passwd != _newPasswordController.text) {
+                                  return 'Пароли не совпадают!';
+                                }
                               }
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: FilledButton(
-                            onPressed: () {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
-                              context.read<ChangePasswordCubit>().add(
-                                    ChangePasswordEvent(
-                                      newPassword: _newPasswordController.text,
-                                      oldPassword: _oldPasswordController.text,
-                                    ),
-                                  );
+                              return null;
                             },
-                            child: const Text('Сохранить'),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }),
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: FilledButton(
+                              onPressed: () {
+                                if (!_formKey.currentState!.validate()) {
+                                  return;
+                                }
+                                context.read<ChangePasswordCubit>().add(
+                                  ChangePasswordEvent(
+                                    newPassword: _newPasswordController.text,
+                                    oldPassword: _oldPasswordController.text,
+                                  ),
+                                );
+                              },
+                              child: const Text('Сохранить'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),

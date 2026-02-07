@@ -13,9 +13,7 @@ class GroupCreateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Добавление новой группы'),
-      ),
+      appBar: AppBar(title: const Text('Добавление новой группы')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: BlocListener<GroupsCubit, GroupsState>(
@@ -32,10 +30,7 @@ class GroupCreateWidget extends StatelessWidget {
                   TextFormField(
                     controller: _nameController,
                     keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                      helperText: 'Название группы',
-                      icon: Icon(Icons.title),
-                    ),
+                    decoration: const InputDecoration(helperText: 'Название группы', icon: Icon(Icons.title)),
                     validator: (String? name) {
                       if (name == null || name.length < 3) {
                         return 'Название слишком короткое';
@@ -49,10 +44,7 @@ class GroupCreateWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: Navigator.of(context).pop,
-                        child: const Text('Отмена'),
-                      ),
+                      TextButton(onPressed: Navigator.of(context).pop, child: const Text('Отмена')),
                       const SizedBox(width: 20),
                       FilledButton(
                         child: const Text('Добавить'),
@@ -62,9 +54,7 @@ class GroupCreateWidget extends StatelessWidget {
                             return;
                           }
 
-                          final body = GroupCreateRequestModel(
-                            name: _nameController.text.trim(),
-                          );
+                          final body = GroupCreateRequestModel(name: _nameController.text.trim());
                           context.read<GroupsCubit>().create(body);
                         },
                       ),

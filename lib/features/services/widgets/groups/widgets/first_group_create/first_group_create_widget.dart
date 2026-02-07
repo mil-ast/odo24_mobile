@@ -22,10 +22,7 @@ class FirstGroupCreateWidget extends StatelessWidget {
             children: [
               const Icon(Icons.comment),
               const SizedBox(height: 20),
-              Text(
-                'Групп ещё нет :(',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text('Групп ещё нет :(', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -33,9 +30,7 @@ class FirstGroupCreateWidget extends StatelessWidget {
                   TextFormField(
                     controller: _nameController,
                     keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                      helperText: 'Название группы',
-                    ),
+                    decoration: const InputDecoration(helperText: 'Название группы'),
                     validator: (String? name) {
                       if (name == null || name.length < 3) {
                         return 'Название слишком короткое';
@@ -57,9 +52,7 @@ class FirstGroupCreateWidget extends StatelessWidget {
                             return;
                           }
 
-                          final body = GroupCreateRequestModel(
-                            name: _nameController.text.trim(),
-                          );
+                          final body = GroupCreateRequestModel(name: _nameController.text.trim());
                           context.read<GroupsCubit>().create(body);
                         },
                       ),

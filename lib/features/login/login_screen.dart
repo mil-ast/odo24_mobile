@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/cars/cars_screen.dart';
@@ -32,98 +31,169 @@ class LoginScreenState extends State<LoginScreen> {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => LoginCubit(authRepository: authRepository)),
         BlocProvider(
-          create: (context) => LoginCubit(authRepository: authRepository),
-        ),
-        BlocProvider(
-          create: (context) => PasswordRecoveryCubit(
-            authRepository: authRepository,
-            sharedPreferences: sp,
-          ),
+          create: (context) => PasswordRecoveryCubit(authRepository: authRepository, sharedPreferences: sp),
         ),
       ],
-      child: Builder(
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: AppScaffold(
-              automaticallyImplyLeading: true,
-              body: AppCard(
-                title: const AppCardTitle(title: 'Сервисная книжка автомобиля'),
-                child: Center(
-                  child: BlocListener<LoginCubit, LoginState>(
-                    listener: (BuildContext context, LoginState state) {
-                      switch (state) {
-                        case LoginSuccessState():
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CarsScreen(),
-                            ),
-                          );
-                        case LoginGoToRegisterState():
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
-                            ),
-                          );
-                        case LoginGoToPasswordRecoveryState():
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<PasswordRecoveryCubit>(),
-                                child: const PasswordRecoveryScreen(),
-                              ),
-                            ),
-                          );
-                        case LoginErrorState():
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.message),
-                              backgroundColor: Theme.of(
+      child: AppScaffold(
+        title: 'Сервисная книжка автомобиля',
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                spacing: 20,
+                children: [
+                  AppCard(
+                    title: const AppCardTitle(title: 'Авторизация'),
+                    child: Center(
+                      child: BlocListener<LoginCubit, LoginState>(
+                        listener: (BuildContext context, LoginState state) {
+                          switch (state) {
+                            case LoginSuccessState():
+                              Navigator.pushReplacement(
                                 context,
-                              ).colorScheme.error,
-                            ),
-                          );
-                        default:
-                      }
-                    },
-                    child: LoginFormWidget(
-                      formKey: _formKey,
-                      loginController: _loginController,
-                      passwordController: _passwordController,
+                                MaterialPageRoute(builder: (context) => CarsScreen.carsScreenScope()),
+                              );
+                            case LoginGoToRegisterState():
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
+                            case LoginGoToPasswordRecoveryState():
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: context.read<PasswordRecoveryCubit>(),
+                                    child: const PasswordRecoveryScreen(),
+                                  ),
+                                ),
+                              );
+                            case LoginErrorState():
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                ),
+                              );
+                            default:
+                          }
+                        },
+                        child: LoginFormWidget(
+                          formKey: _formKey,
+                          loginController: _loginController,
+                          passwordController: _passwordController,
+                        ),
+                      ),
                     ),
+                  ),
+                  const Spacer(),
+                  BlocBuilder<LoginCubit, LoginState>(
+                    buildWhen: (previous, state) => state.isWaiting || state.isReady,
+                    builder: (context, state) {
+                      return FilledButton(
+                        onPressed: state is LoginWaitingState ? null : () => _onLogin(context),
+                        child: const Text('Войти'),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        /* persistentFooterButtons: [
+          BlocBuilder<LoginCubit, LoginState>(
+            buildWhen: (previous, state) => state.isWaiting || state.isReady,
+            builder: (context, state) {
+              return FilledButton(
+                onPressed: state is LoginWaitingState
+                    ? null
+                    : () => _onLogin(context),
+                child: const Text('Войти'),
+              );
+            },
+          ),
+        ], */
+      ),
+      /* child: Builder(
+        builder: (context) {
+          return AppScaffold(
+            automaticallyImplyLeading: true,
+            padding: const EdgeInsets.all(20),
+            title: 'Сервисная книжка автомобиля',
+            body: AppCard(
+              title: const AppCardTitle(title: 'Авторизация'),
+              child: Center(
+                child: BlocListener<LoginCubit, LoginState>(
+                  listener: (BuildContext context, LoginState state) {
+                    switch (state) {
+                      case LoginSuccessState():
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CarsScreen(),
+                          ),
+                        );
+                      case LoginGoToRegisterState():
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
+                        );
+                      case LoginGoToPasswordRecoveryState():
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<PasswordRecoveryCubit>(),
+                              child: const PasswordRecoveryScreen(),
+                            ),
+                          ),
+                        );
+                      case LoginErrorState():
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.error,
+                          ),
+                        );
+                      default:
+                    }
+                  },
+                  child: LoginFormWidget(
+                    formKey: _formKey,
+                    loginController: _loginController,
+                    passwordController: _passwordController,
                   ),
                 ),
               ),
-              persistentFooterButtons: [
-                BlocBuilder<LoginCubit, LoginState>(
-                  buildWhen: (previous, state) =>
-                      state.isWaiting || state.isReady,
-                  builder: (context, state) {
-                    return FilledButton(
-                      onPressed: state is LoginWaitingState
-                          ? null
-                          : () => _onLogin(context),
-                      child: const Text('Войти'),
-                    );
-                  },
-                ),
-              ],
             ),
+            persistentFooterButtons: [
+              BlocBuilder<LoginCubit, LoginState>(
+                buildWhen: (previous, state) =>
+                    state.isWaiting || state.isReady,
+                builder: (context, state) {
+                  return FilledButton(
+                    onPressed: state is LoginWaitingState
+                        ? null
+                        : () => _onLogin(context),
+                    child: const Text('Войти'),
+                  );
+                },
+              ),
+            ],
           );
         },
-      ),
+      ), */
     );
   }
 
   void _onLogin(BuildContext context) {
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Неверный логин или пароль')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неверный логин или пароль')));
       return;
     }
 

@@ -24,10 +24,7 @@ class ServicesScreen extends StatelessWidget {
   final CarModel selectedCar;
   final _currentCarODO = ValueNotifier<int>(0);
 
-  ServicesScreen({
-    required this.selectedCar,
-    super.key,
-  }) {
+  ServicesScreen({required this.selectedCar, super.key}) {
     _currentCarODO.value = selectedCar.odo;
   }
 
@@ -35,11 +32,11 @@ class ServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
+        /* BlocProvider(
           create: (_) => GroupsCubit(
             groupsRepository: DependenciesScope.of(context).groupsRepository,
           )..getAllGroups(),
-        ),
+        ), */
         BlocProvider(
           create: (_) {
             final dependencies = DependenciesScope.of(context);
@@ -56,11 +53,7 @@ class ServicesScreen extends StatelessWidget {
           BlocListener<GroupsCubit, GroupsState>(
             listener: (context, state) async {
               if (state is GroupsMessageState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                  ),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
               } else if (state is OnChangeSelectedGroupState) {
                 // при изменении групп обновляем записи
                 context.read<ServicesCubit>().onChangeSelectedGroup(state.selected!);
@@ -71,10 +64,8 @@ class ServicesScreen extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BlocProvider.value(
-                          value: context.read<GroupsCubit>(),
-                          child: const GroupsSettingsScreen(),
-                        ),
+                        builder: (_) =>
+                            BlocProvider.value(value: context.read<GroupsCubit>(), child: const GroupsSettingsScreen()),
                         fullscreenDialog: false,
                       ),
                     );
@@ -83,10 +74,7 @@ class ServicesScreen extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => Dialog.fullscreen(
-                        child: BlocProvider.value(
-                          value: context.read<GroupsCubit>(),
-                          child: GroupCreateWidget(),
-                        ),
+                        child: BlocProvider.value(value: context.read<GroupsCubit>(), child: GroupCreateWidget()),
                       ),
                     );
                   case GroupAction.update:
@@ -116,17 +104,10 @@ class ServicesScreen extends StatelessWidget {
           BlocListener<ServicesCubit, ServicesState>(
             listener: (context, state) async {
               if (state is ServiceMessageState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                  ),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
               } else if (state is ServiceErrorState) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                  ),
+                  SnackBar(content: Text(state.message), backgroundColor: Theme.of(context).colorScheme.error),
                 );
               } else if (state is ServiceActionState) {
                 switch (state.action) {
@@ -140,10 +121,7 @@ class ServicesScreen extends StatelessWidget {
                       builder: (_) => Dialog.fullscreen(
                         child: BlocProvider.value(
                           value: context.read<ServicesCubit>(),
-                          child: ServiceRecCreateWidget(
-                            car: selectedCar,
-                            selectedGroup: selectedGroup,
-                          ),
+                          child: ServiceRecCreateWidget(car: selectedCar, selectedGroup: selectedGroup),
                         ),
                       ),
                     );
@@ -153,9 +131,7 @@ class ServicesScreen extends StatelessWidget {
                       builder: (_) => Dialog.fullscreen(
                         child: BlocProvider.value(
                           value: context.read<ServicesCubit>(),
-                          child: ServiceUpdateDialog(
-                            service: state.service!,
-                          ),
+                          child: ServiceUpdateDialog(service: state.service!),
                         ),
                       ),
                     );
@@ -182,10 +158,7 @@ class ServicesScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  selectedCar.name,
-                  style: const TextStyle(fontSize: 22),
-                ),
+                Text(selectedCar.name, style: const TextStyle(fontSize: 22)),
                 const SizedBox(height: 2),
                 ValueListenableBuilder(
                   valueListenable: _currentCarODO,
@@ -210,9 +183,7 @@ class ServicesScreen extends StatelessWidget {
                 buildWhen: (previous, current) => current.needBuild,
                 builder: (context, state) {
                   if (state is LoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   } else if (state is ShowGroupsState) {
                     if (state.groups.isEmpty) {
                       return FirstGroupCreateWidget();
@@ -227,15 +198,10 @@ class ServicesScreen extends StatelessWidget {
                   buildWhen: (previous, current) => current.needBuild,
                   builder: (context, state) {
                     if (state is ServicesLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     } else if (state is ServicesShowListState) {
                       if (state.services.isNotEmpty) {
-                        return ListServicesWidget(
-                          inform: state.inform,
-                          services: state.services,
-                        );
+                        return ListServicesWidget(inform: state.inform, services: state.services);
                       }
                     }
                     return const EmptyServicesWidget();
@@ -253,17 +219,11 @@ class ServicesScreen extends StatelessWidget {
 class ListServicesWidget extends StatelessWidget {
   final List<ServiceModel> services;
   final NextODOInformation? inform;
-  const ListServicesWidget({
-    required this.services,
-    this.inform,
-    super.key,
-  });
+  const ListServicesWidget({required this.services, this.inform, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: ODO24Colors.inverseTextColor,
-        );
+    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(color: ODO24Colors.inverseTextColor);
     return Column(
       children: [
         if (inform != null)
@@ -274,21 +234,12 @@ class ListServicesWidget extends StatelessWidget {
               child: ListTile(
                 title: Row(
                   children: [
-                    Text(
-                      'Осталось ${inform!.leftDistance.format()} км',
-                      style: textStyle,
-                    ),
+                    Text('Осталось ${inform!.leftDistance.format()} км', style: textStyle),
                     const Spacer(),
-                    Text(
-                      inform!.toStringLeftDistancePercent(),
-                      style: textStyle,
-                    ),
+                    Text(inform!.toStringLeftDistancePercent(), style: textStyle),
                   ],
                 ),
-                subtitle: Text(
-                  'До следующей замены',
-                  style: textStyle,
-                ),
+                subtitle: Text('До следующей замены', style: textStyle),
               ),
             ),
           ),
@@ -296,9 +247,8 @@ class ListServicesWidget extends StatelessWidget {
           child: ListView.separated(
             itemCount: services.length,
             itemBuilder: (context, index) => ServiceItemWidget(services[index]),
-            separatorBuilder: (BuildContext context, int index) => ServiceItemSeparatorWidget(
-              leftDistance: services[index].leftDistance,
-            ),
+            separatorBuilder: (BuildContext context, int index) =>
+                ServiceItemSeparatorWidget(leftDistance: services[index].leftDistance),
           ),
         ),
       ],

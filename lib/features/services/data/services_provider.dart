@@ -14,9 +14,7 @@ abstract interface class IServicesDataProvider {
 class ServicesDataProvider implements IServicesDataProvider {
   final Dio _httpClient;
 
-  ServicesDataProvider({
-    required Dio httpClient,
-  }) : _httpClient = httpClient;
+  ServicesDataProvider({required Dio httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<ServiceModel>> getByCarAndGroup(int carID, int groupID) async {

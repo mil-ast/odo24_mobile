@@ -27,10 +27,7 @@ class AuthDataProvider implements IAuthDataProvider {
   late final Dio _dioWithoutAuth;
   late final Dio _dio;
 
-  void setHttpClients({
-    required Dio dioWithoutAuth,
-    required Dio dioWithAuth,
-  }) {
+  void setHttpClients({required Dio dioWithoutAuth, required Dio dioWithAuth}) {
     _dioWithoutAuth = dioWithoutAuth;
     _dio = dioWithAuth;
   }
@@ -62,40 +59,24 @@ class AuthDataProvider implements IAuthDataProvider {
   @override
   Future<void> removeTokens() async {
     final prefs = await SharedPreferences.getInstance();
-    await Future.wait([
-      prefs.remove(_keyAccessToken),
-      prefs.remove(_keyRefreshToken),
-    ]);
+    await Future.wait([prefs.remove(_keyAccessToken), prefs.remove(_keyRefreshToken)]);
   }
 
   @override
   Future<void> refreshToken(AuthData currentAuthData) async {
     final dio = Dio(
-      BaseOptions(
-        baseUrl: Configs.baseHost,
-        headers: {
-          'Authorization': 'Bearer ${currentAuthData.accessToken}',
-        },
-      ),
+      BaseOptions(baseUrl: Configs.baseHost, headers: {'Authorization': 'Bearer ${currentAuthData.accessToken}'}),
     );
-    final authResult = await dio.post('/api/auth/refresh_token', data: {
-      'refresh_token': currentAuthData.refreshToken,
-    });
+    final authResult = await dio.post('/api/auth/refresh_token', data: {'refresh_token': currentAuthData.refreshToken});
     final Map<String, dynamic> data = authResult.data;
     final tokenInfo = AuthData.fromStrings(data['access_token'], data['refresh_token']);
 
-    await Future.wait([
-      setAccessToken(tokenInfo.accessToken),
-      setRefreshToken(tokenInfo.refreshToken),
-    ]);
+    await Future.wait([setAccessToken(tokenInfo.accessToken), setRefreshToken(tokenInfo.refreshToken)]);
   }
 
   @override
   Future<AuthResultModel> signInWithEmailAndPassword(String email, String password) async {
-    final api = _dioWithoutAuth.post('/api/auth/login', data: {
-      'login': email,
-      'password': password,
-    });
+    final api = _dioWithoutAuth.post('/api/auth/login', data: {'login': email, 'password': password});
 
     final json = await ResponseHandler.parseJSON(api);
     if (json == null) {
@@ -107,46 +88,40 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<void> registerSendConfirmationCode(String email) async {
-    final api = _dioWithoutAuth.post('/api/register/register_send_code', data: {
-      'email': email,
-    });
+    final api = _dioWithoutAuth.post('/api/register/register_send_code', data: {'email': email});
     await ResponseHandler.parseJSON(api);
   }
 
   @override
   Future<void> register(String email, String password, int code) async {
-    final api = _dioWithoutAuth.post('/api/register/register_by_email', data: {
-      'email': email,
-      'password': password,
-      'code': code,
-    });
+    final api = _dioWithoutAuth.post(
+      '/api/register/register_by_email',
+      data: {'email': email, 'password': password, 'code': code},
+    );
     await ResponseHandler.parseJSON(api);
   }
 
   @override
   Future<void> recoverSendEmailCodeConfirmation(String email) async {
-    final api = _dioWithoutAuth.post('/api/register/recover_send_code', data: {
-      'email': email,
-    });
+    final api = _dioWithoutAuth.post('/api/register/recover_send_code', data: {'email': email});
     await ResponseHandler.parseJSON(api);
   }
 
   @override
   Future<void> recoverSaveNewPassword(String email, int code, String password) async {
-    final api = _dioWithoutAuth.post('/api/register/recover_password', data: {
-      'email': email,
-      'code': code,
-      'password': password,
-    });
+    final api = _dioWithoutAuth.post(
+      '/api/register/recover_password',
+      data: {'email': email, 'code': code, 'password': password},
+    );
     await ResponseHandler.parseJSON(api);
   }
 
   @override
   Future<void> changePassword(String currentPassword, String newPassword) async {
-    final api = _dio.post('/api/auth/change_password', data: {
-      'current_password': currentPassword,
-      'new_password': newPassword,
-    });
+    final api = _dio.post(
+      '/api/auth/change_password',
+      data: {'current_password': currentPassword, 'new_password': newPassword},
+    );
     await ResponseHandler.parseJSON(api);
   }
 }

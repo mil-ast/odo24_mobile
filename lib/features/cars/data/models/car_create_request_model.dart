@@ -3,15 +3,7 @@ class CarCreateRequestModel {
   final int odo;
   final bool avatar;
 
-  const CarCreateRequestModel({
-    required this.name,
-    required this.odo,
-    this.avatar = false,
-  });
+  const CarCreateRequestModel({required this.name, required this.odo, this.avatar = false});
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'odo': odo,
-        'avatar': avatar,
-      };
+  Map<String, dynamic> toJson() => {'name': name, 'odo': odo, 'avatar': avatar};
 }

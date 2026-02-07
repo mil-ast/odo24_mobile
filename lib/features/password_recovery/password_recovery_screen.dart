@@ -4,7 +4,7 @@ import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/password_recovery/bloc/password_recovery_cubit.dart';
-import 'package:odo24_mobile/features/password_recovery/confirmation_email_form/confirmation_email_screen.dart';
+import 'package:odo24_mobile/core/shared_widgets/confirmation_email_form/confirmation_email_screen.dart';
 import 'package:odo24_mobile/features/password_recovery/password_recovery_form_widget.dart';
 
 class PasswordRecoveryScreen extends StatefulWidget {
@@ -29,8 +29,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<PasswordRecoveryCubit, PasswordRecoveryState>(
-      listenWhen: (previous, current) =>
-          current.hasError || current.isSuccess || current.isCompeted,
+      listenWhen: (previous, current) => current.hasError || current.isSuccess || current.isCompeted,
       listener: (context, state) {
         switch (state) {
           case PasswordRecoveryFormCodeSentSuccessfullyState(): // код подтверждения отправлен
@@ -42,6 +41,9 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   child: ConfirmationEmailScreen(
                     email: state.email,
                     password: state.password,
+                    onSubmit: ({required code, required email, required password}) async {
+                      context.read<PasswordRecoveryCubit>().recovery(email: email, password: password, code: code);
+                    },
                   ),
                 ),
               ),
@@ -57,9 +59,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
             Navigator.popUntil(context, (route) => route.isFirst);
             break;
           case PasswordRecoveryFailureState():
-            final details = state.error.details != null
-                ? '\n${state.error.details}'
-                : '';
+            final details = state.error.details != null ? '\n${state.error.details}' : '';
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${state.error.message}$details'),
@@ -88,8 +88,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                 onPressed: state.isWaiting
                     ? null
                     : () {
-                        if (!(_formEmailKey.currentState?.validate() ??
-                            false)) {
+                        if (!(_formEmailKey.currentState?.validate() ?? false)) {
                           return;
                         }
                         context.read<PasswordRecoveryCubit>().submitForm(

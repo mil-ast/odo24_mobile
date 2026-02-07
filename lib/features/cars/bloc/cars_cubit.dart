@@ -9,10 +9,7 @@ class CarsCubit extends Cubit<CarsState> {
   final ICarsRepository _carsRepository;
   final List<CarModel> _cars = [];
 
-  CarsCubit({
-    required ICarsRepository carsRepository,
-  })  : _carsRepository = carsRepository,
-        super(CarsState.ready());
+  CarsCubit({required ICarsRepository carsRepository}) : _carsRepository = carsRepository, super(CarsState.ready());
 
   void getAllCars() async {
     try {

@@ -15,15 +15,15 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Настройка сервисных групп'),
+      appBar: AppBar(title: const Text('Настройка сервисных групп')),
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            onPressed: context.read<GroupsCubit>().onClickCreateGroup,
+            child: const Icon(Icons.add),
+          );
+        },
       ),
-      floatingActionButton: Builder(builder: (context) {
-        return FloatingActionButton(
-          onPressed: context.read<GroupsCubit>().onClickCreateGroup,
-          child: const Icon(Icons.add),
-        );
-      }),
       body: PrimaryScrollController(
         controller: ScrollController(),
         child: BlocBuilder<GroupsCubit, GroupsState>(
@@ -41,11 +41,7 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
                       child: Row(
                         spacing: 20,
                         children: [
-                          Icon(
-                            Icons.info,
-                            color: ODO24Colors.inverseTextColor,
-                            size: 36,
-                          ),
+                          Icon(Icons.info, color: ODO24Colors.inverseTextColor, size: 36),
                           Expanded(
                             child: Text(
                               'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
@@ -75,10 +71,7 @@ class _GroupsSettingsState extends State<GroupsSettingsScreen> {
                               child: const Wrap(
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 spacing: 10,
-                                children: [
-                                  Icon(Icons.edit),
-                                  Text('Изменить'),
-                                ],
+                                children: [Icon(Icons.edit), Text('Изменить')],
                               ),
                             ),
                             PopupMenuItem(

@@ -36,10 +36,7 @@ class ResponseHandler {
           throw _handleErrorDataResponse(res);
       }
     } on DioException catch (e) {
-      throw AppNetworkException(
-        'HttpError',
-        e.message ?? '',
-      );
+      throw AppNetworkException('HttpError', e.message ?? '');
     }
   }
 
@@ -54,16 +51,9 @@ class ResponseHandler {
     final data = res.data;
     if (data is Map) {
       final responseData = ErrorDataModel.fromJson(data.cast<String, dynamic>());
-      return AppNetworkException(
-        responseData.key,
-        responseData.message,
-      );
+      return AppNetworkException(responseData.key, responseData.message);
     }
 
-    return AppNetworkException(
-      'HttpResponseRrror',
-      data.toString(),
-      details: res.requestOptions.uri.toString(),
-    );
+    return AppNetworkException('HttpResponseRrror', data.toString(), details: res.requestOptions.uri.toString());
   }
 }

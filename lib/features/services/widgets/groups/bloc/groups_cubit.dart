@@ -10,10 +10,9 @@ class GroupsCubit extends Cubit<GroupsState> {
   int _selectedIndex = -1;
   final IGroupsRepository _groupsRepository;
 
-  GroupsCubit({
-    required IGroupsRepository groupsRepository,
-  })  : _groupsRepository = groupsRepository,
-        super(GroupsState.idle());
+  GroupsCubit({required IGroupsRepository groupsRepository})
+    : _groupsRepository = groupsRepository,
+      super(GroupsState.idle());
 
   GroupModel? getSelected() {
     if (_selectedIndex == -1) {
@@ -32,7 +31,7 @@ class GroupsCubit extends Cubit<GroupsState> {
       groups.sort((a, b) => a.sort - b.sort);
 
       _groups.clear();
-      _groups.addAll(groups);
+      //_groups.addAll(groups);
 
       GroupModel? selected;
       if (_groups.isNotEmpty) {
@@ -52,10 +51,10 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   void create(GroupCreateRequestModel body) async {
     try {
-      final group = await _groupsRepository.create(body);
+      //final group = await _groupsRepository.create(body);
 
-      _groups.add(group);
-      emit(GroupsState.createSuccess(group));
+      //_groups.add(group);
+      //emit(GroupsState.createSuccess(group));
       emit(GroupsState.message('Группа успешно добавлена!'));
       _selectedIndex = _groups.length - 1;
       refresh();
@@ -66,11 +65,8 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   void update(GroupModel newGroup) async {
     try {
-      final body = GroupUpdateRequestModel(
-        groupID: newGroup.groupID,
-        name: newGroup.name,
-      );
-      await _groupsRepository.update(body);
+      final body = GroupUpdateRequestModel(groupID: newGroup.groupID, name: newGroup.name);
+      //await _groupsRepository.update(body);
 
       final index = _groups.indexWhere((g) => g.groupID == newGroup.groupID);
       _groups.removeAt(index);

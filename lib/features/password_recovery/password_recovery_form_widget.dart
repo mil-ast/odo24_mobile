@@ -13,12 +13,10 @@ class PasswordRecoveryFormWidget extends StatefulWidget {
   });
 
   @override
-  State<PasswordRecoveryFormWidget> createState() =>
-      _PasswordRecoveryFormWidgetState();
+  State<PasswordRecoveryFormWidget> createState() => _PasswordRecoveryFormWidgetState();
 }
 
-class _PasswordRecoveryFormWidgetState
-    extends State<PasswordRecoveryFormWidget> {
+class _PasswordRecoveryFormWidgetState extends State<PasswordRecoveryFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -46,9 +44,7 @@ class _PasswordRecoveryFormWidgetState
             keyboardType: TextInputType.text,
             obscureText: true,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: const InputDecoration(
-              labelText: 'Введите новый пароль',
-            ),
+            decoration: const InputDecoration(labelText: 'Введите новый пароль'),
             validator: (passwd) {
               if (passwd == null || passwd.isEmpty) {
                 return 'Введите пароль';

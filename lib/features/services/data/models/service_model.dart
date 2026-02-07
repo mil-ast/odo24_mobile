@@ -17,13 +17,7 @@ class ServiceModel implements Comparable<ServiceModel> {
     required this.price,
   });
 
-  ServiceModel copyWith({
-    required DateTime dt,
-    int? odo,
-    int? price,
-    int? nextDistance,
-    String? description,
-  }) =>
+  ServiceModel copyWith({required DateTime dt, int? odo, int? price, int? nextDistance, String? description}) =>
       ServiceModel(
         serviceID: serviceID,
         odo: odo,

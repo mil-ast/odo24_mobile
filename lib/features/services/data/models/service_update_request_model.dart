@@ -5,19 +5,13 @@ class ServiceUpdateRequestModel {
   final String? description;
   final int? price;
 
-  const ServiceUpdateRequestModel({
-    this.odo,
-    this.nextDistance,
-    required this.dt,
-    this.description,
-    this.price,
-  });
+  const ServiceUpdateRequestModel({this.odo, this.nextDistance, required this.dt, this.description, this.price});
 
   Map<String, dynamic> toJson() => {
-        'odo': odo,
-        'next_distance': nextDistance,
-        'dt': dt,
-        'description': description,
-        'price': price,
-      };
+    'odo': odo,
+    'next_distance': nextDistance,
+    'dt': dt,
+    'description': description,
+    'price': price,
+  };
 }

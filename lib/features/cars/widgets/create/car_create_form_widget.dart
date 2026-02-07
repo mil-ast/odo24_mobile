@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
 
 class CarCreateFormWidget extends StatefulWidget {
-  const CarCreateFormWidget({
-    super.key,
-  });
+  const CarCreateFormWidget({super.key});
 
   @override
   CarCreateFormState createState() => CarCreateFormState();
@@ -27,26 +26,20 @@ class CarCreateFormState extends State<CarCreateFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Добавьте ваш первый авто',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: Column(
+    return AppCard(
+      title: const AppCardTitle(title: 'Добавить авто'),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Column(
+              spacing: 20,
               children: [
                 TextFormField(
                   controller: _nameController,
                   autofocus: true,
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    hintText: 'Название авто',
-                    icon: Icon(Icons.title),
-                  ),
+                  decoration: const InputDecoration(hintText: 'Название авто', icon: Icon(Icons.title)),
                   validator: (String? name) {
                     if (name == null || name.length < 3) {
                       return 'Название слишком короткое';
@@ -56,15 +49,10 @@ class CarCreateFormState extends State<CarCreateFormWidget> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
                 TextFormField(
                   controller: _odoController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: 'Пробег',
-                    helperText: 'км',
-                    icon: Icon(Icons.speed),
-                  ),
+                  decoration: const InputDecoration(hintText: 'Пробег', helperText: 'км', icon: Icon(Icons.speed)),
                   inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                   validator: (String? input) {
                     if (input == null) {
@@ -80,7 +68,6 @@ class CarCreateFormState extends State<CarCreateFormWidget> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -89,30 +76,28 @@ class CarCreateFormState extends State<CarCreateFormWidget> {
                       child: const Text('Добавить'),
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Проверьте правильность заполнения формы'),
-                            ),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('Проверьте правильность заполнения формы')));
                           return;
                         }
 
                         context.read<CarsCubit>().create(
-                              CarCreateRequestModel(
-                                name: _nameController.text,
-                                odo: int.parse(_odoController.text),
-                                avatar: false,
-                              ),
-                            );
+                          CarCreateRequestModel(
+                            name: _nameController.text,
+                            odo: int.parse(_odoController.text),
+                            avatar: false,
+                          ),
+                        );
                       },
                     ),
                   ],
                 ),
               ],
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

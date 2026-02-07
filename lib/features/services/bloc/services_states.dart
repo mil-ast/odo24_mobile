@@ -21,14 +21,10 @@ sealed class ServicesState {
   factory ServicesState.message(String message) = ServiceMessageState;
   factory ServicesState.showList(List<ServiceModel> services, NextODOInformation? inform) = ServicesShowListState;
   factory ServicesState.actionCreate() => ServiceActionState(ServiceAction.create);
-  factory ServicesState.actionUpdate(ServiceModel service) => ServiceActionState(
-        ServiceAction.update,
-        service: service,
-      );
-  factory ServicesState.actionDelete(ServiceModel service) => ServiceActionState(
-        ServiceAction.delete,
-        service: service,
-      );
+  factory ServicesState.actionUpdate(ServiceModel service) =>
+      ServiceActionState(ServiceAction.update, service: service);
+  factory ServicesState.actionDelete(ServiceModel service) =>
+      ServiceActionState(ServiceAction.delete, service: service);
   factory ServicesState.createSuccess() = ServiceCreateSuccessState;
   factory ServicesState.updateSuccess() = ServiceUpdateSuccessState;
   factory ServicesState.deleteSuccess() = ServiceDeleteSuccessState;
@@ -36,11 +32,7 @@ sealed class ServicesState {
   factory ServicesState.failure(Object e) => ServiceErrorState(e.toString());
 }
 
-enum ServiceAction {
-  create,
-  update,
-  delete;
-}
+enum ServiceAction { create, update, delete }
 
 class ServicesReadyState extends ServicesState {
   const ServicesReadyState() : super(true);

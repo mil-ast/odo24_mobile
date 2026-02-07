@@ -15,9 +15,7 @@ abstract interface class IGroupsDataProvider {
 class GroupsDataProvider implements IGroupsDataProvider {
   final Dio _httpClient;
 
-  GroupsDataProvider({
-    required Dio httpClient,
-  }) : _httpClient = httpClient;
+  GroupsDataProvider({required Dio httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<GroupModel>> getAll() async {

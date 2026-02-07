@@ -9,27 +9,24 @@ class RegisterCubit extends Cubit<RegisterState> {
   final IAuthRepository _authRepository;
 
   RegisterCubit({required IAuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(RegisterState.ready());
+    : _authRepository = authRepository,
+      super(RegisterState.ready());
 
-  Future<void> sendRegisterCode(String email) async {
+  Future<void> sendRegisterCode(String email, String password) async {
     try {
       emit(RegisterState.waiting());
       await _authRepository.registerSendConfirmationCode(email);
-      emit(RegisterState.message('Проверочный код отправлен на $email'));
-    } catch (e) {
+      emit(RegisterState.openEmailConfirmation(email, password));
+    } catch (e, st) {
+      onError(e, st);
       emit(RegisterState.failure(e));
     }
   }
 
-  void openEmailConfirmationScreen(String email, String password) {
-    emit(RegisterState.openEmailConfirmation(email, password));
-  }
-
-  Future<void> register(String email, String password, String code) async {
+  Future<void> register({required String email, required String password, required int code}) async {
     try {
       emit(RegisterState.waiting());
-      await _authRepository.register(email, password, int.parse(code));
+      await _authRepository.register(email, password, code);
       emit(RegisterState.success());
     } on DioException catch (e) {
       if (e.response?.statusCode == HttpStatus.forbidden) {

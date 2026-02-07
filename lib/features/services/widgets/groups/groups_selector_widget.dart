@@ -26,26 +26,19 @@ class GroupsSelectorWidget extends StatelessWidget {
                 enabledBorder: theme.dropdownMenuTheme.inputDecorationTheme?.border,
                 focusedBorder: theme.dropdownMenuTheme.inputDecorationTheme?.border,
               ),
-              value: selected,
+              initialValue: selected,
               isExpanded: true,
               items: groups.map((GroupModel group) {
                 return DropdownMenuItem<GroupModel>(
                   key: ValueKey(group.groupID),
                   value: group,
-                  child: Text(
-                    group.name,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: Text(group.name, overflow: TextOverflow.ellipsis),
                 );
               }).toList(),
               onChanged: BlocProvider.of<GroupsCubit>(context).onChangeGroup,
               icon: Padding(
                 padding: const EdgeInsets.only(left: 20),
-                child: Icon(
-                  Icons.arrow_drop_down_outlined,
-                  size: 24,
-                  color: theme.dropdownMenuTheme.textStyle?.color,
-                ),
+                child: Icon(Icons.arrow_drop_down_outlined, size: 24, color: theme.dropdownMenuTheme.textStyle?.color),
               ),
               //iconEnabledColor: theme.colorScheme.inversePrimary,
               //underline: const SizedBox.shrink(), //remove underline

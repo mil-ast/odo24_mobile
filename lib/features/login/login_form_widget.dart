@@ -20,17 +20,15 @@ class LoginFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final themePreferences = DependenciesScope.of(context).themePreferences;
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         spacing: 20,
         children: [
           Center(
             child: SvgPicture.asset(
-              themePreferences.brightness.value == Brightness.dark
-                  ? 'assets/logo.svg'
-                  : 'assets/logo_dark.svg',
-              width: 80,
-              height: 80,
+              themePreferences.brightness.value == Brightness.dark ? 'assets/logo.svg' : 'assets/logo_dark.svg',
+              width: 60,
+              height: 60,
             ),
           ),
           Form(
@@ -66,14 +64,9 @@ class LoginFormWidget extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   alignment: WrapAlignment.spaceBetween,
                   children: [
+                    TextButton(onPressed: context.read<LoginCubit>().onClickRegister, child: const Text('Регистрация')),
                     TextButton(
-                      onPressed: context.read<LoginCubit>().onClickRegister,
-                      child: const Text('Регистрация'),
-                    ),
-                    TextButton(
-                      onPressed: context
-                          .read<LoginCubit>()
-                          .onClickPasswordRecovery,
+                      onPressed: context.read<LoginCubit>().onClickPasswordRecovery,
                       child: const Wrap(children: [Text('Забыли пароль?')]),
                     ),
                   ],
