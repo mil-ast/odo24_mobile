@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
-import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
-import 'package:odo24_mobile/features/services/bloc/services_states.dart';
-import 'package:odo24_mobile/features/services/data/models/service_create_request_model.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services_old/bloc/services_cubit.dart';
+import 'package:odo24_mobile/features/services_old/bloc/services_states.dart';
+import 'package:odo24_mobile/features/services_old/data/models/service_create_request_model.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/data/models/group_model.dart';
 
 class ServiceRecCreateWidget extends StatelessWidget {
   static const _defaultNextDistanceValue = 10000;

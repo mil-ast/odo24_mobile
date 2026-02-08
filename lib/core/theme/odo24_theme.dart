@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import './color_scheme.dart';
 
 abstract class ODO24Theme {
@@ -6,6 +7,8 @@ abstract class ODO24Theme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      highlightColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
       colorScheme: const ColorScheme.light(
         primary: ODO24LightThemeColors.primary,
         secondary: ODO24LightThemeColors.secondary,

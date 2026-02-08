@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_create_request_model.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_model.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/models/group_update_request_model.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/data/models/group_create_request_model.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/data/models/group_update_request_model.dart';
 
 abstract interface class IGroupsDataProvider {
   Future<List<GroupModel>> getAll();

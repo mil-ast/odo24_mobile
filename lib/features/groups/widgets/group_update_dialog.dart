@@ -25,6 +25,12 @@ class _GroupUpdateWidgetState extends State<GroupUpdateWidget> {
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AppCard(
       child: BlocListener<GroupsCubit, GroupsState>(

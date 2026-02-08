@@ -52,10 +52,7 @@ class LoginScreenState extends State<LoginScreen> {
                         listener: (BuildContext context, LoginState state) {
                           switch (state) {
                             case LoginSuccessState():
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => CarsScreen.carsScreenScope()),
-                              );
+                              CarsScreen.open(context);
                             case LoginGoToRegisterState():
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
                             case LoginGoToPasswordRecoveryState():

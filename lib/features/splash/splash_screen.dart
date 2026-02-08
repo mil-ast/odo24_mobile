@@ -17,7 +17,7 @@ class SplashScreen extends StatelessWidget {
         }
 
         if (snap.data == true) {
-          return CarsScreen.carsScreenScope();
+          return CarsScreen.create();
         }
         return const LoginScreen();
       },

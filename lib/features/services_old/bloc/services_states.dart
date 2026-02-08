@@ -1,4 +1,5 @@
-part of './services_cubit.dart';
+import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
+import 'package:odo24_mobile/features/services_old/data/models/service_model.dart';
 
 class NextODOInformation {
   final double factor;
@@ -12,8 +13,7 @@ class NextODOInformation {
 }
 
 sealed class ServicesState {
-  const ServicesState();
-  /* final bool needBuild;
+  final bool needBuild;
   const ServicesState(this.needBuild);
 
   factory ServicesState.ready() = ServicesReadyState;
@@ -29,37 +29,18 @@ sealed class ServicesState {
   factory ServicesState.updateSuccess() = ServiceUpdateSuccessState;
   factory ServicesState.deleteSuccess() = ServiceDeleteSuccessState;
   factory ServicesState.onCarODOAutoUpdate(int newODO) = ServiceCarODOAutoUpdateState;
-  factory ServicesState.failure(Object e) => ServiceErrorState(e.toString()); */
-
-  bool get needBuild => switch (this) {
-    ServicesLoadingState() => true,
-    ServicesFailureState() => false,
-    ServicesShowListState() => true,
-  };
+  factory ServicesState.failure(Object e) => ServiceErrorState(e.toString());
 }
 
 enum ServiceAction { create, update, delete }
 
-class ServicesLoadingState extends ServicesState {
-  const ServicesLoadingState();
-}
-
-class ServicesFailureState extends ServicesState {
-  final String message;
-  ServicesFailureState(Object err) : message = err.toString();
-}
-
-class ServicesShowListState extends ServicesState {
-  final List<ServiceModel> services;
-  final NextODOInformation? inform;
-  const ServicesShowListState({required this.services, required this.inform});
-}
-
-/* class ServicesReadyState extends ServicesState {
+class ServicesReadyState extends ServicesState {
   const ServicesReadyState() : super(true);
 }
 
-
+class ServicesLoadingState extends ServicesState {
+  const ServicesLoadingState() : super(true);
+}
 
 class ServicesShowListState extends ServicesState {
   final List<ServiceModel> services;
@@ -99,4 +80,3 @@ class ServiceErrorState extends ServicesState {
   final String message;
   ServiceErrorState(this.message) : super(false);
 }
- */

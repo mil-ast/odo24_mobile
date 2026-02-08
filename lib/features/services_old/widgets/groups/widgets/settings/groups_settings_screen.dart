@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_cubit.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/bloc/groups_states.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/services_old/widgets/groups/bloc/groups_states.dart';
 
 class GroupsSettingsScreen extends StatefulWidget {
   const GroupsSettingsScreen({super.key});

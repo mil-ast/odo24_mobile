@@ -6,12 +6,15 @@ import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
-import 'package:odo24_mobile/features/cars/cars_dependencies_scope.dart';
+import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/groups/group_item_widget.dart';
+import 'package:odo24_mobile/features/groups/groups_dependencies.dart';
 import 'package:odo24_mobile/features/groups/widgets/first_group_create_widget.dart';
 import 'package:odo24_mobile/features/groups/widgets/group_create_widget.dart';
 import 'package:odo24_mobile/features/groups/widgets/group_update_dialog.dart';
+import 'package:odo24_mobile/features/services/services_screen.dart';
 
 class GroupsScreenScope extends StatelessWidget {
   final Widget child;
@@ -31,40 +34,42 @@ class GroupsScreenScope extends StatelessWidget {
 class GroupsScreen extends StatefulWidget {
   const GroupsScreen({super.key});
 
+  static Future<void> open(BuildContext context, {required CarModel selectedCar}) => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => GroupsDependenciesScope(
+        dependencies: GroupsDependencies(selectedCar: selectedCar),
+        child: const GroupsScreenScope(child: GroupsScreen()),
+      ),
+    ),
+  );
+
   @override
   State<GroupsScreen> createState() => _GroupsScreenState();
 }
 
 class _GroupsScreenState extends State<GroupsScreen> {
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     context.read<GroupsCubit>().getAllGroups();
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedCar = CarsDependenciesScope.of(context).selectedCar;
+    final selectedCar = GroupsDependenciesScope.of(context).selectedCar;
     return BlocConsumer<GroupsCubit, GroupsState>(
       listenWhen: (previous, current) => !current.needBuild,
       listener: (context, state) async {
         switch (state) {
           case GroupsOnSelectState():
-            print(state.group);
-          /* Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CarsDependenciesScope(
-                    selectedCar: state.car,
-                    child: const GroupsScreenScope(child: GroupsScreen()),
-                  ),
-                ),
-              ); */
+            final selectedCar = GroupsDependenciesScope.of(context).selectedCar;
+            ServicesScreen.open(context, selectedCar: selectedCar, selectedGroup: state.group);
           case GroupsActionShowCreateDialogState():
             showFullScreenDialog(
               context,
               title: 'Добавить группу',
-              body: BlocProvider.value(value: context.read<GroupsCubit>(), child: GroupCreateWidget()),
+              body: BlocProvider.value(value: context.read<GroupsCubit>(), child: const GroupCreateWidget()),
             );
           case GroupsActionShowUpdateDialogState():
             showFullScreenDialog(
@@ -81,7 +86,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
             if (confirm == true && context.mounted) {
               context.read<GroupsCubit>().delete(state.group);
             }
-          case GroupsErrorState():
+          case GroupsFailureState():
             showErrorDialog(context, title: 'Ошибка', message: state.message);
           default:
         }
@@ -95,6 +100,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
         if (state is GroupsLoadedState && state.groups.isNotEmpty) {
           return AppScaffold(
             title: selectedCar.name,
+            subTitle: 'Группы',
             floatingActionButton: FloatingActionButton(
               onPressed: context.read<GroupsCubit>().openFormCreateGroup,
               child: const Icon(Icons.add),
@@ -109,9 +115,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   child: Padding(
                     padding: EdgeInsetsGeometry.all(10),
                     child: Row(
-                      spacing: 20,
+                      spacing: 10,
                       children: [
-                        Icon(Icons.info, color: ODO24Colors.inverseTextColor, size: 36),
+                        Icon(Icons.info_outline, color: ODO24Colors.inverseTextColor, size: 28),
                         Expanded(
                           child: Text(
                             'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
@@ -136,42 +142,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 },
                 footer: const SizedBox(height: 40),
                 children: state.groups
-                    .map(
-                      (item) => ListTile(
-                        key: ValueKey(item.groupID.toString()),
-                        title: Text(item.name, overflow: TextOverflow.fade),
-                        contentPadding: const EdgeInsets.only(top: 6, right: 4, bottom: 6, left: 20),
-                        onTap: () {
-                          context.read<GroupsCubit>().onSelectGroup(item);
-                        },
-                        trailing: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            PopupMenuButton(
-                              icon: const Icon(Icons.more_vert),
-                              itemBuilder: (ctx) => [
-                                PopupMenuItem(
-                                  child: const ListTile(leading: Icon(Icons.edit), title: Text('Изменить')),
-                                  onTap: () {
-                                    context.read<GroupsCubit>().showUpdateDialog(item);
-                                  },
-                                ),
-                                PopupMenuItem(
-                                  child: const ListTile(
-                                    leading: Icon(Icons.delete, color: Colors.red),
-                                    title: Text('Удалить', style: TextStyle(color: Colors.red)),
-                                  ),
-                                  onTap: () {
-                                    context.read<GroupsCubit>().showDeleteConfirmDialog(item);
-                                  },
-                                ),
-                              ],
-                            ),
-                            const Icon(Icons.chevron_right_outlined, color: Colors.grey),
-                          ],
-                        ),
-                      ),
-                    )
+                    .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
                     .toList(),
               ),
             ),
@@ -180,11 +151,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
         return AppScaffold(
           title: selectedCar.name,
-          body: SingleChildScrollView(
+          body: const SingleChildScrollView(
             child: Column(
               children: [
                 AppCard(
-                  title: const AppCardTitle(title: 'Добавить группу'),
+                  title: AppCardTitle(title: 'Добавить группу'),
                   child: FirstGroupCreateWidget(),
                 ),
               ],

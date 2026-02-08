@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/extensions/date_format_extension.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
-import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
-import 'package:odo24_mobile/features/services/data/models/service_model.dart';
+import 'package:odo24_mobile/features/services_old/bloc/services_cubit.dart';
+import 'package:odo24_mobile/features/services_old/data/models/service_model.dart';
 
 class ServiceItemWidget extends StatelessWidget {
   final ServiceModel service;

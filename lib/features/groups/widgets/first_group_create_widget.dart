@@ -3,13 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_create_request_model.dart';
 
-class FirstGroupCreateWidget extends StatelessWidget {
-  FirstGroupCreateWidget({super.key});
+class FirstGroupCreateWidget extends StatefulWidget {
+  const FirstGroupCreateWidget({super.key});
 
+  @override
+  State<FirstGroupCreateWidget> createState() => _FirstGroupCreateWidgetState();
+}
+
+class _FirstGroupCreateWidgetState extends State<FirstGroupCreateWidget> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController.fromValue(
     const TextEditingValue(text: 'Моторное масло'),
   );
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

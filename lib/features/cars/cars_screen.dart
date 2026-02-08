@@ -8,13 +8,28 @@ import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/car_item_widget.dart';
-import 'package:odo24_mobile/features/cars/cars_dependencies_scope.dart';
 import 'package:odo24_mobile/features/cars/widgets/create/car_create_dialog.dart';
 import 'package:odo24_mobile/features/cars/widgets/create/car_create_form_widget.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit/car_edit_form_dialog.dart';
 import 'package:odo24_mobile/features/cars/widgets/edit_miliage/edit_miliage_widget.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/groups_screen.dart';
+
+/* class CarsDependenciesScope extends InheritedWidget {
+  final CarModel selectedCar;
+
+  const CarsDependenciesScope({super.key, required this.selectedCar, required super.child});
+
+  static CarsDependenciesScope of(BuildContext context) {
+    final model = context.dependOnInheritedWidgetOfExactType<CarsDependenciesScope>();
+
+    assert(model?.selectedCar != null, 'No DependenciesScope found in context');
+    return model!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant CarsDependenciesScope oldWidget) => selectedCar != oldWidget.selectedCar;
+} */
 
 class CarsScreenScope extends StatelessWidget {
   final Widget child;
@@ -33,10 +48,13 @@ class CarsScreenScope extends StatelessWidget {
 class CarsScreen extends StatefulWidget {
   const CarsScreen({super.key});
 
+  static Future<void> open(BuildContext context) =>
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CarsScreen.create()));
+
+  static Widget create() => const CarsScreenScope(child: CarsScreen());
+
   @override
   State<CarsScreen> createState() => _CarsScreenState();
-
-  static CarsScreenScope carsScreenScope() => const CarsScreenScope(child: CarsScreen());
 }
 
 class _CarsScreenState extends State<CarsScreen> {
@@ -61,15 +79,7 @@ class _CarsScreenState extends State<CarsScreen> {
             case CarsErrorState():
               showErrorDialog(context, title: 'Ошибка', message: state.message);
             case CarActionSelectState():
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CarsDependenciesScope(
-                    selectedCar: state.car,
-                    child: const GroupsScreenScope(child: GroupsScreen()),
-                  ),
-                ),
-              );
+              await GroupsScreen.open(context, selectedCar: state.car);
               if (context.mounted) {
                 context.read<CarsCubit>().getAllCars();
               }

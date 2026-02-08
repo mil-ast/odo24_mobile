@@ -4,19 +4,34 @@ class AppCardTitle extends StatelessWidget {
   final String title;
   final Color? titleColor;
   final Color? backgroundColor;
-  const AppCardTitle({required this.title, this.titleColor = Colors.white, this.backgroundColor, super.key});
+  final Widget? action;
+  const AppCardTitle({
+    required this.title,
+    this.action,
+    this.titleColor = Colors.white,
+    this.backgroundColor,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         color: backgroundColor ?? Theme.of(context).colorScheme.secondary,
         border: Border.all(color: backgroundColor ?? Colors.transparent),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor)),
+        padding: const EdgeInsets.fromLTRB(20, 20, 5, 20),
+        child: action != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor)),
+                  action!,
+                ],
+              )
+            : Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor)),
       ),
     );
   }

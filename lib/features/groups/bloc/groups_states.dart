@@ -4,7 +4,7 @@ sealed class GroupsState {
   const GroupsState();
 
   factory GroupsState.waiting() = GroupsWaitingState;
-  factory GroupsState.failure(Object err) = GroupsErrorState;
+  factory GroupsState.failure(Object err) = GroupsFailureState;
   factory GroupsState.loaded(List<GroupModel> groups) = GroupsLoadedState;
   factory GroupsState.actionCreate() = GroupsActionShowCreateDialogState;
   factory GroupsState.createSuccess() = GroupsCreateSuccessState;
@@ -13,7 +13,7 @@ sealed class GroupsState {
 
   bool get needBuild => switch (this) {
     GroupsWaitingState() => true,
-    GroupsErrorState() => true,
+    GroupsFailureState() => true,
     GroupsLoadedState() => true,
     GroupsActionShowCreateDialogState() => false,
     GroupsOnSelectState() => false,
@@ -29,9 +29,9 @@ class GroupsWaitingState extends GroupsState {
   const GroupsWaitingState();
 }
 
-class GroupsErrorState extends GroupsState {
+class GroupsFailureState extends GroupsState {
   final String message;
-  GroupsErrorState(Object err) : message = err.toString();
+  GroupsFailureState(Object err) : message = err.toString();
 }
 
 class GroupsLoadedState extends GroupsState {

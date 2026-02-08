@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
+import 'package:odo24_mobile/features/services_old/bloc/services_cubit.dart';
 
 class EmptyServicesWidget extends StatelessWidget {
   const EmptyServicesWidget({super.key});

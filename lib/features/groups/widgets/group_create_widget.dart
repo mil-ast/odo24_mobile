@@ -4,11 +4,22 @@ import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_create_request_model.dart';
 
-class GroupCreateWidget extends StatelessWidget {
-  GroupCreateWidget({super.key});
+class GroupCreateWidget extends StatefulWidget {
+  const GroupCreateWidget({super.key});
 
+  @override
+  State<GroupCreateWidget> createState() => _GroupCreateWidgetState();
+}
+
+class _GroupCreateWidgetState extends State<GroupCreateWidget> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

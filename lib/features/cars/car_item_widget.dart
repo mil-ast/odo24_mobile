@@ -22,7 +22,29 @@ class CarItemWidget extends StatelessWidget {
         context.read<CarsCubit>().onSelectCar(car);
       },
       child: AppCard(
-        title: AppCardTitle(title: car.name),
+        title: AppCardTitle(
+          title: car.name,
+          action: PopupMenuButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            itemBuilder: (ctx) => [
+              PopupMenuItem(
+                child: const ListTile(leading: Icon(Icons.edit), title: Text('Изменить')),
+                onTap: () {
+                  context.read<CarsCubit>().openFormEditCar(car);
+                },
+              ),
+              PopupMenuItem(
+                child: const ListTile(
+                  leading: Icon(Icons.delete, color: Colors.red),
+                  title: Text('Удалить', style: TextStyle(color: Colors.red)),
+                ),
+                onTap: () {
+                  context.read<CarsCubit>().onClickDeleteCar(car);
+                },
+              ),
+            ],
+          ),
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,59 +54,33 @@ class CarItemWidget extends StatelessWidget {
                 spacing: 10,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(car.name, style: theme.textTheme.titleLarge),
-                      PopupMenuButton(
-                        icon: const Icon(Icons.more_vert),
-                        itemBuilder: (ctx) => [
-                          PopupMenuItem(
-                            child: const ListTile(leading: Icon(Icons.edit), title: Text('Изменить')),
-                            onTap: () {
-                              context.read<CarsCubit>().openFormEditCar(car);
-                            },
-                          ),
-                          PopupMenuItem(
-                            child: const ListTile(
-                              leading: Icon(Icons.delete, color: Colors.red),
-                              title: Text('Удалить', style: TextStyle(color: Colors.red)),
-                            ),
-                            onTap: () {
-                              context.read<CarsCubit>().onClickDeleteCar(car);
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(flex: 6, child: Text('Записей в книжке', style: titleTextTheme)),
-                      Expanded(
-                        flex: 7,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40),
-                          child: Text(numberFmt.format(car.servicesTotal), style: theme.textTheme.bodyMedium),
+                      Expanded(child: Text('Записей в книжке', style: titleTextTheme)),
+                      SizedBox(
+                        width: 160,
+                        child: Text(
+                          numberFmt.format(car.servicesTotal),
+                          textAlign: TextAlign.right,
+                          style: theme.textTheme.bodyMedium,
                         ),
                       ),
                     ],
                   ),
                   Row(
                     children: [
-                      Expanded(flex: 6, child: Text('Пробег', style: titleTextTheme)),
-                      Expanded(
-                        flex: 7,
-                        child: Wrap(
-                          spacing: 10,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () {
-                                context.read<CarsCubit>().openFormEditODO(car);
-                              },
-                              icon: const Icon(Icons.edit, size: 20),
-                              label: Text('${numberFmt.format(car.odo)} км'),
-                            ),
-                          ],
+                      Expanded(child: Text('Пробег', style: titleTextTheme)),
+                      SizedBox(
+                        width: 160,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            style: const ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.only(right: 0))),
+                            onPressed: () {
+                              context.read<CarsCubit>().openFormEditODO(car);
+                            },
+                            icon: const Icon(Icons.edit, size: 20),
+                            label: Text('${numberFmt.format(car.odo)} км'),
+                          ),
                         ),
                       ),
                     ],
@@ -92,6 +88,8 @@ class CarItemWidget extends StatelessWidget {
                   if (car.carExtraDataModel.isNotEmpty) ...[
                     Text('Ближайшее обслуживание:', style: theme.textTheme.titleMedium),
                     ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final e = car.carExtraDataModel[index];
                         final nextOdoInfo = e.calculateLeftODO(car.odo);
@@ -100,28 +98,24 @@ class CarItemWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                              flex: 4,
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Text(e.groupName, style: titleTextTheme),
                               ),
                             ),
-                            Expanded(
-                              flex: 3,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: nextOdoInfo.colorLevel.color,
-                                  borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 40, right: 10),
-                                  child: Text(
-                                    '${nextOdoInfo.leftDistance.format()} км',
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: theme.colorScheme.inverseTextColor,
-                                    ),
-                                  ),
+                            Container(
+                              width: 120,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: nextOdoInfo.colorLevel.color,
+                                borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10, right: 10),
+                                child: Text(
+                                  '${nextOdoInfo.leftDistance.format()} км',
+                                  style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.inverseTextColor),
                                 ),
                               ),
                             ),
@@ -130,7 +124,6 @@ class CarItemWidget extends StatelessWidget {
                       },
                       separatorBuilder: (context, index) => const SizedBox(height: 8),
                       itemCount: car.carExtraDataModel.length,
-                      shrinkWrap: true,
                     ),
                   ],
                 ],
