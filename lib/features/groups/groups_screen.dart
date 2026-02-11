@@ -9,6 +9,7 @@ import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
+import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/groups/group_item_widget.dart';
 import 'package:odo24_mobile/features/groups/groups_dependencies.dart';
 import 'package:odo24_mobile/features/groups/widgets/first_group_create_widget.dart';
@@ -92,77 +93,97 @@ class _GroupsScreenState extends State<GroupsScreen> {
         }
       },
       buildWhen: (previous, current) => current.needBuild,
-      builder: (context, state) {
-        if (state is GroupsWaitingState) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      builder: (context, state) => switch (state) {
+        GroupsWaitingState() => const Center(child: CircularProgressIndicator()),
+        GroupsLoadedState() => ListGroupsWidget(selectedCar: selectedCar, groups: state.groups),
+        _ => CreateFirstGroupWidget(selectedCar: selectedCar),
+      },
+    );
+  }
+}
 
-        if (state is GroupsLoadedState && state.groups.isNotEmpty) {
-          return AppScaffold(
-            title: selectedCar.name,
-            subTitle: 'Группы',
-            floatingActionButton: FloatingActionButton(
-              onPressed: context.read<GroupsCubit>().openFormCreateGroup,
-              child: const Icon(Icons.add),
-            ),
-            body: ColoredBox(
-              color: Colors.white,
-              child: ReorderableListView(
-                header: const Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                  margin: EdgeInsets.only(bottom: 20),
-                  color: ODO24Colors.actions,
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.all(10),
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        Icon(Icons.info_outline, color: ODO24Colors.inverseTextColor, size: 28),
-                        Expanded(
-                          child: Text(
-                            'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
-                            style: TextStyle(color: ODO24Colors.inverseTextColor),
-                          ),
-                        ),
-                      ],
+class ListGroupsWidget extends StatefulWidget {
+  final CarModel selectedCar;
+  final List<GroupModel> groups;
+  const ListGroupsWidget({required this.selectedCar, required this.groups, super.key});
+
+  @override
+  State<ListGroupsWidget> createState() => _ListGroupsWidgetState();
+}
+
+class _ListGroupsWidgetState extends State<ListGroupsWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      title: widget.selectedCar.name,
+      subTitle: 'Группы',
+      floatingActionButton: FloatingActionButton(
+        onPressed: context.read<GroupsCubit>().openFormCreateGroup,
+        child: const Icon(Icons.add),
+      ),
+      body: ColoredBox(
+        color: Colors.white,
+        child: ReorderableListView(
+          header: const Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            margin: EdgeInsets.only(bottom: 20),
+            color: ODO24Colors.actions,
+            child: Padding(
+              padding: EdgeInsetsGeometry.all(10),
+              child: Row(
+                spacing: 10,
+                children: [
+                  Icon(Icons.info_outline, color: ODO24Colors.inverseTextColor, size: 28),
+                  Expanded(
+                    child: Text(
+                      'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
+                      style: TextStyle(color: ODO24Colors.inverseTextColor),
                     ),
                   ),
-                ),
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-
-                    final item = state.groups.removeAt(oldIndex);
-                    state.groups.insert(newIndex, item);
-
-                    context.read<GroupsCubit>().updateSortGroups(state.groups);
-                  });
-                },
-                footer: const SizedBox(height: 40),
-                children: state.groups
-                    .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
-                    .toList(),
+                ],
               ),
             ),
-          );
-        }
-
-        return AppScaffold(
-          title: selectedCar.name,
-          body: const SingleChildScrollView(
-            child: Column(
-              children: [
-                AppCard(
-                  title: AppCardTitle(title: 'Добавить группу'),
-                  child: FirstGroupCreateWidget(),
-                ),
-              ],
-            ),
           ),
-        );
-      },
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+
+              final item = widget.groups.removeAt(oldIndex);
+              widget.groups.insert(newIndex, item);
+
+              context.read<GroupsCubit>().updateSortGroups(widget.groups);
+            });
+          },
+          footer: const SizedBox(height: 40),
+          children: widget.groups
+              .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
+              .toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class CreateFirstGroupWidget extends StatelessWidget {
+  final CarModel selectedCar;
+  const CreateFirstGroupWidget({required this.selectedCar, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      title: selectedCar.name,
+      body: const SingleChildScrollView(
+        child: Column(
+          children: [
+            AppCard(
+              title: AppCardTitle(title: 'Добавить группу'),
+              child: FirstGroupCreateWidget(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

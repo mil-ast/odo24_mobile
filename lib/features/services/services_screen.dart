@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
@@ -7,11 +10,15 @@ import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
 import 'package:odo24_mobile/features/services/service_item_widget.dart';
 import 'package:odo24_mobile/features/services/services_dependencies.dart';
+import 'package:odo24_mobile/features/services/widgets/service_create_dialog.dart';
+import 'package:odo24_mobile/features/services/widgets/service_update_dialog.dart';
 
 class ServicesScreenScope extends StatelessWidget {
   final Widget child;
+  final CarModel selectedCar;
+  final GroupModel selectedGroup;
 
-  const ServicesScreenScope({required this.child, super.key});
+  const ServicesScreenScope({required this.selectedCar, required this.selectedGroup, required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +27,8 @@ class ServicesScreenScope extends StatelessWidget {
       create: (context) => ServicesCubit(
         carsRepository: dependencies.carsRepository,
         servicesRepository: dependencies.servicesRepository,
+        selectedCar: selectedCar,
+        selectedGroup: selectedGroup,
       ),
       child: child,
     );
@@ -35,7 +44,11 @@ class ServicesScreen extends StatefulWidget {
         MaterialPageRoute(
           builder: (_) => ServicesDependenciesScope(
             dependencies: ServicesDependencies(selectedCar: selectedCar, selectedGroup: selectedGroup),
-            child: const ServicesScreenScope(child: ServicesScreen()),
+            child: ServicesScreenScope(
+              selectedCar: selectedCar,
+              selectedGroup: selectedGroup,
+              child: const ServicesScreen(),
+            ),
           ),
         ),
       );
@@ -48,12 +61,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    final servicesDependencies = ServicesDependenciesScope.of(context);
-    context.read<ServicesCubit>().getAllServices(
-      selectedCar: servicesDependencies.selectedCar,
-      selectedGroup: servicesDependencies.selectedGroup,
-    );
+    context.read<ServicesCubit>().getAllServices();
   }
 
   @override
@@ -65,8 +73,53 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return AppScaffold(
       title: selectedCar.name,
       subTitle: selectedGroup.name,
+      floatingActionButton: FloatingActionButton(
+        onPressed: context.read<ServicesCubit>().openFormCreateService,
+        child: const Icon(Icons.add),
+      ),
       body: BlocConsumer<ServicesCubit, ServicesState>(
-        listener: (context, state) {},
+        listenWhen: (previous, current) => !current.needBuild,
+        listener: (context, state) {
+          switch (state) {
+            case ServicesCreateSuccessState():
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Запись успешно добавлена!')));
+            case ServicesUpdateSuccessState():
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Изменения успешно сохранены!')));
+            case ServicesUpdateDeleteState():
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Запись успешно удалена!')));
+            case ServicesFailureState():
+              showErrorDialog(context, title: 'Ошибка', message: state.message);
+            case ServicesActionShowCreateDialogState():
+              showFullScreenDialog(
+                context,
+                title: 'Новая запись',
+                body: BlocProvider.value(
+                  value: context.read<ServicesCubit>(),
+                  child: ServiceCreateWidget(selectedCar: selectedCar, selectedGroup: selectedGroup),
+                ),
+              );
+            case ServicesActionShowUpdateDialogState():
+              showFullScreenDialog(
+                context,
+                title: 'Изменить запись',
+                body: BlocProvider.value(
+                  value: context.read<ServicesCubit>(),
+                  child: ServiceUpdateDialog(service: state.service, selectedGroup: selectedGroup),
+                ),
+              );
+            case ServicesActionShowDeleteConfirmationDialogState():
+              showConfirmationDialog(
+                context,
+                title: 'Удаление группы',
+                message: 'Вы действительно хотите удалить запись?',
+              ).then((isOk) {
+                if ((isOk ?? false) && context.mounted) {
+                  context.read<ServicesCubit>().delete(state.service);
+                }
+              });
+            default:
+          }
+        },
         buildWhen: (previous, current) => current.needBuild,
         builder: (context, state) {
           return switch (state) {

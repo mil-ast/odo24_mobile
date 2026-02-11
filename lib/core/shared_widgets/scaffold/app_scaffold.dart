@@ -39,13 +39,12 @@ class AppScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       body: Padding(
         padding: padding,
-        child: body,
-        /* child: ClipRRect(
+        child: ClipRRect(
           borderRadius: title != null
               ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
               : BorderRadius.zero,
           child: body,
-        ), */
+        ),
       ),
     );
   }

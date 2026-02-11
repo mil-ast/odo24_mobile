@@ -3,7 +3,9 @@ import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
+import 'package:odo24_mobile/features/services/data/models/service_create_request_model.dart';
 import 'package:odo24_mobile/features/services/data/models/service_model.dart';
+import 'package:odo24_mobile/features/services/data/models/service_update_request_model.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
 
 part './services_states.dart';
@@ -14,15 +16,22 @@ class ServicesCubit extends Cubit<ServicesState> {
   final IServicesRepository _servicesRepository;
   final ICarsRepository _carsRepository;
 
-  ServicesCubit({required IServicesRepository servicesRepository, required ICarsRepository carsRepository})
-    : _servicesRepository = servicesRepository,
-      _carsRepository = carsRepository,
-      super(const ServicesLoadingState());
+  final CarModel selectedCar;
+  final GroupModel selectedGroup;
 
-  Future<void> getAllServices({required CarModel selectedCar, required GroupModel selectedGroup}) async {
+  ServicesCubit({
+    required IServicesRepository servicesRepository,
+    required ICarsRepository carsRepository,
+    required this.selectedCar,
+    required this.selectedGroup,
+  }) : _servicesRepository = servicesRepository,
+       _carsRepository = carsRepository,
+       super(const ServicesLoadingState());
+
+  Future<void> getAllServices() async {
     try {
       final services = await _servicesRepository.getByCarAndGroup(selectedCar.carID, selectedGroup.groupID);
-      _prepareServices(selectedCar: selectedCar, services: services);
+      _prepareServices(services: services);
       final nextOdoInform = _calcNextODOInformation(services: services, selectedCar: selectedCar);
 
       emit(ServicesShowListState(services: services, inform: nextOdoInform));
@@ -32,21 +41,68 @@ class ServicesCubit extends Cubit<ServicesState> {
     }
   }
 
-  // ----------------------------------
+  void openFormCreateService() {
+    emit(const ServicesActionShowCreateDialogState());
+  }
 
-  /* Future<void> onChangeSelectedGroup({required CarModel selectedCar, required GroupModel selectedGroup}) async {
+  Future<void> create(ServiceCreateRequestModel body) async {
     try {
-      emit(ServicesState.idle());
+      final milleage = (body.odo ?? 0) - selectedCar.odo;
+      /* if (milleage > _maxMilleageForAutoUpdateODO) {
+        // добавить подтверждение
+        return;
+      } */
 
-      final services = await _servicesRepository.getByCarAndGroup(selectedCar.carID, selectedGroup.groupID);
+      if (body.odo != null && milleage < _maxMilleageForAutoUpdateODO && body.odo! > selectedCar.odo) {
+        // обновить пробег авто
+        try {
+          await _carsRepository.updateODO(selectedCar.carID, body.odo!);
+        } catch (e, st) {
+          super.onError(e, st);
+        }
+      }
 
-      _refreshAndEmitServices(services: services, selectedCar: selectedCar);
-    } catch (e) {
-      emit(ServicesState.failure(e));
+      await _servicesRepository.create(selectedCar.carID, selectedGroup.groupID, body);
+
+      getAllServices();
+      emit(const ServicesCreateSuccessState());
+    } catch (e, st) {
+      super.onError(e, st);
+      emit(ServicesFailureState(e));
     }
-  } */
+  }
 
-  void _prepareServices({required List<ServiceModel> services, required CarModel selectedCar}) {
+  Future<void> update({required int serviceID, required ServiceUpdateRequestModel body}) async {
+    try {
+      await _servicesRepository.update(serviceID, body);
+      getAllServices();
+      emit(const ServicesUpdateSuccessState());
+    } catch (e, st) {
+      super.onError(e, st);
+      emit(ServicesFailureState(e));
+    }
+  }
+
+  Future<void> delete(ServiceModel service) async {
+    try {
+      await _servicesRepository.delete(service);
+      getAllServices();
+      emit(const ServicesUpdateDeleteState());
+    } catch (e, st) {
+      super.onError(e, st);
+      emit(ServicesFailureState(e));
+    }
+  }
+
+  void showUpdateDialog(ServiceModel service) {
+    emit(ServicesActionShowUpdateDialogState(service));
+  }
+
+  void confirmDeleteService(ServiceModel service) {
+    emit(ServicesActionShowDeleteConfirmationDialogState(service));
+  }
+
+  void _prepareServices({required List<ServiceModel> services}) {
     services.sort();
 
     for (int i = 0; i < services.length - 1; i++) {

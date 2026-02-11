@@ -3,6 +3,7 @@ import 'package:odo24_mobile/features/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_create_request_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_update_request_model.dart';
+
 part 'groups_states.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
@@ -15,6 +16,10 @@ class GroupsCubit extends Cubit<GroupsState> {
   Future<void> getAllGroups() async {
     try {
       final groups = await _groupsRepository.getAll();
+      if (groups.isEmpty) {
+        emit(const GroupsEmptyGroupsState());
+        return;
+      }
       emit(GroupsState.loaded(groups));
     } catch (e, st) {
       super.onError(e, st);

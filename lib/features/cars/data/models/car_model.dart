@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
-import 'package:odo24_mobile/features/services_old/bloc/services_states.dart';
+import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
 
 class CarModel implements Comparable<CarModel> {
   static const _maxExtDataLength = 3;

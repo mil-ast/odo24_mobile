@@ -13,8 +13,9 @@ sealed class GroupsState {
 
   bool get needBuild => switch (this) {
     GroupsWaitingState() => true,
-    GroupsFailureState() => true,
+    GroupsFailureState() => false,
     GroupsLoadedState() => true,
+    GroupsEmptyGroupsState() => true,
     GroupsActionShowCreateDialogState() => false,
     GroupsOnSelectState() => false,
     GroupsCreateSuccessState() => false,
@@ -38,6 +39,10 @@ class GroupsLoadedState extends GroupsState {
   final List<GroupModel> groups;
 
   const GroupsLoadedState(this.groups);
+}
+
+class GroupsEmptyGroupsState extends GroupsState {
+  const GroupsEmptyGroupsState();
 }
 
 class GroupsActionShowCreateDialogState extends GroupsState {

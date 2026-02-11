@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/extensions/date_format_extension.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
 import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
 import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 
 class ServiceItemWidget extends StatelessWidget {
@@ -21,7 +23,7 @@ class ServiceItemWidget extends StatelessWidget {
             return [
               PopupMenuItem(
                 onTap: () {
-                  //context.read<ServicesCubit>().openFormUpdateService(service);
+                  context.read<ServicesCubit>().showUpdateDialog(service);
                 },
                 child: const Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -31,7 +33,7 @@ class ServiceItemWidget extends StatelessWidget {
               ),
               PopupMenuItem(
                 onTap: () {
-                  //context.read<ServicesCubit>().onClickDeleteService(service);
+                  context.read<ServicesCubit>().confirmDeleteService(service);
                 },
                 child: const Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
