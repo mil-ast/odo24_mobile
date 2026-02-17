@@ -28,11 +28,10 @@ class _FirstGroupCreateWidgetState extends State<FirstGroupCreateWidget> {
       child: Form(
         key: _formKey,
         child: Column(
+          spacing: 20,
           children: [
             const Icon(Icons.comment),
-            const SizedBox(height: 20),
             Text('Групп ещё нет :(', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 20),
             Column(
               spacing: 20,
               mainAxisAlignment: MainAxisAlignment.end,

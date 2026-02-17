@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/features/cars/cars_screen.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/home/home_screen.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -17,7 +17,7 @@ class SplashScreen extends StatelessWidget {
         }
 
         if (snap.data == true) {
-          return CarsScreen.create();
+          return HomeScreen.create();
         }
         return const LoginScreen();
       },

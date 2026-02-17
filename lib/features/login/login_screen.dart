@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
-import 'package:odo24_mobile/features/cars/cars_screen.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/home/home_screen.dart';
 import 'package:odo24_mobile/features/login/bloc/login_cubit.dart';
 import 'package:odo24_mobile/features/login/bloc/login_states.dart';
 import 'package:odo24_mobile/features/login/login_form_widget.dart';
@@ -52,7 +52,7 @@ class LoginScreenState extends State<LoginScreen> {
                         listener: (BuildContext context, LoginState state) {
                           switch (state) {
                             case LoginSuccessState():
-                              CarsScreen.open(context);
+                              HomeScreen.open(context);
                             case LoginGoToRegisterState():
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
                             case LoginGoToPasswordRecoveryState():

@@ -123,6 +123,23 @@ abstract class ODO24Theme {
           borderRadius: BorderRadius.all(Radius.circular(4.0)),
         ),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: Colors.transparent,
+        indicatorColor: Colors.white,
+        height: 60,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: ODO24Colors.inverseTextColor);
+          }
+          return const IconThemeData(color: Colors.white);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
+          }
+          return const TextStyle(color: Colors.grey);
+        }),
+      ),
       dropdownMenuTheme: const DropdownMenuThemeData(
         inputDecorationTheme: InputDecorationTheme(
           filled: true,

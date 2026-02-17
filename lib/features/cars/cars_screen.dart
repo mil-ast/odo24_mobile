@@ -15,22 +15,6 @@ import 'package:odo24_mobile/features/cars/widgets/edit_miliage/edit_miliage_wid
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/groups_screen.dart';
 
-/* class CarsDependenciesScope extends InheritedWidget {
-  final CarModel selectedCar;
-
-  const CarsDependenciesScope({super.key, required this.selectedCar, required super.child});
-
-  static CarsDependenciesScope of(BuildContext context) {
-    final model = context.dependOnInheritedWidgetOfExactType<CarsDependenciesScope>();
-
-    assert(model?.selectedCar != null, 'No DependenciesScope found in context');
-    return model!;
-  }
-
-  @override
-  bool updateShouldNotify(covariant CarsDependenciesScope oldWidget) => selectedCar != oldWidget.selectedCar;
-} */
-
 class CarsScreenScope extends StatelessWidget {
   final Widget child;
   const CarsScreenScope({required this.child, super.key});
@@ -47,9 +31,6 @@ class CarsScreenScope extends StatelessWidget {
 
 class CarsScreen extends StatefulWidget {
   const CarsScreen({super.key});
-
-  static Future<void> open(BuildContext context) =>
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CarsScreen.create()));
 
   static Widget create() => const CarsScreenScope(child: CarsScreen());
 
@@ -72,6 +53,7 @@ class _CarsScreenState extends State<CarsScreen> {
         onPressed: context.read<CarsCubit>().openFormCreateCar,
         child: const Icon(Icons.add),
       ),
+
       body: BlocConsumer<CarsCubit, CarsState>(
         listenWhen: (previous, current) => !current.needBuild,
         listener: (BuildContext context, CarsState state) async {

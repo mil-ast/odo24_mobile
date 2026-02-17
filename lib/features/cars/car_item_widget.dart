@@ -57,7 +57,7 @@ class CarItemWidget extends StatelessWidget {
                     children: [
                       Expanded(child: Text('Записей в книжке', style: titleTextTheme)),
                       SizedBox(
-                        width: 160,
+                        width: 120,
                         child: Text(
                           numberFmt.format(car.servicesTotal),
                           textAlign: TextAlign.right,

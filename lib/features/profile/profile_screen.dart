@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:odo24_mobile/core/theme/theme_preferences.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
@@ -13,39 +13,43 @@ class ProfileScreen extends StatelessWidget {
     final dependencies = DependenciesScope.of(context);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Профиль')),
-      body: ListView(
-        children: [
-          SwitchThemeWidget(themePreferences: dependencies.themePreferences),
-          ListTile(
-            title: const Text('Изменить пароль'),
-            leading: const Icon(Icons.password_outlined),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()));
-            },
-            trailing: const Icon(Icons.chevron_right),
-          ),
-          ListTile(
-            title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
-            leading: Icon(Icons.logout, color: theme.colorScheme.error),
-            onTap: () async {
-              dependencies.authRepository.logout().ignore();
+    return AppScaffold(
+      title: 'Профиль',
+      body: SingleChildScrollView(
+        child: AppCard(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                title: const Text('Изменить пароль'),
+                leading: const Icon(Icons.password_outlined),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()));
+                },
+                trailing: const Icon(Icons.chevron_right),
+              ),
+              ListTile(
+                title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
+                leading: Icon(Icons.logout, color: theme.colorScheme.error),
+                onTap: () async {
+                  dependencies.authRepository.logout().ignore();
 
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false,
-              );
-            },
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class SwitchThemeWidget extends StatelessWidget {
+/* class SwitchThemeWidget extends StatelessWidget {
   final ThemePreferences themePreferences;
 
   const SwitchThemeWidget({required this.themePreferences, super.key});
@@ -71,4 +75,4 @@ class SwitchThemeWidget extends StatelessWidget {
       },
     );
   }
-}
+} */

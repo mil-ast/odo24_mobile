@@ -8,6 +8,7 @@ import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
+import 'package:odo24_mobile/features/services/data/models/service_model.dart';
 import 'package:odo24_mobile/features/services/service_item_widget.dart';
 import 'package:odo24_mobile/features/services/services_dependencies.dart';
 import 'package:odo24_mobile/features/services/widgets/service_create_dialog.dart';
@@ -121,18 +122,44 @@ class _ServicesScreenState extends State<ServicesScreen> {
           }
         },
         buildWhen: (previous, current) => current.needBuild,
-        builder: (context, state) {
-          return switch (state) {
-            ServicesLoadingState() => const Center(child: CircularProgressIndicator()),
-            ServicesShowListState() => ListView.separated(
-              itemCount: state.services.length,
-              itemBuilder: (context, index) => ServiceItemWidget(state.services[index]),
-              separatorBuilder: (BuildContext context, int index) =>
-                  ServiceItemSeparatorWidget(leftDistance: state.services[index].leftDistance),
-            ),
-            _ => const SizedBox.shrink(),
-          };
+        builder: (context, state) => switch (state) {
+          ServicesLoadingState() => const Center(child: CircularProgressIndicator()),
+          ServicesShowListState() => _ListServicesWidget(
+            services: state.services,
+            selectedGroupname: selectedGroup.name,
+          ),
+          _ => const SizedBox.shrink(),
         },
+      ),
+    );
+  }
+}
+
+class _ListServicesWidget extends StatelessWidget {
+  final List<ServiceModel> services;
+  final String selectedGroupname;
+  const _ListServicesWidget({required this.services, required this.selectedGroupname});
+
+  @override
+  Widget build(BuildContext context) {
+    if (services.isNotEmpty) {
+      return ListView.separated(
+        itemCount: services.length,
+        itemBuilder: (context, index) => ServiceItemWidget(services[index]),
+        separatorBuilder: (BuildContext context, int index) =>
+            ServiceItemSeparatorWidget(leftDistance: services[index].leftDistance),
+      );
+    }
+
+    return Center(
+      child: Column(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.comment, color: Colors.white),
+          Text('Записей в группе нет :(', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white)),
+          FilledButton(onPressed: context.read<ServicesCubit>().openFormCreateService, child: const Text('Добавить')),
+        ],
       ),
     );
   }

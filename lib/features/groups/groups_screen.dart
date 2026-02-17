@@ -87,6 +87,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
             if (confirm == true && context.mounted) {
               context.read<GroupsCubit>().delete(state.group);
             }
+          case GroupsCreateSuccessState():
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно Добавлена!')));
+          case GroupsUpdateSuccessState():
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно изменена!')));
+          case GroupsDeleteSuccessState():
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно удалена!')));
           case GroupsFailureState():
             showErrorDialog(context, title: 'Ошибка', message: state.message);
           default:

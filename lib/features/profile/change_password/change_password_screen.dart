@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/profile/change_password/bloc/change_password_cubit.dart';
 
@@ -29,11 +31,10 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
     final authRepository = DependenciesScope.of(context).authRepository;
     return BlocProvider(
       create: (context) => ChangePasswordCubit(authRepository: authRepository),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Изменить пароль')),
+      child: AppScaffold(
+        title: 'Изменить пароль',
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          child: AppCard(
             child: Builder(
               builder: (context) {
                 return BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
