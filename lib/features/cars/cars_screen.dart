@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
@@ -118,16 +117,7 @@ class _CarsScreenState extends State<CarsScreen> {
             );
           }
 
-          return const SingleChildScrollView(
-            child: Column(
-              children: [
-                AppCard(
-                  title: AppCardTitle(title: 'Добавить авто'),
-                  child: CarCreateFormWidget(),
-                ),
-              ],
-            ),
-          );
+          return const SingleChildScrollView(child: CarCreateFormWidget());
         },
       ),
     );

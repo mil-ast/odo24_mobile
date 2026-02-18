@@ -27,20 +27,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: _selectedIndex,
-      builder: (context, index, child) {
-        return Scaffold(
-          body: IndexedStack(index: index, children: [CarsScreen.create(), const ProfileScreen()]),
-          bottomNavigationBar: NavigationBar(
-            //labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-            selectedIndex: index,
-            onDestinationSelected: (index) => _selectedIndex.value = index,
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Авто'),
-              NavigationDestination(icon: Icon(Icons.person_outline), label: 'Профиль'),
-            ],
-          ),
-        );
-      },
+      builder: (context, index, _) => Scaffold(
+        body: IndexedStack(index: index, children: [CarsScreen.create(), const ProfileScreen()]),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: index,
+          onDestinationSelected: (index) => _selectedIndex.value = index,
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Авто'),
+            NavigationDestination(icon: Icon(Icons.person_outline), label: 'Профиль'),
+          ],
+        ),
+      ),
     );
   }
 }
