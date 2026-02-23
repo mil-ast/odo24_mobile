@@ -11,7 +11,7 @@ sealed class PasswordRecoveryState {
 
   const factory PasswordRecoveryState.successfully() = PasswordRecoveryFormSuccessfullState;
 
-  const factory PasswordRecoveryState.failure(AppException error) = PasswordRecoveryFailureState;
+  const factory PasswordRecoveryState.failure(String message) = PasswordRecoveryFailureState;
 
   bool get isReady => this is PasswordRecoveryReadyState;
   bool get isWaiting => this is PasswordRecoveryWaitingState;
@@ -41,7 +41,7 @@ final class PasswordRecoveryWaitingState extends PasswordRecoveryState {
 }
 
 final class PasswordRecoveryFailureState extends PasswordRecoveryState {
-  final AppException error;
+  final String message;
 
-  const PasswordRecoveryFailureState(this.error);
+  const PasswordRecoveryFailureState(this.message);
 }

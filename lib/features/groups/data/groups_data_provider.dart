@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:http/http.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_create_request_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
@@ -13,13 +13,13 @@ abstract interface class IGroupsDataProvider {
 }
 
 class GroupsDataProvider implements IGroupsDataProvider {
-  final Dio _httpClient;
+  final Client _httpClient;
 
-  GroupsDataProvider({required Dio httpClient}) : _httpClient = httpClient;
+  GroupsDataProvider({required Client httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<GroupModel>> getAll() async {
-    final api = _httpClient.get('/api/groups');
+    final api = _httpClient.get(Uri(path: '/api/groups'));
     final json = await ResponseHandler.parseListJSON(api);
     if (json == null) {
       return [];
@@ -29,17 +29,17 @@ class GroupsDataProvider implements IGroupsDataProvider {
 
   @override
   Future<void> updateSortGroups(List<int> sortedGroupIDs) async {
-    await _httpClient.post('/api/groups/update_sort', data: sortedGroupIDs);
+    await _httpClient.post(Uri(path: '/api/groups/update_sort'), body: sortedGroupIDs);
   }
 
   @override
   Future<void> update(GroupUpdateRequestModel group) async {
-    await _httpClient.put('/api/groups/${group.groupID}', data: group);
+    await _httpClient.put(Uri(path: '/api/groups/${group.groupID}'), body: group);
   }
 
   @override
   Future<GroupModel?> create(GroupCreateRequestModel group) async {
-    final api = _httpClient.post('/api/groups', data: group);
+    final api = _httpClient.post(Uri(path: '/api/groups'), body: group);
     final json = await ResponseHandler.parseJSON(api);
     if (json == null) {
       return null;
@@ -49,6 +49,6 @@ class GroupsDataProvider implements IGroupsDataProvider {
 
   @override
   Future<void> delete(int groupID) async {
-    await _httpClient.delete('/api/groups/$groupID');
+    await _httpClient.delete(Uri(path: '/api/groups/$groupID'));
   }
 }

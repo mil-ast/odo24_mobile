@@ -4,8 +4,7 @@ import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/password_recovery/bloc/password_recovery_cubit.dart';
-import 'package:odo24_mobile/core/shared_widgets/confirmation_email_form/confirmation_email_screen.dart';
-import 'package:odo24_mobile/features/password_recovery/password_recovery_form_widget.dart';
+import 'package:odo24_mobile/features/password_recovery/password_recovery_confirmation_email_screen.dart';
 
 class PasswordRecoveryScreen extends StatefulWidget {
   const PasswordRecoveryScreen({super.key});
@@ -38,13 +37,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
               MaterialPageRoute(
                 builder: (_) => BlocProvider.value(
                   value: context.read<PasswordRecoveryCubit>(),
-                  child: ConfirmationEmailScreen(
-                    email: state.email,
-                    password: state.password,
-                    onSubmit: ({required code, required email, required password}) async {
-                      context.read<PasswordRecoveryCubit>().recovery(email: email, password: password, code: code);
-                    },
-                  ),
+                  child: PasswordRecoveryConfirmationEmailScreen(email: state.email, password: state.password),
                 ),
               ),
             );
@@ -56,15 +49,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                 backgroundColor: Theme.of(context).colorScheme.success,
               ),
             );
-            Navigator.popUntil(context, (route) => route.isFirst);
+            // закрыть все окна
+            Navigator.of(context).popUntil((route) => route.isFirst);
             break;
           case PasswordRecoveryFailureState():
-            final details = state.error.details != null ? '\n${state.error.details}' : '';
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${state.error.message}$details'),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: Theme.of(context).colorScheme.error),
             );
             break;
           default:
@@ -73,36 +63,100 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       child: AppScaffold(
         title: 'Восстановление пароля',
         automaticallyImplyLeading: true,
-        body: AppCard(
-          title: const AppCardTitle(title: 'Шаг 1 / 2'),
-          child: PasswordRecoveryFormWidget(
-            formEmailKey: _formEmailKey,
-            emailController: _emailController,
-            passwordController: _passwordController,
-          ),
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: BlocBuilder<PasswordRecoveryCubit, PasswordRecoveryState>(
+                builder: (context, state) {
+                  return Column(
+                    spacing: 10,
+                    children: [
+                      AppCard(
+                        title: const AppCardTitle(title: 'Шаг 1 / 2'),
+                        child: Form(
+                          key: _formEmailKey,
+                          child: Column(
+                            spacing: 40,
+                            children: [
+                              TextFormField(
+                                enabled: !state.isWaiting,
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                autofocus: true,
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                decoration: const InputDecoration(labelText: 'E-mail'),
+                                validator: (value) {
+                                  if (_emailController.text.length < 5) {
+                                    return 'Введите ваш Email';
+                                  } else if (!_emailController.text.contains('@')) {
+                                    return 'Некорректный email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                enabled: !state.isWaiting,
+                                controller: _passwordController,
+                                keyboardType: TextInputType.text,
+                                obscureText: true,
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                decoration: const InputDecoration(labelText: 'Введите новый пароль'),
+                                validator: (passwd) {
+                                  if (passwd == null || passwd.isEmpty) {
+                                    return 'Введите пароль';
+                                  } else if (passwd.length < 6) {
+                                    return 'Пароль слишком короткий';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                enabled: !state.isWaiting,
+                                keyboardType: TextInputType.text,
+                                obscureText: true,
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                decoration: const InputDecoration(labelText: 'Повторите пароль'),
+                                validator: (confirmPasswd) {
+                                  if (confirmPasswd == null) {
+                                    return null;
+                                  }
+                                  if (confirmPasswd.isEmpty) {
+                                    return 'Повторите пароль';
+                                  } else if (_passwordController.text != confirmPasswd) {
+                                    return 'Пароль не совпадает';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      FilledButton.icon(
+                        onPressed: state.isWaiting
+                            ? null
+                            : () {
+                                if (!(_formEmailKey.currentState?.validate() ?? false)) {
+                                  return;
+                                }
+                                context.read<PasswordRecoveryCubit>().submitForm(
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                );
+                              },
+                        label: const Text('Далее'),
+                        icon: const Icon(Icons.arrow_forward),
+                        iconAlignment: IconAlignment.end,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-        persistentFooterButtons: [
-          BlocBuilder<PasswordRecoveryCubit, PasswordRecoveryState>(
-            builder: (context, state) {
-              return FilledButton.icon(
-                onPressed: state.isWaiting
-                    ? null
-                    : () {
-                        if (!(_formEmailKey.currentState?.validate() ?? false)) {
-                          return;
-                        }
-                        context.read<PasswordRecoveryCubit>().submitForm(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        );
-                      },
-                label: const Text('Далее'),
-                icon: const Icon(Icons.arrow_forward),
-                iconAlignment: IconAlignment.end,
-              );
-            },
-          ),
-        ],
       ),
     );
   }

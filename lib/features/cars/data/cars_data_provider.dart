@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:http/http.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
@@ -13,13 +13,13 @@ abstract interface class ICarsDataProvider {
 }
 
 class CarsDataProvider implements ICarsDataProvider {
-  final Dio _httpClient;
+  final Client _httpClient;
 
-  CarsDataProvider({required Dio httpClient}) : _httpClient = httpClient;
+  CarsDataProvider({required Client httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<CarModel>> getMyCars() async {
-    final api = _httpClient.get('/api/cars');
+    final api = _httpClient.get(Uri(path: '/api/cars'));
     final json = await ResponseHandler.parseListJSON(api);
     if (json == null) {
       return [];
@@ -29,7 +29,7 @@ class CarsDataProvider implements ICarsDataProvider {
 
   @override
   Future<CarModel?> create(CarCreateRequestModel body) async {
-    final api = _httpClient.post('/api/cars', data: body);
+    final api = _httpClient.post(Uri(path: '/api/cars'), body: body);
     final json = await ResponseHandler.parseJSON(api);
     if (json == null) {
       return null;
@@ -39,16 +39,16 @@ class CarsDataProvider implements ICarsDataProvider {
 
   @override
   Future<void> update(CarUpdateRequestModel body) async {
-    await _httpClient.put('/api/cars/${body.carID}', data: body);
+    await _httpClient.put(Uri(path: '/api/cars/${body.carID}'), body: body);
   }
 
   @override
   Future<void> updateODO(int carID, int odo) async {
-    await _httpClient.put('/api/cars/$carID/update_odo', data: {'odo': odo});
+    await _httpClient.put(Uri(path: '/api/cars/$carID/update_odo'), body: {'odo': odo});
   }
 
   @override
   Future<void> delete(int carID) async {
-    await _httpClient.delete('/api/cars/$carID');
+    await _httpClient.delete(Uri(path: '/api/cars/$carID'));
   }
 }

@@ -1,59 +1,88 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
+
+import 'package:http/http.dart';
 import 'package:odo24_mobile/core/app_exception.dart';
 import 'package:odo24_mobile/core/http/models/error_data_model.dart';
 
+enum ContentType { json, string }
+
+final class ResponseData {
+  final ContentType contentType;
+  final Object? body;
+
+  const ResponseData({required this.contentType, required this.body});
+}
+
 class ResponseHandler {
-  static Future<Map<String, dynamic>?> parseJSON(Future<Response<dynamic>> api) async {
+  static Future<Map<String, Object?>?> parseJSON(Future<Response> api) async {
     final result = await _parse(api);
     if (result == null) {
       return null;
-    } else if (result is List) {
-      return result.first;
     }
-    return result;
+    if (result.contentType == ContentType.json) {
+      if (result.body is Map) {
+        return (result.body as Map).cast<String, Object?>();
+      }
+    }
+    throw AppNetworkException('UnsupportedType', result.body.toString());
   }
 
-  static Future<List<Map<String, dynamic>>?> parseListJSON(Future<Response<dynamic>> api) async {
+  static Future<List<Map<String, dynamic>>?> parseListJSON(Future<Response> api) async {
     final result = await _parse(api);
     if (result == null) {
       return [];
-    } else if (result is List) {
-      return List.castFrom<dynamic, Map<String, dynamic>>(result);
     }
-    return [result];
-  }
-
-  static Future<dynamic> _parse(Future<Response<dynamic>> api) async {
-    try {
-      final res = await api;
-      switch (res.statusCode) {
-        case HttpStatus.ok:
-          return res.data;
-        case HttpStatus.noContent:
-          return null;
-        default:
-          throw _handleErrorDataResponse(res);
+    if (result.contentType == ContentType.json) {
+      if (result.body is List) {
+        return List.castFrom<dynamic, Map<String, Object?>>(result.body as List);
       }
-    } on DioException catch (e) {
-      throw AppNetworkException('HttpError', e.message ?? '');
+      return [];
     }
+
+    throw AppNetworkException('UnsupportedType', result.body.toString());
   }
 
-  static AppNetworkException _handleErrorDataResponse(Response<dynamic> res) {
-    if (res.data == null) {
+  static Future<ResponseData?> _parse(Future<Response> api) async {
+    //try {
+    final response = await api;
+    switch (response.statusCode) {
+      case HttpStatus.ok:
+        final contentType = response.headers['content-type']?.toLowerCase() ?? '';
+        if (contentType.contains('application/json')) {
+          return ResponseData(contentType: ContentType.json, body: jsonDecode(response.body));
+        }
+        return ResponseData(contentType: ContentType.string, body: response.body);
+      case HttpStatus.noContent:
+        return null;
+      default:
+        throw _handleErrorDataResponse(response);
+    }
+    /*     } on Exception catch (e) {
+      throw AppNetworkException('HttpError', e.toString(), statusCode: response?.statusCode);
+    } */
+  }
+
+  static AppNetworkException _handleErrorDataResponse(Response res) {
+    if (res.body.isEmpty) {
       return AppNetworkException(
         'HttpResponseRrror',
-        res.statusMessage ?? '',
-        details: res.requestOptions.uri.toString(),
+        res.statusCode.toString(),
+        details: res.request?.url.toString(),
+        statusCode: res.statusCode,
       );
     }
-    final data = res.data;
+    final data = jsonDecode(res.body);
     if (data is Map) {
-      final responseData = ErrorDataModel.fromJson(data.cast<String, dynamic>());
-      return AppNetworkException(responseData.key, responseData.message);
+      final responseData = ErrorDataModel.fromJson(data.cast<String, Object?>());
+      return AppNetworkException(responseData.key, responseData.message, statusCode: res.statusCode);
     }
 
-    return AppNetworkException('HttpResponseRrror', data.toString(), details: res.requestOptions.uri.toString());
+    return AppNetworkException(
+      'HttpResponseRrror',
+      data.toString(),
+      details: res.request?.url.toString(),
+      statusCode: res.statusCode,
+    );
   }
 }

@@ -10,9 +10,9 @@ class ChangePasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = DependenciesScope.of(context).authRepository;
+    final authService = DependenciesScope.of(context).authService;
     return BlocProvider(
-      create: (context) => ChangePasswordCubit(authRepository: authRepository),
+      create: (context) => ChangePasswordCubit(authService: authService),
       child: const _ChangePasswordWidget(),
     );
   }

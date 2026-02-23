@@ -1,4 +1,6 @@
-class ServiceCreateRequestModel {
+import 'package:odo24_mobile/core/http/models/json_serializable_interface.dart';
+
+class ServiceCreateRequestModel implements JsonSerializable {
   final int? odo;
   final int? nextDistance;
   final String dt;
@@ -7,7 +9,8 @@ class ServiceCreateRequestModel {
 
   const ServiceCreateRequestModel({this.odo, this.nextDistance, required this.dt, this.description, this.price});
 
-  Map<String, dynamic> toJson() => {
+  @override
+  Map<String, Object?> toJson() => {
     'odo': odo,
     'next_distance': nextDistance,
     'dt': dt,

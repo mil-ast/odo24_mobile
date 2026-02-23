@@ -1,19 +1,19 @@
+import 'dart:async';
+
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/models/auth_token.dart';
 
 abstract interface class IAuthRepository {
-  Future<bool> get isAuth;
-  Future<AuthData?> getAuthData();
+  AuthData? getAuthData();
   Future<void> updateAuthData(AuthData newAuthData);
   Future<void> removeTokens();
-  Future<void> refreshToken(AuthData currentAuthData);
+  Future<AuthData?> refreshToken(AuthData currentAuthData);
   Future<AuthData> signInWithEmailAndPassword(String email, String password);
   Future<void> registerSendConfirmationCode(String email);
   Future<void> register(String email, String password, int code);
   Future<void> recoverSendEmailCodeConfirmation(String email);
   Future<void> recoverSaveNewPassword(String email, int code, String password);
   Future<void> changePassword(String currentPassword, String newPassword);
-  Future<void> logout();
 }
 
 class AuthRepository implements IAuthRepository {
@@ -22,30 +22,11 @@ class AuthRepository implements IAuthRepository {
   AuthRepository({required IAuthDataProvider authDataProvider}) : _authDataProvider = authDataProvider;
 
   @override
-  Future<bool> get isAuth async {
-    try {
-      final authData = await getAuthData();
-      if (authData == null) {
-        return false;
-      }
-      if (authData.isAccessExpired()) {
-        await _authDataProvider.refreshToken(authData);
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+  AuthData? getAuthData() {
+    final accessTokenRaw = _authDataProvider.getAccessToken();
+    final refreshTokenRaw = _authDataProvider.getRefreshToken();
 
-  @override
-  Future<AuthData?> getAuthData() async {
-    final tokens = await Future.wait<String?>([
-      _authDataProvider.getAccessToken(),
-      _authDataProvider.getRefreshToken(),
-    ]);
-    final [accessTokenRaw, refreshTokenRaw] = tokens;
     if (accessTokenRaw == null || refreshTokenRaw == null) {
-      await _authDataProvider.removeTokens();
       return null;
     }
     return AuthData.fromStrings(accessTokenRaw, refreshTokenRaw);
@@ -65,7 +46,7 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<void> refreshToken(AuthData currentAuthData) async {
+  Future<AuthData?> refreshToken(AuthData currentAuthData) {
     return _authDataProvider.refreshToken(currentAuthData);
   }
 
@@ -98,10 +79,5 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<void> changePassword(String currentPassword, String newPassword) {
     return _authDataProvider.changePassword(currentPassword, newPassword);
-  }
-
-  @override
-  Future<void> logout() {
-    return removeTokens();
   }
 }

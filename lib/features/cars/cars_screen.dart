@@ -53,7 +53,7 @@ class _CarsScreenState extends State<CarsScreen> {
         child: const Icon(Icons.add),
       ),
 
-      body: BlocConsumer<CarsCubit, CarsState>(
+      body: BlocListener<CarsCubit, CarsState>(
         listenWhen: (previous, current) => !current.needBuild,
         listener: (BuildContext context, CarsState state) async {
           switch (state) {
@@ -103,22 +103,33 @@ class _CarsScreenState extends State<CarsScreen> {
             default:
           }
         },
-        buildWhen: (previous, current) => current.needBuild,
+        child: RefreshIndicator(
+          onRefresh: () {
+            return context.read<CarsCubit>().getAllCars();
+          },
+          child: BlocBuilder<CarsCubit, CarsState>(
+            buildWhen: (previous, current) => current.needBuild,
+            builder: (context, state) {
+              if (state is CarsWaitingState) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is CarsLoadedState && state.cars.isNotEmpty) {
+                return ListView.separated(
+                  separatorBuilder: (context, i) => const SizedBox(height: 20),
+                  itemCount: state.cars.length,
+                  itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
+                );
+              }
+
+              return const SingleChildScrollView(child: CarCreateFormWidget());
+            },
+          ),
+        ),
+        /* buildWhen: (previous, current) => current.needBuild,
         builder: (context, state) {
-          if (state is CarsWaitingState) {
-            return const Center(child: CircularProgressIndicator());
-          }
 
-          if (state is CarsLoadedState && state.cars.isNotEmpty) {
-            return ListView.separated(
-              separatorBuilder: (context, i) => const SizedBox(height: 20),
-              itemCount: state.cars.length,
-              itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
-            );
-          }
-
-          return const SingleChildScrollView(child: CarCreateFormWidget());
-        },
+        }, */
       ),
     );
   }

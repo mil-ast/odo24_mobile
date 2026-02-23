@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
-import 'package:odo24_mobile/features/login/login_screen.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -29,16 +30,47 @@ class ProfileScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
+                title: const Text('О приложении'),
+                leading: const Icon(Icons.app_shortcut_rounded),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('О приложении'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset('assets/logo_dark.svg', width: 48, height: 48),
+
+                            const Text('Сервисная книжка автомобиля'),
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snap) {
+                                if (snap.hasData) {
+                                  return Text('Версия: ${snap.data!.version}');
+                                } else {
+                                  return const Text('...');
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Закрыть')),
+                        ],
+                      );
+                    },
+                  );
+                },
+                trailing: const Icon(Icons.chevron_right),
+              ),
+              ListTile(
                 title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
                 leading: Icon(Icons.logout, color: theme.colorScheme.error),
-                onTap: () async {
-                  dependencies.authRepository.logout().ignore();
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false,
-                  );
+                onTap: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  dependencies.authService.logout().ignore();
                 },
               ),
             ],
@@ -48,31 +80,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-
-/* class SwitchThemeWidget extends StatelessWidget {
-  final ThemePreferences themePreferences;
-
-  const SwitchThemeWidget({required this.themePreferences, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: themePreferences.brightness,
-      builder: (context, value, _) {
-        return ListTile(
-          title: const Text('Тёмная тема'),
-          onTap: () {
-            themePreferences.setTheme(value == Brightness.dark ? Brightness.light : Brightness.dark);
-          },
-          trailing: Switch(
-            value: value == Brightness.dark,
-            activeThumbColor: Colors.black,
-            onChanged: (bool isDark) {
-              themePreferences.setTheme(isDark ? Brightness.dark : Brightness.light);
-            },
-          ),
-        );
-      },
-    );
-  }
-} */
