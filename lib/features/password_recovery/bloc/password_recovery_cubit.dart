@@ -29,7 +29,7 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
       final dt = DateTime.fromMillisecondsSinceEpoch(time);
       final now = DateTime.now();
       if (dt.add(Configs.sendEmailDuration).isBefore(now)) {
-        //await _authService.recoverSendEmailCodeConfirmation(email);
+        await _authService.recoverSendEmailCodeConfirmation(email);
         _sharedPreferences.setInt(_spKeyTimeSendCode, now.millisecondsSinceEpoch);
       }
 
@@ -44,7 +44,6 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
       }
     } catch (e, st) {
       onError(e, st);
-
       emit(const PasswordRecoveryState.failure('Не удалось отправить код'));
     }
   }
@@ -52,8 +51,7 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
   Future<void> recovery({required String email, required String password, required int code}) async {
     try {
       emit(const PasswordRecoveryState.waiting());
-      //await _authService.recoverSaveNewPassword(email, code, password);
-
+      await _authService.recoverSaveNewPassword(email, code, password);
       emit(const PasswordRecoveryState.successfully());
     } on AppNetworkException catch (e, st) {
       onError(e, st);
