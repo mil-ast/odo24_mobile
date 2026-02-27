@@ -9,11 +9,7 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
-      "toolArgs": [
-        //"--dart-define=SENTRY_DSN=",
-        "--dart-define=TEST=abc\ndef",
-        "--dart-define=WiFiNetworks=qwe\\nfff"
-      ],
+      "toolArgs": [],
       "args": [
         //"--no-enable-impeller",
         "--device-user=0"

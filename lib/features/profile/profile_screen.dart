@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/profile/about/about_screen.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -33,35 +32,7 @@ class ProfileScreen extends StatelessWidget {
                 title: const Text('О приложении'),
                 leading: const Icon(Icons.app_shortcut_rounded),
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('О приложении'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset('assets/logo_dark.svg', width: 48, height: 48),
-
-                            const Text('Сервисная книжка автомобиля'),
-                            FutureBuilder<PackageInfo>(
-                              future: PackageInfo.fromPlatform(),
-                              builder: (context, snap) {
-                                if (snap.hasData) {
-                                  return Text('Версия: ${snap.data!.version}');
-                                } else {
-                                  return const Text('...');
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Закрыть')),
-                        ],
-                      );
-                    },
-                  );
+                  Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) => const AboutScreen()));
                 },
                 trailing: const Icon(Icons.chevron_right),
               ),
