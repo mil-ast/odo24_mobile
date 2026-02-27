@@ -83,7 +83,6 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                                 enabled: !state.isWaiting,
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                autofocus: true,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 decoration: const InputDecoration(labelText: 'E-mail'),
                                 validator: (value) {

@@ -9,6 +9,7 @@ import 'package:odo24_mobile/features/login/bloc/login_cubit.dart';
 import 'package:odo24_mobile/features/login/bloc/login_states.dart';
 import 'package:odo24_mobile/features/password_recovery/bloc/password_recovery_cubit.dart';
 import 'package:odo24_mobile/features/password_recovery/password_recovery_screen.dart';
+import 'package:odo24_mobile/features/profile/about/about_screen.dart';
 import 'package:odo24_mobile/features/register/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -167,6 +168,15 @@ class LoginScreenState extends State<LoginWidget> {
                         icon: const Icon(Icons.login_outlined),
                         onPressed: state.isWaiting ? null : () => _onLogin(context),
                         label: const Text('Войти'),
+                      ),
+                      const Divider(),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(
+                            context,
+                          ).push<void>(MaterialPageRoute(builder: (context) => const AboutScreen()));
+                        },
+                        child: const Text('О приложении'),
                       ),
                     ],
                   );

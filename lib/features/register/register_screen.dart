@@ -105,7 +105,6 @@ final class RegisterScreenState extends State<RegisterWidget> {
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                                autofocus: true,
                                 decoration: const InputDecoration(labelText: 'E-mail'),
                                 validator: (email) {
                                   if (email == null || email.length < 5) {
