@@ -9,7 +9,9 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
-      "toolArgs": [],
+      "toolArgs": [
+        "--dart-define=cronetHttpNoPlay=false"
+      ],
       "args": [
         //"--no-enable-impeller",
         "--device-user=0"
