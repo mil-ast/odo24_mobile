@@ -1,50 +1,80 @@
-import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
-import 'package:odo24_mobile/features/services/data/models/service_model.dart';
+part of './services_cubit.dart';
 
 class NextODOInformation {
   final double factor;
   final int leftDistance;
   final NextODOInformationColorLevel colorLevel;
   const NextODOInformation(this.leftDistance, this.factor, this.colorLevel);
+
+  String toStringLeftDistancePercent() {
+    return '${(factor * 100).round()}%';
+  }
 }
 
 sealed class ServicesState {
-  final bool needBuild;
-  const ServicesState(this.needBuild);
+  const ServicesState();
 
-  factory ServicesState.ready() = ServicesReadyState;
-  factory ServicesState.idle() = ServicesLoadingState;
-  factory ServicesState.message(String message) = ServiceMessageState;
-  factory ServicesState.showList(List<ServiceModel> services, NextODOInformation? inform) = ServicesShowListState;
-  factory ServicesState.actionCreate() => ServiceActionState(ServiceAction.create);
-  factory ServicesState.actionUpdate(ServiceModel service) => ServiceActionState(
-        ServiceAction.update,
-        service: service,
-      );
-  factory ServicesState.actionDelete(ServiceModel service) => ServiceActionState(
-        ServiceAction.delete,
-        service: service,
-      );
-  factory ServicesState.createSuccess() = ServiceCreateSuccessState;
-  factory ServicesState.updateSuccess() = ServiceUpdateSuccessState;
-  factory ServicesState.deleteSuccess() = ServiceDeleteSuccessState;
-  factory ServicesState.onCarODOAutoUpdate(int newODO) = ServiceCarODOAutoUpdateState;
-  factory ServicesState.failure(Object e) => ServiceErrorState(e.toString());
+  bool get needBuild => switch (this) {
+    ServicesLoadingState() => true,
+    ServicesFailureState() => false,
+    ServicesShowListState() => true,
+    ServicesActionShowCreateDialogState() => false,
+    ServicesActionShowUpdateDialogState() => false,
+    ServicesActionShowDeleteConfirmationDialogState() => false,
+    ServicesCreateSuccessState() => false,
+    ServicesUpdateSuccessState() => false,
+    ServicesUpdateDeleteState() => false,
+  };
 }
 
-enum ServiceAction {
-  create,
-  update,
-  delete;
+enum ServiceAction { create, update, delete }
+
+class ServicesLoadingState extends ServicesState {
+  const ServicesLoadingState();
 }
 
-class ServicesReadyState extends ServicesState {
+class ServicesFailureState extends ServicesState {
+  final String message;
+  ServicesFailureState(Object err) : message = err.toString();
+}
+
+class ServicesShowListState extends ServicesState {
+  final List<ServiceModel> services;
+  final NextODOInformation? inform;
+  const ServicesShowListState({required this.services, required this.inform});
+}
+
+class ServicesActionShowUpdateDialogState extends ServicesState {
+  final ServiceModel service;
+  const ServicesActionShowUpdateDialogState(this.service);
+}
+
+class ServicesActionShowDeleteConfirmationDialogState extends ServicesState {
+  final ServiceModel service;
+  const ServicesActionShowDeleteConfirmationDialogState(this.service);
+}
+
+class ServicesActionShowCreateDialogState extends ServicesState {
+  const ServicesActionShowCreateDialogState();
+}
+
+class ServicesCreateSuccessState extends ServicesState {
+  const ServicesCreateSuccessState();
+}
+
+class ServicesUpdateSuccessState extends ServicesState {
+  const ServicesUpdateSuccessState();
+}
+
+class ServicesUpdateDeleteState extends ServicesState {
+  const ServicesUpdateDeleteState();
+}
+
+/* class ServicesReadyState extends ServicesState {
   const ServicesReadyState() : super(true);
 }
 
-class ServicesLoadingState extends ServicesState {
-  const ServicesLoadingState() : super(true);
-}
+
 
 class ServicesShowListState extends ServicesState {
   final List<ServiceModel> services;
@@ -84,3 +114,4 @@ class ServiceErrorState extends ServicesState {
   final String message;
   ServiceErrorState(this.message) : super(false);
 }
+ */

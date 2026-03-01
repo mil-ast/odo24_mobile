@@ -1,34 +1,68 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/data/auth/auth_repository.dart';
-import 'package:odo24_mobile/features/password_recovery/bloc/password_repovery_states.dart';
+import 'package:odo24_mobile/core/app_exception.dart';
+import 'package:odo24_mobile/core/configs/configs.dart';
+import 'package:odo24_mobile/data/auth/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+part 'password_recovery_states.dart';
 
 class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
-  final IAuthRepository _authRepository;
+  static const String _spKeyTimeSendCode = 'spKeyTimeSendCode';
+  final AuthService _authService;
+  final SharedPreferences _sharedPreferences;
 
-  PasswordRecoveryCubit({required IAuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(PasswordRecoveryState.ready());
+  PasswordRecoveryCubit({required AuthService authService, required SharedPreferences sharedPreferences})
+    : _authService = authService,
+      _sharedPreferences = sharedPreferences,
+      super(const PasswordRecoveryState.ready());
 
-  Future<bool> recoverSendEmailCodeConfirmation(String email) async {
+  Future<void> submitForm({required String email, required String password}) async {
     try {
-      emit(PasswordRecoveryState.idle());
-      await _authRepository.recoverSendEmailCodeConfirmation(email);
-      emit(PasswordRecoveryState.informMessage('Код был отправлен на адрес $email'));
-      return true;
-    } catch (e) {
-      emit(PasswordRecoveryState.failure(e.toString()));
-      return false;
+      emit(const PasswordRecoveryState.waiting());
+
+      final time =
+          _sharedPreferences.getInt(_spKeyTimeSendCode) ??
+          DateTime.now().subtract(Configs.sendEmailDuration + const Duration(seconds: 1)).millisecondsSinceEpoch;
+
+      final dt = DateTime.fromMillisecondsSinceEpoch(time);
+      final now = DateTime.now();
+      if (dt.add(Configs.sendEmailDuration).isBefore(now)) {
+        await _authService.recoverSendEmailCodeConfirmation(email);
+        _sharedPreferences.setInt(_spKeyTimeSendCode, now.millisecondsSinceEpoch);
+      }
+
+      emit(PasswordRecoveryState.codeSentSuccessfully(email: email, password: password));
+    } on AppNetworkException catch (e, st) {
+      onError(e, st);
+      switch (e.statusCode) {
+        case HttpStatus.tooManyRequests:
+          emit(PasswordRecoveryState.codeSentSuccessfully(email: email, password: password));
+        default:
+          emit(PasswordRecoveryState.failure(e.toString()));
+      }
+    } catch (e, st) {
+      onError(e, st);
+      emit(const PasswordRecoveryState.failure('Не удалось отправить код'));
     }
   }
 
-  Future<bool> saveNewPassword(String email, int code, String newPassword) async {
+  Future<void> recovery({required String email, required String password, required int code}) async {
     try {
-      await _authRepository.recoverSaveNewPassword(email, code, newPassword);
-      emit(PasswordRecoveryState.success());
-      return true;
+      emit(const PasswordRecoveryState.waiting());
+      await _authService.recoverSaveNewPassword(email, code, password);
+      emit(const PasswordRecoveryState.successfully());
+    } on AppNetworkException catch (e, st) {
+      onError(e, st);
+      switch (e.statusCode) {
+        case HttpStatus.forbidden:
+          emit(const PasswordRecoveryState.failure('Неверный код подтверждения или email'));
+        default:
+          emit(PasswordRecoveryState.failure(e.toString()));
+      }
     } catch (e) {
-      emit(PasswordRecoveryState.failure(e));
-      return false;
+      emit(PasswordRecoveryState.failure(e.toString()));
     }
   }
 }

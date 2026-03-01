@@ -10,8 +10,12 @@
       "type": "dart",
       "flutterMode": "debug",
       "toolArgs": [
-        //"--dart-define=SENTRY_DSN=",
-      ]
+        "--dart-define=cronetHttpNoPlay=false"
+      ],
+      "args": [
+        //"--no-enable-impeller",
+        "--device-user=0"
+      ],
     },
     {
       "name": "odo24_mobile (profile mode)",

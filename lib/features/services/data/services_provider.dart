@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/features/services/data/models/service_create_request_model.dart';
 import 'package:odo24_mobile/features/services/data/models/service_model.dart';
@@ -12,15 +12,13 @@ abstract interface class IServicesDataProvider {
 }
 
 class ServicesDataProvider implements IServicesDataProvider {
-  final Dio _httpClient;
+  final AppHttpClient _httpClient;
 
-  ServicesDataProvider({
-    required Dio httpClient,
-  }) : _httpClient = httpClient;
+  ServicesDataProvider({required AppHttpClient httpClient}) : _httpClient = httpClient;
 
   @override
   Future<List<ServiceModel>> getByCarAndGroup(int carID, int groupID) async {
-    final api = _httpClient.get('/api/cars/$carID/groups/$groupID/services');
+    final api = _httpClient.get(Uri(path: '/api/cars/$carID/groups/$groupID/services'));
     final json = await ResponseHandler.parseListJSON(api);
     if (json == null) {
       return [];
@@ -30,7 +28,7 @@ class ServicesDataProvider implements IServicesDataProvider {
 
   @override
   Future<ServiceModel?> create(int carID, int groupID, ServiceCreateRequestModel service) async {
-    final api = _httpClient.post('/api/cars/$carID/groups/$groupID/services', data: service);
+    final api = _httpClient.post(Uri(path: '/api/cars/$carID/groups/$groupID/services'), body: service);
     final json = await ResponseHandler.parseJSON(api);
     if (json == null) {
       return null;
@@ -40,11 +38,11 @@ class ServicesDataProvider implements IServicesDataProvider {
 
   @override
   Future<void> update(int serviceID, ServiceUpdateRequestModel service) async {
-    await _httpClient.put('/api/services/$serviceID', data: service);
+    await _httpClient.put(Uri(path: '/api/services/$serviceID'), body: service);
   }
 
   @override
   Future<void> delete(int serviceID) async {
-    await _httpClient.delete('/api/services/$serviceID');
+    await _httpClient.delete(Uri(path: '/api/services/$serviceID'));
   }
 }

@@ -14,9 +14,7 @@ abstract interface class ICarsRepository {
 class CarsRepository implements ICarsRepository {
   final ICarsDataProvider _carsDataProvider;
 
-  CarsRepository({
-    required ICarsDataProvider carsDataProvider,
-  }) : _carsDataProvider = carsDataProvider;
+  CarsRepository({required ICarsDataProvider carsDataProvider}) : _carsDataProvider = carsDataProvider;
 
   @override
   Future<List<CarModel>> getMyCars() {

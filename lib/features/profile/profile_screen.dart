@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
-import 'package:odo24_mobile/features/login/login_screen.dart';
-import 'package:odo24_mobile/features/profile/app_version_information/app_version_information_widget.dart';
+import 'package:odo24_mobile/features/profile/about/about_screen.dart';
 import 'package:odo24_mobile/features/profile/change_password/change_password_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -13,80 +13,40 @@ class ProfileScreen extends StatelessWidget {
     final dependencies = DependenciesScope.of(context);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Профиль'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
-            child: AppVersionInformationWidget(),
-          ),
-          const Divider(),
-          Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  title: const Text('Изменить пароль'),
-                  leading: const Icon(Icons.password_outlined),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChangePasswordScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    'Выйти из профиля',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  leading: const Icon(
-                    Icons.logout,
-                    color: Colors.red,
-                  ),
-                  onTap: () async {
-                    dependencies.authRepository.logout().ignore();
-
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                        (route) => false);
-                  },
-                ),
-              ],
-            ),
-          ),
-          if (!kIsWeb)
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  Icon(Icons.launch_outlined, color: theme.colorScheme.primary),
-                  InkWell(
-                    onTap: () {
-                      dependencies.methodChannel.invokeMethod<List<dynamic>>('launchURL', <String, String>{
-                        'url': dependencies.siteURL,
-                      });
-                    },
-                    child: Text(
-                      dependencies.siteURL,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ],
+    return AppScaffold(
+      title: 'Профиль',
+      body: SingleChildScrollView(
+        child: AppCard(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                title: const Text('Изменить пароль'),
+                leading: const Icon(Icons.password_outlined),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()));
+                },
+                trailing: const Icon(Icons.chevron_right),
               ),
-            ),
-        ],
+              ListTile(
+                title: const Text('О приложении'),
+                leading: const Icon(Icons.app_shortcut_rounded),
+                onTap: () {
+                  Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) => const AboutScreen()));
+                },
+                trailing: const Icon(Icons.chevron_right),
+              ),
+              ListTile(
+                title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
+                leading: Icon(Icons.logout, color: theme.colorScheme.error),
+                onTap: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  dependencies.authService.logout().ignore();
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

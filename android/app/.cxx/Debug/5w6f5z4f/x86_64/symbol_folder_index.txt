@@ -1,0 +1,1 @@
+/home/pavel/Repos/github.com/mil-ast/odo24_mobile/build/app/intermediates/cxx/Debug/5w6f5z4f/obj/x86_64

@@ -29,16 +29,17 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-  compileSdkVersion 34
-  namespace "ru.odo24.mobile"
+  namespace = "ru.odo24.mobile"
+  compileSdk = 36
+  ndkVersion = flutter.ndkVersion
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_21
+    targetCompatibility JavaVersion.VERSION_21
   }
 
   kotlinOptions {
-    jvmTarget = '1.8'
+    jvmTarget = JavaVersion.VERSION_21.toString()
   }
 
   sourceSets {
@@ -46,14 +47,12 @@ android {
   }
 
   defaultConfig {
-    // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-    applicationId "ru.odo24.mobile"
-    // You can update the following values to match your application needs.
-    // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-    minSdkVersion 26
-    targetSdkVersion 33
-    versionCode flutterVersionCode.toInteger()
-    versionName flutterVersionName
+    applicationId = "ru.odo24.mobile"
+    minSdk = flutter.minSdkVersion
+    compileSdk = 36
+    targetSdk = 35
+    versionCode = flutter.versionCode
+    versionName = flutter.versionName
   }
 
   signingConfigs {
@@ -92,5 +91,5 @@ flutter {
 }
 
 dependencies {
-  implementation 'androidx.appcompat:appcompat:1.6.1'
+  //implementation 'androidx.appcompat:appcompat:1.6.1'
 }

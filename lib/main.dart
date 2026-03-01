@@ -1,27 +1,28 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
+import 'package:odo24_mobile/core/http/middlewares/auth_middleware.dart';
+import 'package:odo24_mobile/core/http/middlewares/json_middleware.dart';
+import 'package:odo24_mobile/core/http/middlewares/status_code_middleware.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
-import 'package:odo24_mobile/core/updater/data/updater_data_provider.dart';
-import 'package:odo24_mobile/core/updater/data/updater_repository.dart';
+import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
+import 'package:odo24_mobile/data/auth/auth_service.dart';
+import 'package:odo24_mobile/features/auth_guard.dart';
 import 'package:odo24_mobile/features/cars/data/cars_data_provider.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
+import 'package:odo24_mobile/features/groups/data/groups_data_provider.dart';
+import 'package:odo24_mobile/features/groups/data/groups_repository.dart';
+import 'package:odo24_mobile/features/home/home_screen.dart';
 import 'package:odo24_mobile/features/services/data/services_provider.dart';
 import 'package:odo24_mobile/features/services/data/services_repository.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/groups_data_provider.dart';
-import 'package:odo24_mobile/features/services/widgets/groups/data/groups_repository.dart';
-import 'package:odo24_mobile/features/splash/splash_screen.dart';
-import 'package:sentry/sentry_io.dart';
-import 'package:sentry_dio/sentry_dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InitializationScreen extends StatelessWidget {
   const InitializationScreen({super.key});
@@ -30,102 +31,100 @@ class InitializationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: RepaintBoundary(child: CircularProgressIndicator()),
-        ),
+        body: Center(child: RepaintBoundary(child: CircularProgressIndicator())),
       ),
     );
   }
 }
 
 void main() async {
-  await Sentry.init((options) {
-    options.dsn = 'https://1535d3545bdf3ee95fcdcc1305dcac3d@o4506994624888832.ingest.us.sentry.io/4506994630524929';
-    options.tracesSampleRate = 1.0;
-  });
   runZonedGuarded(
-    () {
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
       Intl.defaultLocale = 'ru_RU';
 
-      final authDataProvider = AuthDataProvider();
-      final authRepository = AuthRepository(
-        authDataProvider: authDataProvider,
-      );
-      final dio = HttpAPI.newDio(
-        authRepository: authRepository,
-        allowBadCertificate: kDebugMode,
-      );
-      dio.addSentry();
+      final sp = await SharedPreferences.getInstance();
+      final authDataProvider = AuthDataProvider(sharedPreferences: sp);
+      final authRepository = AuthRepository(authDataProvider: authDataProvider);
 
-      final dioWithoutAuth = HttpAPI.newDioWithoutAuth(
-        allowBadCertificate: kDebugMode,
-      );
-      dioWithoutAuth.addSentry();
+      final client = HttpAPI.newHttpClient();
+      final httpClient = AppHttpClient(client, [
+        const JsonContentTypeMiddleware(),
+        AuthMiddleware(authService: AuthService(authRepository)),
+        const StatusCodeMiddleware(),
+      ]);
+      final httpClientWithoutAuth = AppHttpClient(client, [
+        const JsonContentTypeMiddleware(),
+        const StatusCodeMiddleware(),
+      ]);
 
-      authDataProvider.setHttpClients(
-        dioWithoutAuth: dioWithoutAuth,
-        dioWithAuth: dio,
-      );
+      authDataProvider.setHttpClients(httpClient: httpClient, httpClientWithoutAuth: httpClientWithoutAuth);
 
       final dependencies = Dependencies(
-        siteURL: 'https://odo24.ru',
-        httpClient: dio,
+        themePreferences: ThemePreferences(),
+        httpClient: httpClient,
+        sharedPreferences: sp,
         methodChannel: const MethodChannel('odo24/channel'),
-        authRepository: authRepository,
-        updaterRepository: UpdaterRepository(
-          updaterDataProvider: UpdaterDataProvider(httpClient: Dio(BaseOptions(baseUrl: HttpAPI.staticBaseURLHost))),
-        ),
-        carsRepository: CarsRepository(
-          carsDataProvider: CarsDataProvider(httpClient: dio),
-        ),
-        groupsRepository: GroupsRepository(
-          groupsDataProvider: GroupsDataProvider(httpClient: dio),
-        ),
-        servicesRepository: ServicesRepository(
-          servicesDataProvider: ServicesDataProvider(httpClient: dio),
-        ),
+        authService: AuthService.instance,
+        carsRepository: CarsRepository(carsDataProvider: CarsDataProvider(httpClient: httpClient)),
+        groupsRepository: GroupsRepository(groupsDataProvider: GroupsDataProvider(httpClient: httpClient)),
+        servicesRepository: ServicesRepository(servicesDataProvider: ServicesDataProvider(httpClient: httpClient)),
       );
 
-      runApp(DependenciesScope(
-        dependencies: dependencies,
-        child: const Odo24App(),
-      ));
+      runApp(
+        DependenciesScope(
+          dependencies: dependencies,
+          child: const SafeArea(child: Odo24App()),
+        ),
+      );
     },
-    (error, stack) async {
-      if (kDebugMode) {
-        print('Err: $error\r\n$stack');
-      } else {
-        await Sentry.captureException(
-          error,
-          stackTrace: stack,
-        );
-      }
+    (error, stack) {
+      debugPrint('Err: $error\r\n\r\n$stack');
     },
   );
 }
 
 class Odo24App extends StatelessWidget {
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final navigatorKey = GlobalKey<NavigatorState>();
 
   const Odo24App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ODO24.mobile',
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      theme: ODO24Theme.lightTheme,
-      localizationsDelegates: const [
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ru', ''),
-      ],
-      locale: const Locale('ru', ''),
-      home: const SplashScreen(),
+    final themePreferences = DependenciesScope.of(context).themePreferences;
+
+    return FutureBuilder(
+      future: themePreferences.fetchBrightness(),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.done) {
+          return ValueListenableBuilder(
+            valueListenable: themePreferences.brightness,
+            builder: (context, brightness, _) {
+              return MaterialApp(
+                title: 'ODO24.mobile',
+                navigatorKey: navigatorKey,
+                debugShowCheckedModeBanner: false,
+                /* theme: brightness == Brightness.dark
+                    ? ODO24Theme.darkTheme
+                    : ODO24Theme.lightTheme, */
+                theme: ODO24Theme.lightTheme,
+                debugShowMaterialGrid: false,
+                localizationsDelegates: const [
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [Locale('ru', 'RU')],
+                locale: const Locale('ru', 'RU'),
+                home: AuthGuard(child: HomeScreen.create()),
+              );
+            },
+          );
+        }
+
+        return const MaterialApp(home: Center(child: CircularProgressIndicator()));
+      },
     );
   }
 }

@@ -1,20 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
-import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
+import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.dart';
 
 class CarsCubit extends Cubit<CarsState> {
   final ICarsRepository _carsRepository;
   final List<CarModel> _cars = [];
 
-  CarsCubit({
-    required ICarsRepository carsRepository,
-  })  : _carsRepository = carsRepository,
-        super(CarsState.ready());
+  CarsCubit({required ICarsRepository carsRepository}) : _carsRepository = carsRepository, super(CarsState.ready());
 
-  void getAllCars() async {
+  Future<void> getAllCars() async {
     try {
       emit(CarsState.idle());
       final cars = await _carsRepository.getMyCars();

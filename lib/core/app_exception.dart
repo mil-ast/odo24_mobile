@@ -9,8 +9,9 @@ class AppNetworkException implements Exception {
   final String key;
   final String message;
   final String? details;
+  final int? statusCode;
 
-  const AppNetworkException(this.key, this.message, {this.details});
+  const AppNetworkException(this.key, this.message, {this.details, this.statusCode});
 
   @override
   String toString() {
