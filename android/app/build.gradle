@@ -73,7 +73,16 @@ android {
 
     release {
       signingConfig signingConfigs.release
+      minifyEnabled true   // Удаляет неиспользуемый код
+      shrinkResources true // Удаляет неиспользуемые ресурсы (картинки, звуки)
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
+  }
+
+  packagingOptions {
+    exclude 'lib/x86/*'
+    exclude 'lib/x86_64/*'
+    // exclude 'lib/armeabi-v7a/*' 
   }
 
   splits {

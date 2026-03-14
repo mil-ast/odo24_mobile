@@ -5,6 +5,7 @@ import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
+import 'package:odo24_mobile/features/cars/widgets/edit_miliage/camera_miliage_screen.dart';
 
 class EditMiliageWidget extends StatelessWidget {
   final CarModel car;
@@ -33,14 +34,30 @@ class EditMiliageWidget extends StatelessWidget {
               TextFormField(
                 controller: _odoController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(helperText: 'Пробег авто, км.', icon: Icon(Icons.speed)),
+                decoration: InputDecoration(
+                  helperText: 'Пробег авто, км.',
+                  icon: const Icon(Icons.speed),
+                  suffixIcon: IconButton(
+                    onPressed: () async {
+                      final result = await Navigator.push<int>(
+                        context,
+                        MaterialPageRoute(builder: (context) => MiliageCameraScreen(currentODO: car.odo)),
+                      );
+                      if (result != null) {
+                        _odoController.text = result.toString();
+                      }
+                    },
+                    icon: const Icon(Icons.camera_outlined),
+                  ),
+                ),
                 inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+
                 validator: (String? input) {
                   if (input == null) {
                     return 'Укажите пробег авто';
                   }
 
-                  int? odo = int.tryParse(input);
+                  final odo = int.tryParse(input);
                   if (odo == null) {
                     return 'Некорретное значение пробега';
                   } else if (odo > 9999999) {
@@ -67,7 +84,7 @@ class EditMiliageWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 spacing: 20,
                 children: [
-                  TextButton(onPressed: Navigator.of(context).pop, child: const Text('Закрыть')),
+                  TextButton(onPressed: Navigator.of(context).pop, child: const Text('Отмена')),
                   FilledButton.icon(
                     icon: const Icon(Icons.save_outlined),
                     label: const Text('Сохранить'),
