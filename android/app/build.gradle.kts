@@ -29,7 +29,7 @@ android {
 
     sourceSets["main"].java.srcDirs("src/main/kotlin")
 
-    defaultConfig {
+    /* defaultConfig {
         applicationId = "ru.odo24.mobile"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
@@ -37,9 +37,24 @@ android {
         // Оптимизированное чтение версий с дефолтными значениями
         versionCode = localProperties.getProperty("flutter.versionCode")?.toIntOrNull() ?: 1
         versionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+    } */
+    defaultConfig {
+        applicationId = "ru.odo24.mobile"
+        minSdk = flutter.minSdkVersion
+        targetSdk = 35
+        
+        versionCode = localProperties.getProperty("flutter.versionCode")?.toIntOrNull() ?: 1
+        versionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+
+        ndk {
+            abiFilters.clear()
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+        }
     }
 
     signingConfigs {
+        getByName("debug") {}
+        
         create("release") {
             keyAlias = keystoreProperties.getProperty("keyAlias")
             keyPassword = keystoreProperties.getProperty("keyPassword")
@@ -52,19 +67,26 @@ android {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
         }
+
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false // true, если используете R8/ProGuard
-            isShrinkResources = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            
+            isMinifyEnabled = true   // Удаляет неиспользуемый код
+            isShrinkResources = true // Удаляет неиспользуемые ресурсы
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), 
+                "proguard-rules.pro"
+            )
         }
     }
+
 
     splits {
         abi {
             isEnable = true
             reset()
-            include("x86_64", "armeabi-v7a", "arm64-v8a")
+            include("armeabi-v7a", "arm64-v8a") 
             isUniversalApk = true
         }
     }

@@ -6,7 +6,6 @@ allprojects {
 }
 
 // Настройка путей сборки (build directory)
-// В Kotlin DSL рекомендуется использовать layout.buildDirectory
 val rootBuildDir = rootProject.layout.buildDirectory.dir("../build")
 
 subprojects {

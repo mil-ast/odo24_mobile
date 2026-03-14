@@ -105,6 +105,8 @@ class _ServiceCreateWidgetState extends State<ServiceCreateWidget> {
                 TextFormField(
                   controller: _descriptionController,
                   keyboardType: TextInputType.multiline,
+                  maxLines: 20,
+                  minLines: 3,
                   decoration: const InputDecoration(helperText: 'Комментарий', icon: Icon(Icons.comment)),
                   validator: (String? name) {
                     return null;
