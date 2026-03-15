@@ -143,7 +143,9 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
               context.read<GroupsCubit>().updateSortGroups(widget.groups);
             });
           },
-          footer: const Column(children: [HintForSortingGroups(), SizedBox(height: 40)]),
+          footer: Column(
+            children: [if (widget.groups.length > 1) const HintForSortingGroups(), const SizedBox(height: 40)],
+          ),
           children: widget.groups
               .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
               .toList(),

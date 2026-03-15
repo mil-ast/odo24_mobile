@@ -1,23 +1,16 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+val customBuildDir = rootProject.layout.projectDirectory.dir("../build").asFile
 
-// Настройка путей сборки (build directory)
-val rootBuildDir = rootProject.layout.buildDirectory.dir("../build")
+rootProject.layout.buildDirectory.set(customBuildDir)
 
 subprojects {
-    project.layout.buildDirectory.set(rootBuildDir.get().dir(project.name))
+    val newSubprojectBuildDir = File(customBuildDir, project.name)
+    project.layout.buildDirectory.set(newSubprojectBuildDir)
 }
 
-// Указание зависимости оценки проектов
 subprojects {
     evaluationDependsOn(":app")
 }
 
-// Задача очистки
 tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
+    delete(customBuildDir)
 }
