@@ -5,7 +5,6 @@ import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dar
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
-import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
@@ -15,6 +14,7 @@ import 'package:odo24_mobile/features/groups/groups_dependencies.dart';
 import 'package:odo24_mobile/features/groups/widgets/first_group_create_widget.dart';
 import 'package:odo24_mobile/features/groups/widgets/group_create_widget.dart';
 import 'package:odo24_mobile/features/groups/widgets/group_update_dialog.dart';
+import 'package:odo24_mobile/features/groups/widgets/hint_for_sorting_groups.dart';
 import 'package:odo24_mobile/features/services/services_screen.dart';
 
 class GroupsScreenScope extends StatelessWidget {
@@ -88,7 +88,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               context.read<GroupsCubit>().delete(state.group);
             }
           case GroupsCreateSuccessState():
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно Добавлена!')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно добавлена!')));
           case GroupsUpdateSuccessState():
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно изменена!')));
           case GroupsDeleteSuccessState():
@@ -127,29 +127,10 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
         onPressed: context.read<GroupsCubit>().openFormCreateGroup,
         child: const Icon(Icons.add),
       ),
-      body: ColoredBox(
-        color: Colors.white,
+      body: Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
         child: ReorderableListView(
-          header: const Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            margin: EdgeInsets.only(bottom: 20),
-            color: ODO24Colors.actions,
-            child: Padding(
-              padding: EdgeInsetsGeometry.all(10),
-              child: Row(
-                spacing: 10,
-                children: [
-                  Icon(Icons.info_outline, color: ODO24Colors.inverseTextColor, size: 28),
-                  Expanded(
-                    child: Text(
-                      'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
-                      style: TextStyle(color: ODO24Colors.inverseTextColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          header: null,
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
               if (oldIndex < newIndex) {
@@ -162,7 +143,7 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
               context.read<GroupsCubit>().updateSortGroups(widget.groups);
             });
           },
-          footer: const SizedBox(height: 40),
+          footer: const Column(children: [HintForSortingGroups(), SizedBox(height: 40)]),
           children: widget.groups
               .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
               .toList(),

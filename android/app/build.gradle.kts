@@ -81,7 +81,6 @@ android {
         }
     }
 
-
     splits {
         abi {
             isEnable = true
