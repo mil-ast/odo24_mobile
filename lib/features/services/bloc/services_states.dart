@@ -24,6 +24,7 @@ sealed class ServicesState {
     ServicesCreateSuccessState() => false,
     ServicesUpdateSuccessState() => false,
     ServicesUpdateDeleteState() => false,
+    ServiceCarODOConfirmState() => false,
   };
 }
 
@@ -68,6 +69,12 @@ class ServicesUpdateSuccessState extends ServicesState {
 
 class ServicesUpdateDeleteState extends ServicesState {
   const ServicesUpdateDeleteState();
+}
+
+class ServiceCarODOConfirmState extends ServicesState {
+  ServiceCreateRequestModel body;
+  int milleage;
+  ServiceCarODOConfirmState({required this.body, required this.milleage});
 }
 
 /* class ServicesReadyState extends ServicesState {

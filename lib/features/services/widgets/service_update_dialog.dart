@@ -102,8 +102,8 @@ class _ServiceUpdateDialogState extends State<ServiceUpdateDialog> {
               TextFormField(
                 controller: _descriptionController,
                 keyboardType: TextInputType.multiline,
-                maxLines: 10,
-                minLines: 2,
+                maxLines: 20,
+                minLines: 3,
                 decoration: const InputDecoration(helperText: 'Комментарий', icon: Icon(Icons.comment)),
                 validator: (String? name) {
                   return null;

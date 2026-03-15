@@ -36,7 +36,7 @@ class DependenciesScope extends InheritedWidget {
   final Dependencies dependencies;
 
   static Dependencies? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<DependenciesScope>()?.dependencies;
+    return context.getInheritedWidgetOfExactType<DependenciesScope>()?.dependencies;
   }
 
   static Dependencies of(BuildContext context) {

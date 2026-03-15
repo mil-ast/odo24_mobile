@@ -2,7 +2,7 @@ name: odo24_mobile
 description: ODO24 Mobile
 publish_to: 'none'
 
-version: 4.0.0+20
+version: 4.1.0+21
 
 environment:
   sdk: ^3.9.0
@@ -18,7 +18,7 @@ dependencies:
   package_info_plus: ^9.0.0
   cronet_http: ^1.8.0
   shared_preferences: ^2.5.4
-  flutter_svg: ^2.2.3
+  flutter_svg: ^2.2.4
   http: ^1.6.0
   url_launcher: ^6.3.2
 

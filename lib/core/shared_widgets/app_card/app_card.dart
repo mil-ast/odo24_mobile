@@ -46,7 +46,7 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), color: Colors.white),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

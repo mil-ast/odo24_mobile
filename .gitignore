@@ -29,7 +29,14 @@
 .packages
 .pub-cache/
 .pub/
+# Стандартный путь сборки Flutter
 /build/
+# Путь сборки внутри папки android
+/android/build/
+/android/app/build/
+
+# Кэш Gradle
+.gradle/
 
 # Web related
 

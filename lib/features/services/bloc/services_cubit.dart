@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
@@ -45,24 +46,27 @@ class ServicesCubit extends Cubit<ServicesState> {
     emit(const ServicesActionShowCreateDialogState());
   }
 
-  Future<void> create(ServiceCreateRequestModel body) async {
+  Future<void> create(ServiceCreateRequestModel body, {bool confirmed = false}) async {
     try {
-      final milleage = (body.odo ?? 0) - selectedCar.odo;
-      /* if (milleage > _maxMilleageForAutoUpdateODO) {
+      final newODO = (body.odo ?? 0);
+      final milleage = (newODO - selectedCar.odo).abs();
+      if (milleage > _maxMilleageForAutoUpdateODO && !confirmed) {
         // добавить подтверждение
+        emit(ServiceCarODOConfirmState(body: body, milleage: milleage));
         return;
-      } */
-
-      if (body.odo != null && milleage < _maxMilleageForAutoUpdateODO && body.odo! > selectedCar.odo) {
-        // обновить пробег авто
-        try {
-          await _carsRepository.updateODO(selectedCar.carID, body.odo!);
-        } catch (e, st) {
-          super.onError(e, st);
-        }
       }
 
       await _servicesRepository.create(selectedCar.carID, selectedGroup.groupID, body);
+
+      if (milleage > 0 && (milleage < _maxMilleageForAutoUpdateODO || confirmed) && newODO > selectedCar.odo) {
+        // обновить пробег авто
+        try {
+          await _carsRepository.updateODO(selectedCar.carID, newODO);
+        } catch (e, st) {
+          super.onError(e, st);
+          debugPrint(e.toString());
+        }
+      }
 
       getAllServices();
       emit(const ServicesCreateSuccessState());
