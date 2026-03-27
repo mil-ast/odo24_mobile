@@ -118,6 +118,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   context.read<ServicesCubit>().delete(state.service);
                 }
               });
+            case ServiceCarODOConfirmState():
+              showConfirmationDialog(
+                context,
+                title: 'Подтверждение пробега',
+                message:
+                    'Указанный пробег (${state.body.odo}) кажется слишком большим.'
+                    'Вы действительно проехали ${state.milleage}км?',
+              ).then((isOk) {
+                if ((isOk ?? false) && context.mounted) {
+                  context.read<ServicesCubit>().create(state.body, confirmed: true);
+                }
+              });
             default:
           }
         },
