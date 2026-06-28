@@ -50,7 +50,7 @@ class AppCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (title != null) title!,
+          ?title,
           if (child != null)
             Padding(
               padding: title != null

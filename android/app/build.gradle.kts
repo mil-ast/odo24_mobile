@@ -2,13 +2,13 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-fun Project.loadProperties(fileName: String): Properties = Properties().apply {
-    rootProject.file(fileName).let { if (it.exists()) it.inputStream().use { stream -> load(stream) } }
-}
+fun Project.loadProperties(fileName: String): Properties =
+    Properties().apply {
+        rootProject.file(fileName).let { if (it.exists()) it.inputStream().use { stream -> load(stream) } }
+    }
 
 val localProperties = loadProperties("local.properties")
 val keystoreProperties = loadProperties("key.properties")
@@ -19,30 +19,17 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21.toString()
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     sourceSets["main"].java.srcDirs("src/main/kotlin")
 
-    /* defaultConfig {
-        applicationId = "ru.odo24.mobile"
-        minSdk = flutter.minSdkVersion
-        targetSdk = 35
-        
-        // Оптимизированное чтение версий с дефолтными значениями
-        versionCode = localProperties.getProperty("flutter.versionCode")?.toIntOrNull() ?: 1
-        versionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
-    } */
     defaultConfig {
         applicationId = "ru.odo24.mobile"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
-        
+
         versionCode = localProperties.getProperty("flutter.versionCode")?.toIntOrNull() ?: 1
         versionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
@@ -54,7 +41,7 @@ android {
 
     signingConfigs {
         getByName("debug") {}
-        
+
         create("release") {
             keyAlias = keystoreProperties.getProperty("keyAlias")
             keyPassword = keystoreProperties.getProperty("keyPassword")
@@ -70,13 +57,13 @@ android {
 
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
-            
-            isMinifyEnabled = true   // Удаляет неиспользуемый код
+
+            isMinifyEnabled = true // Удаляет неиспользуемый код
             isShrinkResources = true // Удаляет неиспользуемые ресурсы
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), 
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
             )
         }
     }
@@ -85,7 +72,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("armeabi-v7a", "arm64-v8a") 
+            include("armeabi-v7a", "arm64-v8a")
             isUniversalApk = true
         }
     }
@@ -98,4 +85,10 @@ flutter {
 dependencies {
     // Используйте реализацию через строки, если нужно добавить библиотеки
     // implementation("androidx.core:core-ktx:1.12.0")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }
