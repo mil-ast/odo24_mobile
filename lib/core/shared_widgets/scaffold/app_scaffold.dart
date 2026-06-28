@@ -20,7 +20,7 @@ class AppScaffold extends StatelessWidget {
     this.appBarActions,
     this.floatingActionButton,
     this.persistentFooterButtons,
-    this.padding = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(10),
   });
 
   @override

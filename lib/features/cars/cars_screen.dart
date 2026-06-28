@@ -54,7 +54,6 @@ class _CarsScreenState extends State<CarsScreen> {
       ),
 
       body: BlocListener<CarsCubit, CarsState>(
-        listenWhen: (previous, current) => !current.needBuild,
         listener: (BuildContext context, CarsState state) async {
           switch (state) {
             case CarsErrorState():
@@ -104,32 +103,36 @@ class _CarsScreenState extends State<CarsScreen> {
           }
         },
         child: RefreshIndicator(
-          onRefresh: () {
-            return context.read<CarsCubit>().getAllCars();
-          },
+          onRefresh: context.read<CarsCubit>().getAllCars,
           child: BlocBuilder<CarsCubit, CarsState>(
             buildWhen: (previous, current) => current.needBuild,
-            builder: (context, state) {
-              if (state is CarsWaitingState) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (state is CarsLoadedState && state.cars.isNotEmpty) {
-                return ListView.separated(
-                  separatorBuilder: (context, i) => const SizedBox(height: 20),
-                  itemCount: state.cars.length,
-                  itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
-                );
-              }
-
-              return const SingleChildScrollView(child: CarCreateFormWidget());
+            builder: (context, state) => switch (state) {
+              CarsWaitingState() => const Center(child: CircularProgressIndicator()),
+              CarsLoadedState() when state.cars.isNotEmpty => ListView.separated(
+                separatorBuilder: (context, i) => const SizedBox(height: 20),
+                itemCount: state.cars.length,
+                itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
+              ),
+              CarsErrorState() => const CarsFailureWidget(),
+              _ => const SingleChildScrollView(child: CarCreateFormWidget()),
             },
           ),
         ),
-        /* buildWhen: (previous, current) => current.needBuild,
-        builder: (context, state) {
+      ),
+    );
+  }
+}
 
-        }, */
+class CarsFailureWidget extends StatelessWidget {
+  const CarsFailureWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FilledButton.icon(
+        icon: const Icon(Icons.refresh),
+        onPressed: context.read<CarsCubit>().getAllCars,
+        label: Text('Обновить'),
       ),
     );
   }

@@ -19,7 +19,7 @@ sealed class CarsState {
   bool get needBuild => switch (this) {
     CarsReadyState() => true,
     CarsWaitingState() => true,
-    CarsErrorState() => false,
+    CarsErrorState() => true,
     CarsLoadedState() => true,
     CarActionSelectState() => false,
     CarActionShowCreateDialogState() => false,

@@ -1,4 +1,9 @@
 {
+  "[kotlin]": {
+    "editor.defaultFormatter": "rnoro.vscode-ktlint-formatter",
+    "editor.wordWrapColumn": 120,
+    "editor.wordWrap": "wordWrapColumn"
+  },
   "[dart]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
