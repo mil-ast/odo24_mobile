@@ -14,7 +14,7 @@ abstract interface class IServicesDataProvider {
 class ServicesDataProvider implements IServicesDataProvider {
   final AppHttpClient _httpClient;
 
-  ServicesDataProvider({required AppHttpClient httpClient}) : _httpClient = httpClient;
+  ServicesDataProvider({required this._httpClient});
 
   @override
   Future<List<ServiceModel>> getByCarAndGroup(int carID, int groupID) async {

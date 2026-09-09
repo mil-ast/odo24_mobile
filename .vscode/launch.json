@@ -27,7 +27,10 @@
       "name": "odo24_mobile (release mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release"
+      "flutterMode": "release",
+      "toolArgs": [
+        "--dart-define=cronetHttpNoPlay=true"
+      ],
     },
     {
       "name": "odo24_mobile (web)",

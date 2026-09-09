@@ -13,10 +13,8 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
   final AuthService _authService;
   final SharedPreferences _sharedPreferences;
 
-  PasswordRecoveryCubit({required AuthService authService, required SharedPreferences sharedPreferences})
-    : _authService = authService,
-      _sharedPreferences = sharedPreferences,
-      super(const PasswordRecoveryState.ready());
+  PasswordRecoveryCubit({required this._authService, required this._sharedPreferences})
+    : super(const PasswordRecoveryState.ready());
 
   Future<void> submitForm({required String email, required String password}) async {
     try {

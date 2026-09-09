@@ -13,8 +13,7 @@ abstract interface class IServicesRepository {
 class ServicesRepository implements IServicesRepository {
   final IServicesDataProvider _servicesDataProvider;
 
-  ServicesRepository({required IServicesDataProvider servicesDataProvider})
-    : _servicesDataProvider = servicesDataProvider;
+  ServicesRepository({required this._servicesDataProvider});
 
   @override
   Future<List<ServiceModel>> getByCarAndGroup(int carID, int groupID) {

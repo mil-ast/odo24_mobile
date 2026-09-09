@@ -21,6 +21,7 @@ class ProfileScreen extends StatelessWidget {
             shrinkWrap: true,
             children: [
               ListTile(
+                tileColor: Colors.white,
                 title: const Text('Изменить пароль'),
                 leading: const Icon(Icons.password_outlined),
                 onTap: () {
@@ -29,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
+                tileColor: Colors.white,
                 title: const Text('О приложении'),
                 leading: const Icon(Icons.app_shortcut_rounded),
                 onTap: () {
@@ -37,6 +39,7 @@ class ProfileScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
+                tileColor: Colors.white,
                 title: Text('Выйти из профиля', style: TextStyle(color: theme.colorScheme.error)),
                 leading: Icon(Icons.logout, color: theme.colorScheme.error),
                 onTap: () {

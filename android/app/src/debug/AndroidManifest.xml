@@ -4,7 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     
     <application
-        tools:replace="android:label" android:label="ODO24"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic"
     >
         <activity
             android:name=".MainActivity"

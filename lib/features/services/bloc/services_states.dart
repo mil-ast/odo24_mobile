@@ -28,8 +28,6 @@ sealed class ServicesState {
   };
 }
 
-enum ServiceAction { create, update, delete }
-
 class ServicesLoadingState extends ServicesState {
   const ServicesLoadingState();
 }
@@ -76,49 +74,3 @@ class ServiceCarODOConfirmState extends ServicesState {
   int milleage;
   ServiceCarODOConfirmState({required this.body, required this.milleage});
 }
-
-/* class ServicesReadyState extends ServicesState {
-  const ServicesReadyState() : super(true);
-}
-
-
-
-class ServicesShowListState extends ServicesState {
-  final List<ServiceModel> services;
-  final NextODOInformation? inform;
-  const ServicesShowListState(this.services, this.inform) : super(true);
-}
-
-class ServiceActionState extends ServicesState {
-  final ServiceModel? service;
-  final ServiceAction action;
-  ServiceActionState(this.action, {this.service}) : super(false);
-}
-
-class ServiceCreateSuccessState extends ServicesState {
-  const ServiceCreateSuccessState() : super(false);
-}
-
-class ServiceUpdateSuccessState extends ServicesState {
-  const ServiceUpdateSuccessState() : super(false);
-}
-
-class ServiceDeleteSuccessState extends ServicesState {
-  const ServiceDeleteSuccessState() : super(false);
-}
-
-class ServiceMessageState extends ServicesState {
-  final String message;
-  ServiceMessageState(this.message) : super(false);
-}
-
-class ServiceCarODOAutoUpdateState extends ServicesState {
-  final int newODO;
-  ServiceCarODOAutoUpdateState(this.newODO) : super(false);
-}
-
-class ServiceErrorState extends ServicesState {
-  final String message;
-  ServiceErrorState(this.message) : super(false);
-}
- */

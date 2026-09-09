@@ -8,7 +8,7 @@ base class AuthMiddleware extends Middleware {
   static Future<AuthData?>? _refreshFuture;
 
   final AuthService _authService;
-  AuthMiddleware({required AuthService authService}) : _authService = authService;
+  AuthMiddleware({required this._authService});
 
   @override
   Future<StreamedResponse> execute(BaseRequest request, NextFunction next) async {

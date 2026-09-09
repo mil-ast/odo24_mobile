@@ -10,7 +10,7 @@ part 'register_states.dart';
 class RegisterCubit extends Cubit<RegisterState> {
   final AuthService _authService;
 
-  RegisterCubit({required AuthService authService}) : _authService = authService, super(RegisterState.ready());
+  RegisterCubit({required this._authService}) : super(RegisterState.ready());
 
   Future<void> sendRegisterCode(String email, String password) async {
     try {

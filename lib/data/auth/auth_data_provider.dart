@@ -28,7 +28,7 @@ class AuthDataProvider implements IAuthDataProvider {
   static const _keyRefreshToken = 'auth_refresh_token';
   final SharedPreferences _sharedPreferences;
 
-  AuthDataProvider({required SharedPreferences sharedPreferences}) : _sharedPreferences = sharedPreferences;
+  AuthDataProvider({required this._sharedPreferences});
 
   late final AppHttpClient _httpClientWithoutAuth;
   late final AppHttpClient _httpClient;
