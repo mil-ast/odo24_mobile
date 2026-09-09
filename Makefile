@@ -2,7 +2,7 @@ build: buildapk
 
 # Build apk
 buildapk:
-	flutter build apk --release --dart-define=cronetHttpNoPlay=true --target-platform android-arm,android-arm64
+	flutter build apk --release --dart-define=cronetHttpNoPlay=false --target-platform android-arm,android-arm64
 
 builddebugapk:
 	flutter build apk --debug --dart-define=cronetHttpNoPlay=true --target-platform android-arm,android-arm64
