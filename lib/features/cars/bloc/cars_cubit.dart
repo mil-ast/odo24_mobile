@@ -7,22 +7,16 @@ import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.
 
 class CarsCubit extends Cubit<CarsState> {
   final ICarsRepository _carsRepository;
-  final List<CarModel> _cars = [];
 
-  CarsCubit({required ICarsRepository carsRepository}) : _carsRepository = carsRepository, super(CarsState.ready());
+  CarsCubit({required this._carsRepository}) : super(CarsState.ready());
 
   Future<void> getAllCars() async {
     try {
       emit(CarsState.idle());
-      final cars = await _carsRepository.getMyCars();
-      _cars.clear();
-      _cars.addAll(cars);
-      _cars.sort();
-
-      emit(CarsState.loaded(_cars));
+      final cars = (await _carsRepository.getMyCars())..sort();
+      emit(CarsState.loaded(cars));
     } catch (e) {
       emit(CarsState.failure(e));
-      emit(CarsState.ready());
       rethrow;
     }
   }
@@ -49,10 +43,11 @@ class CarsCubit extends Cubit<CarsState> {
 
   Future<void> create(CarCreateRequestModel model) async {
     try {
-      final newCar = await _carsRepository.create(model);
-      _cars.insert(0, newCar);
+      await _carsRepository.create(model);
       emit(CarsState.createSuccess());
-      emit(CarsState.loaded(_cars));
+
+      final cars = (await _carsRepository.getMyCars())..sort();
+      emit(CarsState.loaded(cars));
     } catch (e) {
       emit(CarsState.failure(e));
       rethrow;

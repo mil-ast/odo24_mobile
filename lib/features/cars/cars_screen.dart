@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
@@ -113,7 +114,7 @@ class _CarsScreenState extends State<CarsScreen> {
                 itemCount: state.cars.length,
                 itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
               ),
-              CarsErrorState() => const CarsFailureWidget(),
+              CarsErrorState() => SingleChildScrollView(child: const CarsFailureWidget()),
               _ => const SingleChildScrollView(child: CarCreateFormWidget()),
             },
           ),
@@ -128,11 +129,17 @@ class CarsFailureWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FilledButton.icon(
-        icon: const Icon(Icons.refresh),
-        onPressed: context.read<CarsCubit>().getAllCars,
-        label: Text('Обновить'),
+    return AppCard(
+      child: Column(
+        spacing: 20,
+        children: [
+          Text('Не удалось загрузить'),
+          FilledButton.icon(
+            icon: const Icon(Icons.refresh),
+            onPressed: context.read<CarsCubit>().getAllCars,
+            label: Text('Обновить'),
+          ),
+        ],
       ),
     );
   }

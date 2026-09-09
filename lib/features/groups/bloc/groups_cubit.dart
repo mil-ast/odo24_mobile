@@ -9,9 +9,7 @@ part 'groups_states.dart';
 class GroupsCubit extends Cubit<GroupsState> {
   final IGroupsRepository _groupsRepository;
 
-  GroupsCubit({required IGroupsRepository groupsRepository})
-    : _groupsRepository = groupsRepository,
-      super(GroupsState.waiting());
+  GroupsCubit({required this._groupsRepository}) : super(GroupsState.waiting());
 
   Future<void> getAllGroups() async {
     try {
@@ -20,6 +18,7 @@ class GroupsCubit extends Cubit<GroupsState> {
         emit(const GroupsEmptyGroupsState());
         return;
       }
+      groups.sort();
       emit(GroupsState.loaded(groups));
     } catch (e, st) {
       super.onError(e, st);

@@ -8,12 +8,11 @@ class RegisterConfirmationEmailScreen extends StatefulWidget {
   final String _email;
   final String _password;
   const RegisterConfirmationEmailScreen({
-    required String email,
-    required String password,
+    required this._email,
+    required this._password,
     String? buttonTitle,
     super.key,
-  }) : _email = email,
-       _password = password;
+  });
 
   @override
   State<RegisterConfirmationEmailScreen> createState() => _RegisterConfirmationEmailScreenState();

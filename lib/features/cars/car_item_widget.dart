@@ -28,19 +28,31 @@ class CarItemWidget extends StatelessWidget {
             icon: const Icon(Icons.more_vert, color: Colors.white),
             itemBuilder: (ctx) => [
               PopupMenuItem(
-                child: const ListTile(leading: Icon(Icons.edit), title: Text('Изменить')),
+                // Управляем отступами внутри элемента меню, если нужно
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 onTap: () {
                   context.read<CarsCubit>().openFormEditCar(car);
                 },
+                child: const Row(
+                  children: [
+                    Icon(Icons.edit),
+                    SizedBox(width: 12), // Задает красивый отступ между иконкой и текстом
+                    Text('Изменить'),
+                  ],
+                ),
               ),
               PopupMenuItem(
-                child: const ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text('Удалить', style: TextStyle(color: Colors.red)),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 onTap: () {
                   context.read<CarsCubit>().onClickDeleteCar(car);
                 },
+                child: const Row(
+                  children: [
+                    Icon(Icons.delete, color: Colors.red),
+                    SizedBox(width: 12), // Отступ между иконкой и текстом
+                    Text('Удалить', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
               ),
             ],
           ),

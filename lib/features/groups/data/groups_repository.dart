@@ -14,7 +14,7 @@ abstract interface class IGroupsRepository {
 class GroupsRepository implements IGroupsRepository {
   final GroupsDataProvider _groupsDataProvider;
 
-  GroupsRepository({required GroupsDataProvider groupsDataProvider}) : _groupsDataProvider = groupsDataProvider;
+  GroupsRepository({required this._groupsDataProvider});
 
   @override
   Future<List<GroupModel>> getAll() {

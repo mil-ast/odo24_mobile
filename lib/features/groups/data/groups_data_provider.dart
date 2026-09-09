@@ -15,7 +15,7 @@ abstract interface class IGroupsDataProvider {
 class GroupsDataProvider implements IGroupsDataProvider {
   final Client _httpClient;
 
-  GroupsDataProvider({required Client httpClient}) : _httpClient = httpClient;
+  GroupsDataProvider({required this._httpClient});
 
   @override
   Future<List<GroupModel>> getAll() async {

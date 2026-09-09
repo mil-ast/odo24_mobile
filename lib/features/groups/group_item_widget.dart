@@ -9,37 +9,45 @@ class GroupItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(group.name, overflow: TextOverflow.fade),
-      contentPadding: const EdgeInsets.only(top: 6, right: 4, bottom: 6, left: 20),
-      onTap: () {
-        context.read<GroupsCubit>().onSelectGroup(group);
-      },
-      trailing: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert),
-            itemBuilder: (ctx) => [
-              PopupMenuItem(
-                child: const ListTile(leading: Icon(Icons.edit), title: Text('Изменить')),
-                onTap: () {
-                  context.read<GroupsCubit>().showUpdateDialog(group);
-                },
-              ),
-              PopupMenuItem(
-                child: const ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text('Удалить', style: TextStyle(color: Colors.red)),
+    return Material(
+      color: Colors.white,
+      child: ListTile(
+        title: Text(group.name, overflow: TextOverflow.fade),
+        contentPadding: const EdgeInsets.only(top: 6, right: 4, bottom: 6, left: 20),
+        onTap: () {
+          context.read<GroupsCubit>().onSelectGroup(group);
+        },
+        trailing: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            PopupMenuButton(
+              icon: const Icon(Icons.more_vert),
+              itemBuilder: (ctx) => [
+                PopupMenuItem(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  onTap: () {
+                    context.read<GroupsCubit>().showUpdateDialog(group);
+                  },
+                  child: const Row(children: [Icon(Icons.edit), SizedBox(width: 12), Text('Изменить')]),
                 ),
-                onTap: () {
-                  context.read<GroupsCubit>().showDeleteConfirmDialog(group);
-                },
-              ),
-            ],
-          ),
-          const Icon(Icons.chevron_right_outlined, color: Colors.grey),
-        ],
+                PopupMenuItem(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  onTap: () {
+                    context.read<GroupsCubit>().showDeleteConfirmDialog(group);
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.red),
+                      SizedBox(width: 12),
+                      Text('Удалить', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Icon(Icons.chevron_right_outlined, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }

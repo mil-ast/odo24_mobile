@@ -12,9 +12,7 @@ class ChangePasswordEvent {
 class ChangePasswordCubit extends Bloc<ChangePasswordEvent, ChangePasswordState> {
   final AuthService _authService;
 
-  ChangePasswordCubit({required AuthService authService})
-    : _authService = authService,
-      super(ChangePasswordState.ready) {
+  ChangePasswordCubit({required this._authService}) : super(ChangePasswordState.ready) {
     on<ChangePasswordEvent>(_onChangePassword);
   }
 

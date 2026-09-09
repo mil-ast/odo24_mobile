@@ -7,7 +7,7 @@ import 'package:odo24_mobile/features/login/bloc/login_states.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final AuthService _authService;
-  LoginCubit({required AuthService authService}) : _authService = authService, super(LoginState.ready());
+  LoginCubit({required this._authService}) : super(LoginState.ready());
 
   void signInWithEmailAndPassword(String email, String password) async {
     try {

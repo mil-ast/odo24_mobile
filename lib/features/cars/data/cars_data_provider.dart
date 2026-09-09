@@ -15,7 +15,7 @@ abstract interface class ICarsDataProvider {
 class CarsDataProvider implements ICarsDataProvider {
   final Client _httpClient;
 
-  CarsDataProvider({required Client httpClient}) : _httpClient = httpClient;
+  CarsDataProvider({required this._httpClient});
 
   @override
   Future<List<CarModel>> getMyCars() async {

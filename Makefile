@@ -7,6 +7,13 @@ buildapk:
 builddebugapk:
 	flutter build apk --debug --dart-define=cronetHttpNoPlay=true --target-platform android-arm,android-arm64
 
+flutter_launcher_icons:
+	dart run flutter_launcher_icons
+
+flutter_native_splash:
+	dart run flutter_native_splash:create
+
+
 .PHONY: pg
 pg:
 	flutter pub get

@@ -21,13 +21,11 @@ class ServicesCubit extends Cubit<ServicesState> {
   final GroupModel selectedGroup;
 
   ServicesCubit({
-    required IServicesRepository servicesRepository,
-    required ICarsRepository carsRepository,
+    required this._servicesRepository,
+    required this._carsRepository,
     required this.selectedCar,
     required this.selectedGroup,
-  }) : _servicesRepository = servicesRepository,
-       _carsRepository = carsRepository,
-       super(const ServicesLoadingState());
+  }) : super(const ServicesLoadingState());
 
   Future<void> getAllServices() async {
     try {

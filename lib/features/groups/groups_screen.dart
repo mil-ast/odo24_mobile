@@ -129,28 +129,36 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
       ),
       body: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
-        child: ReorderableListView(
-          header: null,
-          onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-
-              final item = widget.groups.removeAt(oldIndex);
-              widget.groups.insert(newIndex, item);
-
-              context.read<GroupsCubit>().updateSortGroups(widget.groups);
-            });
-          },
-          footer: Column(
-            children: [if (widget.groups.length > 1) const HintForSortingGroups(), const SizedBox(height: 40)],
-          ),
-          children: widget.groups
-              .map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group))
-              .toList(),
-        ),
+        child: _ReorderableListGroups(groups: widget.groups),
       ),
+    );
+  }
+}
+
+class _ReorderableListGroups extends StatefulWidget {
+  final List<GroupModel> groups;
+  const _ReorderableListGroups({required this.groups});
+
+  @override
+  State<_ReorderableListGroups> createState() => __ListGroupsState();
+}
+
+class __ListGroupsState extends State<_ReorderableListGroups> {
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView(
+      header: null,
+      onReorderItem: (int oldIndex, int newIndex) {
+        final item = widget.groups.removeAt(oldIndex);
+        widget.groups.insert(newIndex, item);
+
+        context.read<GroupsCubit>().updateSortGroups(widget.groups);
+        setState(() {});
+      },
+      footer: Column(
+        children: [if (widget.groups.length > 1) const HintForSortingGroups(), const SizedBox(height: 40)],
+      ),
+      children: widget.groups.map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group)).toList(),
     );
   }
 }

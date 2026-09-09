@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#222531"
+  image: "assets/bg2.png"
+  android_gravity: fill
+
+  android_12:
+    color: "#222531"
+    image: "assets/bg2.png"
+    branding: null

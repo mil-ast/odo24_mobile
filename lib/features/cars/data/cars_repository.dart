@@ -1,7 +1,7 @@
-import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
-import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.dart';
 import 'package:odo24_mobile/features/cars/data/cars_data_provider.dart';
+import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
+import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.dart';
 
 abstract interface class ICarsRepository {
   Future<List<CarModel>> getMyCars();
@@ -14,7 +14,7 @@ abstract interface class ICarsRepository {
 class CarsRepository implements ICarsRepository {
   final ICarsDataProvider _carsDataProvider;
 
-  CarsRepository({required ICarsDataProvider carsDataProvider}) : _carsDataProvider = carsDataProvider;
+  CarsRepository({required this._carsDataProvider});
 
   @override
   Future<List<CarModel>> getMyCars() {

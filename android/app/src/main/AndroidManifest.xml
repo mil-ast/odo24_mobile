@@ -6,7 +6,7 @@
 
   <application
         android:label="ODO24"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:hasFragileUserData="false"

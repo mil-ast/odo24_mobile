@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 4.1.1+22
 
 environment:
-  sdk: ^3.10.0
-  flutter: ^3.38.0
+  sdk: ^3.12.1
+  flutter: ^3.44.0
 
 dependencies:
   flutter:
@@ -28,11 +28,14 @@ dev_dependencies:
   test: ^1.25.9
   analyzer: ^12.1.0
   flutter_lints: ^6.0.0
-  flutter_launcher_icons: ^0.14.3
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/empty.png
+    #- assets/logo.png
     - assets/logo.svg
     - assets/logo_dark.svg
     - assets/logo_v2.svg
