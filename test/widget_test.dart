@@ -1,30 +1,26 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:odo24_mobile/main.dart';
+import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const Odo24App());
+  Widget wrap(Widget child) => MaterialApp(home: child);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('AppScaffold отображает заголовок и тело', (tester) async {
+    await tester.pumpWidget(wrap(const AppScaffold(title: 'Тест', body: Center(child: Text('Контент')))));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Тест'), findsOneWidget);
+    expect(find.text('Контент'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('AppCard отображает заголовок и дочерний виджет', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: AppCard(title: AppCardTitle(title: 'Заголовок'), child: Text('Дочерний'))),
+      ),
+    );
+
+    expect(find.text('Заголовок'), findsOneWidget);
+    expect(find.text('Дочерний'), findsOneWidget);
   });
 }

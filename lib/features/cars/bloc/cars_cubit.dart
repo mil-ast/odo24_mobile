@@ -17,7 +17,6 @@ class CarsCubit extends Cubit<CarsState> {
       emit(CarsState.loaded(cars));
     } catch (e) {
       emit(CarsState.failure(e));
-      rethrow;
     }
   }
 
@@ -50,7 +49,6 @@ class CarsCubit extends Cubit<CarsState> {
       emit(CarsState.loaded(cars));
     } catch (e) {
       emit(CarsState.failure(e));
-      rethrow;
     }
   }
 
@@ -61,7 +59,6 @@ class CarsCubit extends Cubit<CarsState> {
       getAllCars();
     } catch (e) {
       emit(CarsState.failure(e));
-      rethrow;
     }
   }
 
@@ -72,7 +69,6 @@ class CarsCubit extends Cubit<CarsState> {
       getAllCars();
     } catch (e) {
       emit(CarsState.failure(e));
-      rethrow;
     }
   }
 
@@ -83,7 +79,6 @@ class CarsCubit extends Cubit<CarsState> {
       getAllCars();
     } catch (e) {
       emit(CarsState.failure(e));
-      rethrow;
     }
   }
 }

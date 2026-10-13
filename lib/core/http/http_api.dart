@@ -28,7 +28,6 @@ class AppHttpClient extends BaseClient {
 
   @override
   Future<Response> post(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    print(body);
     return super.post(_urlToFull(url), body: _toJsonString(body), headers: headers, encoding: encoding);
   }
 

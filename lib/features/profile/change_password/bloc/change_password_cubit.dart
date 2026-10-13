@@ -22,7 +22,6 @@ class ChangePasswordCubit extends Bloc<ChangePasswordEvent, ChangePasswordState>
       emit(ChangePasswordState.successful);
     } catch (e) {
       emit(ChangePasswordState.error);
-      rethrow;
     }
   }
 }

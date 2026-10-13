@@ -44,23 +44,35 @@ class ResponseHandler {
   }
 
   static Future<ResponseData?> _parse(Future<Response> api) async {
-    //try {
-    final response = await api;
-    switch (response.statusCode) {
-      case HttpStatus.ok:
-        final contentType = response.headers['content-type']?.toLowerCase() ?? '';
-        if (contentType.contains('application/json')) {
-          return ResponseData(contentType: ContentType.json, body: jsonDecode(response.body));
-        }
-        return ResponseData(contentType: ContentType.string, body: response.body);
-      case HttpStatus.noContent:
-        return null;
-      default:
-        throw _handleErrorDataResponse(response);
+    final Response response;
+    try {
+      response = await api;
+    } on AppNetworkException {
+      rethrow;
+    } catch (e) {
+      throw AppNetworkException(
+        'NetworkError',
+        e.toString(),
+        details: e.runtimeType.toString(),
+      );
     }
-    /*     } on Exception catch (e) {
-      throw AppNetworkException('HttpError', e.toString(), statusCode: response?.statusCode);
-    } */
+
+    try {
+      switch (response.statusCode) {
+        case HttpStatus.ok:
+          final contentType = response.headers['content-type']?.toLowerCase() ?? '';
+          if (contentType.contains('application/json')) {
+            return ResponseData(contentType: ContentType.json, body: jsonDecode(response.body));
+          }
+          return ResponseData(contentType: ContentType.string, body: response.body);
+        case HttpStatus.noContent:
+          return null;
+        default:
+          throw _handleErrorDataResponse(response);
+      }
+    } on FormatException catch (e) {
+      throw AppNetworkException('ParseError', e.toString(), statusCode: response.statusCode);
+    }
   }
 
   static AppNetworkException _handleErrorDataResponse(Response res) {

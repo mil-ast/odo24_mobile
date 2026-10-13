@@ -55,12 +55,12 @@ class AboutScreen extends StatelessWidget {
                   spacing: 20,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: _sendEmail,
+                      onPressed: () => _sendEmail(context),
                       icon: const Icon(Icons.email_outlined),
                       label: const Text('Написать нам'),
                     ),
                     ElevatedButton.icon(
-                      onPressed: _openGitlab,
+                      onPressed: () => _openGitlab(context),
                       icon: const Icon(Icons.link_outlined),
                       label: const Text('Gitlab'),
                     ),
@@ -87,25 +87,42 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _sendEmail() async {
+  Future<void> _sendEmail(BuildContext context) async {
     final emailLaunchUri = Uri(
       scheme: 'mailto',
       path: Configs.email,
       queryParameters: {'subject': 'Сервисная книжка автомобиля', 'body': 'Текст сообщения'},
     );
 
-    if (await canLaunchUrl(emailLaunchUri)) {
-      await launchUrl(emailLaunchUri);
-    } else {
-      throw 'Не удалось открыть почтовый клиент';
-    }
+    await _launchExternal(context, emailLaunchUri, 'Не удалось открыть почтовый клиент');
   }
 
-  Future<void> _openGitlab() async {
+  Future<void> _openGitlab(BuildContext context) async {
     final url = Uri.parse(Configs.gitlabURL);
+    await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
+  }
 
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Не удалось открыть ссылку');
+  Future<void> _launchExternal(
+    BuildContext context,
+    Uri uri,
+    String errorMessage, {
+    bool external = false,
+  }) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      if (!await canLaunchUrl(uri)) {
+        messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+        return;
+      }
+      final launched = await launchUrl(
+        uri,
+        mode: external ? LaunchMode.externalApplication : LaunchMode.platformDefault,
+      );
+      if (!launched) {
+        messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      }
+    } catch (_) {
+      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 }
