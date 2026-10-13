@@ -10,7 +10,7 @@
       "type": "dart",
       "flutterMode": "debug",
       "toolArgs": [
-        "--dart-define=cronetHttpNoPlay=true"
+        "--dart-define=cronetHttpNoPlay=false"
       ],
       "args": [
         //"--no-enable-impeller",
@@ -29,7 +29,7 @@
       "type": "dart",
       "flutterMode": "release",
       "toolArgs": [
-        "--dart-define=cronetHttpNoPlay=true"
+        "--dart-define=cronetHttpNoPlay=false"
       ],
     },
     {

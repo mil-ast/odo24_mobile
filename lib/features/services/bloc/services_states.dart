@@ -1,16 +1,5 @@
 part of './services_cubit.dart';
 
-class NextODOInformation {
-  final double factor;
-  final int leftDistance;
-  final NextODOInformationColorLevel colorLevel;
-  const NextODOInformation(this.leftDistance, this.factor, this.colorLevel);
-
-  String toStringLeftDistancePercent() {
-    return '${(factor * 100).round()}%';
-  }
-}
-
 sealed class ServicesState {
   const ServicesState();
 

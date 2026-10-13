@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:odo24_mobile/core/app_exception.dart';
-import 'package:odo24_mobile/core/http/models/error_data_model.dart';
 
 enum ContentType { json, string }
 
@@ -68,33 +67,15 @@ class ResponseHandler {
         case HttpStatus.noContent:
           return null;
         default:
-          throw _handleErrorDataResponse(response);
+          throw AppNetworkException(
+            'HttpResponseRrror',
+            'Unexpected status code ${response.statusCode}',
+            details: response.request?.url.toString(),
+            statusCode: response.statusCode,
+          );
       }
     } on FormatException catch (e) {
       throw AppNetworkException('ParseError', e.toString(), statusCode: response.statusCode);
     }
-  }
-
-  static AppNetworkException _handleErrorDataResponse(Response res) {
-    if (res.body.isEmpty) {
-      return AppNetworkException(
-        'HttpResponseRrror',
-        res.statusCode.toString(),
-        details: res.request?.url.toString(),
-        statusCode: res.statusCode,
-      );
-    }
-    final data = jsonDecode(res.body);
-    if (data is Map) {
-      final responseData = ErrorDataModel.fromJson(data.cast<String, Object?>());
-      return AppNetworkException(responseData.key, responseData.message, statusCode: res.statusCode);
-    }
-
-    return AppNetworkException(
-      'HttpResponseRrror',
-      data.toString(),
-      details: res.request?.url.toString(),
-      statusCode: res.statusCode,
-    );
   }
 }

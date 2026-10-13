@@ -63,10 +63,6 @@ class AppHttpClient extends BaseClient {
 }
 
 class HttpAPI {
-  static String get baseHost {
-    return Configs.baseHost;
-  }
-
   static Client newHttpClient() {
     if (Platform.isAndroid) {
       final engine = CronetEngine.build(

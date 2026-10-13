@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:odo24_mobile/core/configs/configs.dart';
 import 'package:odo24_mobile/core/http/http_api.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 import 'package:odo24_mobile/data/models/auth_result_model.dart';
@@ -65,22 +64,24 @@ class AuthDataProvider implements IAuthDataProvider {
 
   @override
   Future<AuthData?> refreshToken(AuthData currentAuthData) async {
-    final authClient = Client();
+    try {
+      final response = await _httpClientWithoutAuth.post(
+        Uri(path: '/api/auth/refresh_token'),
+        headers: {'Authorization': 'Bearer ${currentAuthData.accessToken}'},
+        body: {'refresh_token': currentAuthData.refreshToken},
+      );
 
-    final response = await authClient.post(
-      Uri.parse('${Configs.baseHost}/api/auth/refresh_token'),
-      headers: {'Authorization': 'Bearer ${currentAuthData.accessToken}', 'Content-Type': 'application/json'},
-      body: jsonEncode({'refresh_token': currentAuthData.refreshToken}),
-    );
+      if (response.statusCode != 200) {
+        return null;
+      }
 
-    if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
       final newAuthData = AuthData.fromStrings(data['access_token'], data['refresh_token']);
       await Future.wait([setAccessToken(newAuthData.accessToken), setRefreshToken(newAuthData.refreshToken)]);
       return newAuthData;
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 
   @override

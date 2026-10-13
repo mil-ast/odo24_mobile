@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
+import 'package:odo24_mobile/core/next_odo_information.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
@@ -131,36 +131,11 @@ class ServicesCubit extends Cubit<ServicesState> {
       return null;
     }
 
-    final nextOdo = lastService.odo! + lastService.nextDistance!;
-
-    int leftDistance = nextOdo - selectedCar.odo;
-    if (leftDistance < 0) {
-      leftDistance = 0;
-    }
-
-    double factor = 0;
-
-    final mileageFromStart = selectedCar.odo - lastService.odo!;
-
-    factor = mileageFromStart / lastService.nextDistance!;
-
-    if (factor > 1) {
-      factor = 1;
-    } else if (factor < 0) {
-      factor = 0;
-    }
-
-    NextODOInformationColorLevel colorLevel;
-    final rFactor = 1 - factor;
-    if (rFactor <= NextODOInformationColorLevel.alarm.factor) {
-      colorLevel = NextODOInformationColorLevel.alarm;
-    } else if (rFactor <= NextODOInformationColorLevel.warn.factor) {
-      colorLevel = NextODOInformationColorLevel.warn;
-    } else {
-      colorLevel = NextODOInformationColorLevel.normal;
-    }
-
-    return NextODOInformation(leftDistance, factor, colorLevel);
+    return calculateNextODOInformation(
+      carODO: selectedCar.odo,
+      serviceODO: lastService.odo!,
+      nextDistance: lastService.nextDistance!,
+    );
   }
 
   /* void openFormCreateService() {

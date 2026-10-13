@@ -1,7 +1,6 @@
 import 'dart:math';
 
-import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
-import 'package:odo24_mobile/features/services/bloc/services_cubit.dart';
+import 'package:odo24_mobile/core/next_odo_information.dart';
 
 class CarModel implements Comparable<CarModel> {
   static const _maxExtDataLength = 3;
@@ -68,34 +67,7 @@ class CarExtraDataModel implements Comparable<CarExtraDataModel> {
   );
 
   NextODOInformation calculateLeftODO(int carODO) {
-    double factor = 0;
-    final nextMileage = odo + nextOdo;
-    final mileageFromStart = carODO - odo;
-
-    factor = mileageFromStart / nextOdo;
-
-    if (factor > 1) {
-      factor = 1;
-    } else if (factor < 0) {
-      factor = 0;
-    }
-
-    NextODOInformationColorLevel colorLevel;
-    final rFactor = 1 - factor;
-    if (rFactor <= NextODOInformationColorLevel.alarm.factor) {
-      colorLevel = NextODOInformationColorLevel.alarm;
-    } else if (rFactor <= NextODOInformationColorLevel.warn.factor) {
-      colorLevel = NextODOInformationColorLevel.warn;
-    } else {
-      colorLevel = NextODOInformationColorLevel.normal;
-    }
-
-    int leftDistance = nextMileage - carODO;
-    if (leftDistance < 0) {
-      leftDistance = 0;
-    }
-
-    return NextODOInformation(leftDistance, factor, colorLevel);
+    return calculateNextODOInformation(carODO: carODO, serviceODO: odo, nextDistance: nextOdo);
   }
 
   @override
