@@ -92,7 +92,6 @@ class LoginScreenState extends State<LoginWidget> {
               hasScrollBody: false,
               child: BlocBuilder<LoginCubit, LoginState>(
                 builder: (context, state) {
-                  final themePreferences = DependenciesScope.of(context).themePreferences;
                   return Column(
                     spacing: 10,
                     children: [
@@ -102,15 +101,7 @@ class LoginScreenState extends State<LoginWidget> {
                           child: Column(
                             spacing: 20,
                             children: [
-                              Center(
-                                child: SvgPicture.asset(
-                                  themePreferences.brightness.value == Brightness.dark
-                                      ? 'assets/logo.svg'
-                                      : 'assets/logo_dark.svg',
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              ),
+                              Center(child: SvgPicture.asset('assets/logo_dark.svg', width: 60, height: 60)),
                               Form(
                                 key: _formKey,
                                 child: Column(
@@ -134,12 +125,15 @@ class LoginScreenState extends State<LoginWidget> {
                                       decoration: const InputDecoration(hintText: 'Пароль'),
                                       controller: _passwordController,
                                       obscureText: true,
-                                      keyboardType: TextInputType.emailAddress,
+                                      keyboardType: TextInputType.visiblePassword,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Пароль не указан';
                                         }
                                         return null;
+                                      },
+                                      onFieldSubmitted: (_) {
+                                        _login(context);
                                       },
                                     ),
                                     Wrap(
@@ -166,7 +160,7 @@ class LoginScreenState extends State<LoginWidget> {
                       const Spacer(),
                       FilledButton.icon(
                         icon: const Icon(Icons.login_outlined),
-                        onPressed: state.isWaiting ? null : () => _onLogin(context),
+                        onPressed: state.isWaiting ? null : () => _login(context),
                         label: const Text('Войти'),
                       ),
                       const Divider(),
@@ -189,7 +183,7 @@ class LoginScreenState extends State<LoginWidget> {
     );
   }
 
-  void _onLogin(BuildContext context) {
+  void _login(BuildContext context) {
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неверный логин или пароль')));
       return;

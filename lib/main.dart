@@ -9,7 +9,6 @@ import 'package:odo24_mobile/core/http/middlewares/auth_middleware.dart';
 import 'package:odo24_mobile/core/http/middlewares/json_middleware.dart';
 import 'package:odo24_mobile/core/http/middlewares/status_code_middleware.dart';
 import 'package:odo24_mobile/core/theme/odo24_theme.dart';
-import 'package:odo24_mobile/core/theme/theme_preferences.dart';
 import 'package:odo24_mobile/data/auth/auth_data_provider.dart';
 import 'package:odo24_mobile/data/auth/auth_repository.dart';
 import 'package:odo24_mobile/data/auth/auth_service.dart';
@@ -62,7 +61,6 @@ void main() async {
       authDataProvider.setHttpClients(httpClient: httpClient, httpClientWithoutAuth: httpClientWithoutAuth);
 
       final dependencies = Dependencies(
-        themePreferences: ThemePreferences(),
         httpClient: httpClient,
         sharedPreferences: sp,
         methodChannel: const MethodChannel('odo24/channel'),
@@ -92,39 +90,20 @@ class Odo24App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themePreferences = DependenciesScope.of(context).themePreferences;
-
-    return FutureBuilder(
-      future: themePreferences.fetchBrightness(),
-      builder: (context, snap) {
-        if (snap.connectionState == ConnectionState.done) {
-          return ValueListenableBuilder(
-            valueListenable: themePreferences.brightness,
-            builder: (context, brightness, _) {
-              return MaterialApp(
-                title: 'ODO24.mobile',
-                navigatorKey: navigatorKey,
-                debugShowCheckedModeBanner: false,
-                /* theme: brightness == Brightness.dark
-                    ? ODO24Theme.darkTheme
-                    : ODO24Theme.lightTheme, */
-                theme: ODO24Theme.lightTheme,
-                debugShowMaterialGrid: false,
-                localizationsDelegates: const [
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const [Locale('ru', 'RU')],
-                locale: const Locale('ru', 'RU'),
-                home: AuthGuard(child: HomeScreen.create()),
-              );
-            },
-          );
-        }
-
-        return const MaterialApp(home: Center(child: CircularProgressIndicator()));
-      },
+    return MaterialApp(
+      title: 'ODO24.mobile',
+      navigatorKey: navigatorKey,
+      debugShowCheckedModeBanner: false,
+      theme: ODO24Theme.lightTheme,
+      debugShowMaterialGrid: false,
+      localizationsDelegates: const [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('ru', 'RU')],
+      locale: const Locale('ru', 'RU'),
+      home: AuthGuard(child: HomeScreen.create()),
     );
   }
 }

@@ -15,12 +15,7 @@ abstract class ODO24LightThemeColors {
   static const active = Color(0xFFe7522e);
 }
 
-abstract class ODO24DarkThemeColors {
-  static const primary = Color(0xFF222531);
-  static const secondary = Color(0xff323645);
-  static const tertiary = Color(0xFF787f9a);
-  static const link = Color(0xFF109BD6);
-}
+
 
 extension ColorSchemeExt on ColorScheme {
   Color get actions => ODO24Colors.actions;
