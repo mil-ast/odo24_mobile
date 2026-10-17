@@ -58,13 +58,13 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
 
-            isMinifyEnabled = true // Удаляет неиспользуемый код
-            isShrinkResources = true // Удаляет неиспользуемые ресурсы
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            // R8 minification here caused runtime crashes in flutter plugins
+            // (shared_preferences_android pigeon `suspend` methods): NoSuchMethodError
+            // on SharedPreferencesApiRegistrar.getAll, plus ClassNotFoundException for
+            // kotlin.coroutines.intrinsics.CoroutineSingletons and kotlin.Result.
+            // Disabling minify/shrink is the reliable fix (small size cost).
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 
