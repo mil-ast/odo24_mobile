@@ -8,5 +8,6 @@ abstract final class Configs {
   static String get baseHost => _hosts.first;
   static const email = 'odo24@yandex.ru';
   static const gitlabURL = 'https://github.com/mil-ast/odo24_mobile';
+  static const siteURL = 'https://1427507-cd27842.tw1.ru';
   static const sendEmailDuration = Duration(seconds: 30);
 }

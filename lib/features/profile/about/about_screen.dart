@@ -51,6 +51,14 @@ class AboutScreen extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
+                AppCard(
+                  child: Column(
+                    children: [
+                      Text('Самая актуальная версия на сайте:'),
+                      TextButton(onPressed: () => _openSite(context), child: Text(Configs.siteURL)),
+                    ],
+                  ),
+                ),
                 Wrap(
                   spacing: 20,
                   children: [
@@ -99,6 +107,11 @@ class AboutScreen extends StatelessWidget {
 
   Future<void> _openGitlab(BuildContext context) async {
     final url = Uri.parse(Configs.gitlabURL);
+    await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
+  }
+
+  Future<void> _openSite(BuildContext context) async {
+    final url = Uri.parse(Configs.siteURL);
     await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
   }
 
