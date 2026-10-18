@@ -102,12 +102,7 @@ class AboutScreen extends StatelessWidget {
     await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
   }
 
-  Future<void> _launchExternal(
-    BuildContext context,
-    Uri uri,
-    String errorMessage, {
-    bool external = false,
-  }) async {
+  Future<void> _launchExternal(BuildContext context, Uri uri, String errorMessage, {bool external = false}) async {
     final messenger = ScaffoldMessenger.maybeOf(context);
     try {
       if (!await canLaunchUrl(uri)) {
@@ -121,7 +116,7 @@ class AboutScreen extends StatelessWidget {
       if (!launched) {
         messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
       }
-    } catch (_) {
+    } catch (e) {
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }

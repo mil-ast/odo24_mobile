@@ -10,7 +10,7 @@ import 'package:odo24_mobile/core/http/middlewares/status_code_middleware.dart';
 import 'package:odo24_mobile/core/http/response_handler.dart';
 
 void main() {
-  const baseHost = 'https://backend.1427507-cd27842.tw1.ru';
+  const baseHost = 'https://1427507-cd27842.tw1.ru';
   const jsonHeaders = {'content-type': 'application/json; charset=utf-8'};
 
   group('AppHttpClient', () {
@@ -46,18 +46,13 @@ void main() {
 
       final client = AppHttpClient(inner, const [StatusCodeMiddleware()]);
 
-      await expectLater(
-        client.get(Uri(path: '/api/err')),
-        throwsA(isA<AppNetworkException>()),
-      );
+      await expectLater(client.get(Uri(path: '/api/err')), throwsA(isA<AppNetworkException>()));
     });
   });
 
   group('ResponseHandler', () {
     test('parseJSON возвращает декодированный Map', () async {
-      final inner = MockClient(
-        (request) async => http.Response('{"message":"ok"}', 200, headers: jsonHeaders),
-      );
+      final inner = MockClient((request) async => http.Response('{"message":"ok"}', 200, headers: jsonHeaders));
       final client = AppHttpClient(inner, const [JsonContentTypeMiddleware(), StatusCodeMiddleware()]);
 
       final parsed = await ResponseHandler.parseJSON(client.get(Uri(path: '/api/x')));
