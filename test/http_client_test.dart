@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -47,6 +48,25 @@ void main() {
       final client = AppHttpClient(inner, const [StatusCodeMiddleware()]);
 
       await expectLater(client.get(Uri(path: '/api/err')), throwsA(isA<AppNetworkException>()));
+    });
+
+    test('переключается на резервный хост при сетевой ошибке', () async {
+      final inner = MockClient((request) async {
+        if (request.url.host == 'primary.example.com') {
+          throw const SocketException('Network is unreachable');
+        }
+        expect(request.url.toString(), 'https://backup.example.com/api/ping');
+        return http.Response('{"ok":true}', 200, headers: jsonHeaders);
+      });
+
+      final client = AppHttpClient(
+        inner,
+        const [JsonContentTypeMiddleware(), StatusCodeMiddleware()],
+        hosts: const {'https://primary.example.com', 'https://backup.example.com'},
+      );
+      final res = await client.get(Uri(path: '/api/ping'));
+
+      expect(res.statusCode, 200);
     });
   });
 
