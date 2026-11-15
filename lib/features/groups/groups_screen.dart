@@ -5,6 +5,7 @@ import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dar
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/bloc/groups_cubit.dart';
@@ -169,7 +170,7 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
         child: const Icon(Icons.add),
       ),
       body: Material(
-        color: Colors.white,
+        color: ODO24LightThemeColors.surfaceMuted,
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.antiAlias,
         child: _ReorderableListGroups(
@@ -193,8 +194,15 @@ class _ReorderableListGroups extends StatefulWidget {
 class __ListGroupsState extends State<_ReorderableListGroups> {
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView(
-      header: null,
+    return ReorderableListView.builder(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      buildDefaultDragHandles: false,
+      header: widget.groups.length > 1
+          ? const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: HintForSortingGroups(),
+            )
+          : null,
       onReorderItem: (int oldIndex, int newIndex) {
         final item = widget.groups.removeAt(oldIndex);
         widget.groups.insert(newIndex, item);
@@ -202,21 +210,28 @@ class __ListGroupsState extends State<_ReorderableListGroups> {
         context.read<GroupsCubit>().updateSortGroups(widget.groups);
         setState(() {});
       },
-      footer: Column(
-        children: [
-          if (widget.groups.length > 1) const HintForSortingGroups(),
-          const SizedBox(height: 40),
-        ],
+      proxyDecorator: (child, index, animation) => AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          final scale = 1 + Curves.easeOut.transform(animation.value) * 0.02;
+          return Transform.scale(scale: scale, child: child);
+        },
+        child: child,
       ),
-      children: widget.groups
-          .map(
-            (group) => GroupItemWidget(
-              key: ValueKey<int>(group.groupID),
-              group: group,
-              carOdo: widget.carOdo,
-            ),
-          )
-          .toList(),
+      footer: const SizedBox(height: 24),
+      itemCount: widget.groups.length,
+      itemBuilder: (context, index) {
+        final group = widget.groups[index];
+        return Padding(
+          key: ValueKey<int>(group.groupID),
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GroupItemWidget(
+            group: group,
+            carOdo: widget.carOdo,
+            index: index,
+          ),
+        );
+      },
     );
   }
 }

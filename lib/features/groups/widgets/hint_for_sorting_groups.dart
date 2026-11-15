@@ -32,24 +32,40 @@ class _HintForSortingGroupsState extends State<HintForSortingGroups> {
     if (hidden) {
       return const SizedBox.shrink();
     }
-    return Card(
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      margin: const EdgeInsets.only(bottom: 20),
-      color: ODO24Colors.actions,
-      child: Padding(
-        padding: const EdgeInsetsGeometry.all(10),
-        child: Row(
-          spacing: 10,
-          children: [
-            const Expanded(
-              child: Text(
-                'Удерживайте группу полсекунды и далее переместите ее в нужную позицию',
-                style: TextStyle(color: ODO24Colors.inverseTextColor),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
+      decoration: BoxDecoration(
+        color: ODO24Colors.actions,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        spacing: 10,
+        children: [
+          const Icon(
+            Icons.info_outline_rounded,
+            color: ODO24Colors.inverseTextColor,
+            size: 22,
+          ),
+          const Expanded(
+            child: Text(
+              'Перетащите группу за ручку справа, чтобы изменить порядок',
+              style: TextStyle(
+                color: ODO24Colors.inverseTextColor,
+                height: 1.3,
               ),
             ),
-            IconButton(onPressed: _hide, icon: const Icon(Icons.close)),
-          ],
-        ),
+          ),
+          IconButton(
+            onPressed: _hide,
+            tooltip: 'Скрыть подсказку',
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(
+              Icons.close_rounded,
+              color: ODO24Colors.inverseTextColor,
+              size: 20,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dar
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
@@ -19,7 +20,12 @@ class ServicesScreenScope extends StatelessWidget {
   final CarModel selectedCar;
   final GroupModel selectedGroup;
 
-  const ServicesScreenScope({required this.selectedCar, required this.selectedGroup, required this.child, super.key});
+  const ServicesScreenScope({
+    required this.selectedCar,
+    required this.selectedGroup,
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,20 +45,26 @@ class ServicesScreenScope extends StatelessWidget {
 class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
 
-  static Future<void> open(BuildContext context, {required CarModel selectedCar, required GroupModel selectedGroup}) =>
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ServicesDependenciesScope(
-            dependencies: ServicesDependencies(selectedCar: selectedCar, selectedGroup: selectedGroup),
-            child: ServicesScreenScope(
-              selectedCar: selectedCar,
-              selectedGroup: selectedGroup,
-              child: const ServicesScreen(),
-            ),
-          ),
+  static Future<void> open(
+    BuildContext context, {
+    required CarModel selectedCar,
+    required GroupModel selectedGroup,
+  }) => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ServicesDependenciesScope(
+        dependencies: ServicesDependencies(
+          selectedCar: selectedCar,
+          selectedGroup: selectedGroup,
         ),
-      );
+        child: ServicesScreenScope(
+          selectedCar: selectedCar,
+          selectedGroup: selectedGroup,
+          child: const ServicesScreen(),
+        ),
+      ),
+    ),
+  );
 
   @override
   State<ServicesScreen> createState() => _ServicesScreenState();
@@ -78,70 +90,100 @@ class _ServicesScreenState extends State<ServicesScreen> {
         onPressed: context.read<ServicesCubit>().openFormCreateService,
         child: const Icon(Icons.add),
       ),
-      body: BlocConsumer<ServicesCubit, ServicesState>(
-        listenWhen: (previous, current) => !current.needBuild,
-        listener: (context, state) {
-          switch (state) {
-            case ServicesCreateSuccessState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Запись успешно добавлена!')));
-            case ServicesUpdateSuccessState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Изменения успешно сохранены!')));
-            case ServicesUpdateDeleteState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Запись успешно удалена!')));
-            case ServicesFailureState():
-              showErrorDialog(context, title: 'Ошибка', message: state.message);
-            case ServicesActionShowCreateDialogState():
-              showFullScreenDialog(
-                context,
-                title: 'Новая запись',
-                body: BlocProvider.value(
-                  value: context.read<ServicesCubit>(),
-                  child: ServiceCreateWidget(selectedCar: selectedCar, selectedGroup: selectedGroup),
-                ),
-              );
-            case ServicesActionShowUpdateDialogState():
-              showFullScreenDialog(
-                context,
-                title: 'Изменить запись',
-                body: BlocProvider.value(
-                  value: context.read<ServicesCubit>(),
-                  child: ServiceUpdateDialog(service: state.service, selectedGroup: selectedGroup),
-                ),
-              );
-            case ServicesActionShowDeleteConfirmationDialogState():
-              showConfirmationDialog(
-                context,
-                title: 'Удаление группы',
-                message: 'Вы действительно хотите удалить запись?',
-              ).then((isOk) {
-                if ((isOk ?? false) && context.mounted) {
-                  context.read<ServicesCubit>().delete(state.service);
-                }
-              });
-            case ServiceCarODOConfirmState():
-              showConfirmationDialog(
-                context,
-                title: 'Подтверждение пробега',
-                message:
-                    'Указанный пробег (${state.body.odo}) кажется слишком большим.'
-                    'Вы действительно проехали ${state.milleage}км?',
-              ).then((isOk) {
-                if ((isOk ?? false) && context.mounted) {
-                  context.read<ServicesCubit>().create(state.body, confirmed: true);
-                }
-              });
-            default:
-          }
-        },
-        buildWhen: (previous, current) => current.needBuild,
-        builder: (context, state) => switch (state) {
-          ServicesLoadingState() => const Center(child: CircularProgressIndicator()),
-          ServicesShowListState() => _ListServicesWidget(
-            services: state.services,
-            selectedGroupname: selectedGroup.name,
+      body: Material(
+        color: ODO24LightThemeColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: RefreshIndicator(
+          onRefresh: context.read<ServicesCubit>().getAllServices,
+          child: BlocConsumer<ServicesCubit, ServicesState>(
+            listenWhen: (previous, current) => !current.needBuild,
+            listener: (context, state) {
+              switch (state) {
+                case ServicesCreateSuccessState():
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Запись успешно добавлена!')),
+                  );
+                case ServicesUpdateSuccessState():
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Изменения успешно сохранены!'),
+                    ),
+                  );
+                case ServicesUpdateDeleteState():
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Запись успешно удалена!')),
+                  );
+                case ServicesFailureState():
+                  showErrorDialog(
+                    context,
+                    title: 'Ошибка',
+                    message: state.message,
+                  );
+                case ServicesActionShowCreateDialogState():
+                  showFullScreenDialog(
+                    context,
+                    title: 'Новая запись',
+                    body: BlocProvider.value(
+                      value: context.read<ServicesCubit>(),
+                      child: ServiceCreateWidget(
+                        selectedCar: selectedCar,
+                        selectedGroup: selectedGroup,
+                      ),
+                    ),
+                  );
+                case ServicesActionShowUpdateDialogState():
+                  showFullScreenDialog(
+                    context,
+                    title: 'Изменить запись',
+                    body: BlocProvider.value(
+                      value: context.read<ServicesCubit>(),
+                      child: ServiceUpdateDialog(
+                        service: state.service,
+                        selectedGroup: selectedGroup,
+                      ),
+                    ),
+                  );
+                case ServicesActionShowDeleteConfirmationDialogState():
+                  showConfirmationDialog(
+                    context,
+                    title: 'Удаление группы',
+                    message: 'Вы действительно хотите удалить запись?',
+                  ).then((isOk) {
+                    if ((isOk ?? false) && context.mounted) {
+                      context.read<ServicesCubit>().delete(state.service);
+                    }
+                  });
+                case ServiceCarODOConfirmState():
+                  showConfirmationDialog(
+                    context,
+                    title: 'Подтверждение пробега',
+                    message:
+                        'Указанный пробег (${state.body.odo}) кажется слишком большим.'
+                        'Вы действительно проехали ${state.milleage}км?',
+                  ).then((isOk) {
+                    if ((isOk ?? false) && context.mounted) {
+                      context.read<ServicesCubit>().create(
+                        state.body,
+                        confirmed: true,
+                      );
+                    }
+                  });
+                default:
+              }
+            },
+            buildWhen: (previous, current) => current.needBuild,
+            builder: (context, state) => switch (state) {
+              ServicesLoadingState() => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              ServicesShowListState() => _ListServicesWidget(
+                services: state.services,
+              ),
+              _ => const SizedBox.shrink(),
+            },
           ),
-          _ => const SizedBox.shrink(),
-        },
+        ),
       ),
     );
   }
@@ -149,29 +191,76 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
 class _ListServicesWidget extends StatelessWidget {
   final List<ServiceModel> services;
-  final String selectedGroupname;
-  const _ListServicesWidget({required this.services, required this.selectedGroupname});
+
+  const _ListServicesWidget({required this.services});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (services.isNotEmpty) {
       return ListView.separated(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: services.length,
         itemBuilder: (context, index) => ServiceItemWidget(services[index]),
         separatorBuilder: (BuildContext context, int index) =>
-            ServiceItemSeparatorWidget(serviceDistance: services[index].leftDistance),
+            ServiceItemSeparatorWidget(
+              serviceDistance: services[index].leftDistance,
+            ),
       );
     }
 
-    return Center(
-      child: Column(
-        spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.comment, color: Colors.white),
-          Text('Записей в группе нет :(', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white)),
-          FilledButton(onPressed: context.read<ServicesCubit>().openFormCreateService, child: const Text('Добавить')),
-        ],
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 12,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Icon(
+                    Icons.build_circle_outlined,
+                    size: 32,
+                    color: Colors.black38,
+                  ),
+                ),
+                Text(
+                  'Записей пока нет',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  'Добавьте первую запись об обслуживании — она появится в этой группе.',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.black54,
+                  ),
+                ),
+                FilledButton.icon(
+                  onPressed: context
+                      .read<ServicesCubit>()
+                      .openFormCreateService,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Добавить запись'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

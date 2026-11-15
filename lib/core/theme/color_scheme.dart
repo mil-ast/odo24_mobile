@@ -13,9 +13,8 @@ abstract class ODO24LightThemeColors {
   static const secondary = Color(0xff272d34);
   static const tertiary = Color(0xffe2e2e2);
   static const active = Color(0xFFe7522e);
+  static const surfaceMuted = Color(0xFFF3F4F6);
 }
-
-
 
 extension ColorSchemeExt on ColorScheme {
   Color get actions => ODO24Colors.actions;

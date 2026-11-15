@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:odo24_mobile/core/extensions/number_format_extension.dart';
 import 'package:odo24_mobile/core/next_odo_information_level_enum.dart';
-import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/meta_chip.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 
 class CarItemWidget extends StatelessWidget {
+  static const _sectionColor = Color(0xFFF7F8FA);
+
   final CarModel car;
 
   const CarItemWidget({required this.car, super.key});
@@ -16,158 +17,241 @@ class CarItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final numberFmt = NumberFormat.decimalPattern();
-    final titleTextTheme = theme.textTheme.bodyMedium;
-    return InkWell(
-      onTap: () {
-        context.read<CarsCubit>().onSelectCar(car);
-      },
-      child: AppCard(
-        title: AppCardTitle(
-          title: car.name,
-          action: PopupMenuButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            itemBuilder: (ctx) => [
-              PopupMenuItem(
-                // Управляем отступами внутри элемента меню, если нужно
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+    final statusColor = _mostUrgentStatusColor();
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
+      ),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.read<CarsCubit>().onSelectCar(car),
+          overlayColor: WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.03)),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 4, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    _CarAvatar(statusColor: statusColor),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 7,
+                        children: [
+                          Text(
+                            car.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 6,
+                            children: [
+                              MetaChip(
+                                icon: Icons.edit_rounded,
+                                label: '${car.odo.format()} км',
+                                tooltip: 'Изменить пробег',
+                                onTap: () => context.read<CarsCubit>().openFormEditODO(car),
+                              ),
+                              MetaChip(icon: Icons.menu_book_outlined, label: 'Записей: ${car.servicesTotal}'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    _CarActionsMenu(car: car),
+                  ],
                 ),
-                onTap: () {
-                  context.read<CarsCubit>().openFormEditCar(car);
-                },
-                child: const Row(
-                  spacing: 12,
-                  children: [Icon(Icons.edit), Text('Изменить')],
+                if (car.carExtraDataModel.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 14, right: 8),
+                    child: _UpcomingServices(car: car),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color? _mostUrgentStatusColor() {
+    if (car.carExtraDataModel.isEmpty) {
+      return null;
+    }
+
+    final colors = car.carExtraDataModel.map((e) => nextODOColor(carOdo: car.odo, odo: e.odo, leftOdo: e.leftOdo));
+
+    if (colors.contains(ODO24Colors.alarm)) {
+      return ODO24Colors.alarm;
+    }
+    if (colors.contains(ODO24Colors.warning)) {
+      return ODO24Colors.warning;
+    }
+    return ODO24Colors.success;
+  }
+}
+
+class _CarAvatar extends StatelessWidget {
+  final Color? statusColor;
+
+  const _CarAvatar({this.statusColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.directions_car_filled_rounded, size: 26, color: Colors.black38),
+          ),
+          if (statusColor != null)
+            Positioned(
+              right: -1,
+              bottom: -1,
+              child: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
               ),
-              PopupMenuItem(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                onTap: () {
-                  context.read<CarsCubit>().onClickDeleteCar(car);
-                },
-                child: const Row(
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UpcomingServices extends StatelessWidget {
+  final CarModel car;
+
+  const _UpcomingServices({required this.car});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        Row(
+          spacing: 6,
+          children: [
+            const Icon(Icons.build_circle_outlined, size: 17, color: Colors.black45),
+            Text(
+              'Ближайшее обслуживание',
+              style: theme.textTheme.titleSmall?.copyWith(color: Colors.black87, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: CarItemWidget._sectionColor, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 10,
+            children: [
+              ...car.carExtraDataModel.map(
+                (e) => Row(
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
-                    SizedBox(width: 12), // Отступ между иконкой и текстом
-                    Text('Удалить', style: TextStyle(color: Colors.red)),
+                    Expanded(
+                      child: Text(
+                        e.groupName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    MetaChip(
+                      icon: Icons.speed_rounded,
+                      label: '${e.leftOdo.format()} км',
+                      color: nextODOColor(carOdo: car.odo, odo: e.odo, leftOdo: e.leftOdo),
+                    ),
+                    //RemainingOdoBadge(
+                    //  leftOdo: e.leftOdo,
+                    //  color: nextODOColor(
+                    //    carOdo: car.odo,
+                    //    odo: e.odo,
+                    //    leftOdo: e.leftOdo,
+                    //  ),
+                    //),
                   ],
                 ),
               ),
             ],
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text('Записей в книжке', style: titleTextTheme),
-                      ),
-                      SizedBox(
-                        width: 120,
-                        child: Text(
-                          numberFmt.format(car.servicesTotal),
-                          textAlign: TextAlign.right,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Text('Пробег', style: titleTextTheme)),
-                      SizedBox(
-                        width: 160,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton.icon(
-                            style: const ButtonStyle(
-                              padding: WidgetStatePropertyAll(
-                                EdgeInsets.only(right: 0),
-                              ),
-                            ),
-                            onPressed: () {
-                              context.read<CarsCubit>().openFormEditODO(car);
-                            },
-                            icon: const Icon(Icons.edit, size: 20),
-                            label: Text('${numberFmt.format(car.odo)} км'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (car.carExtraDataModel.isNotEmpty) ...[
-                    Text(
-                      'Ближайшее обслуживание:',
-                      style: theme.textTheme.titleMedium,
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final e = car.carExtraDataModel[index];
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Text(e.groupName, style: titleTextTheme),
-                              ),
-                            ),
-                            Container(
-                              width: 120,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: nextODOColor(
-                                  carOdo: car.odo,
-                                  odo: e.odo,
-                                  leftOdo: e.leftOdo,
-                                ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(4.0),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                ),
-                                child: Text(
-                                  '${e.leftOdo.format()} км',
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: theme.colorScheme.inverseTextColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 8),
-                      itemCount: car.carExtraDataModel.length,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
+      ],
+    );
+  }
+}
+
+enum _CarAction { edit, delete }
+
+class _CarActionsMenu extends StatelessWidget {
+  final CarModel car;
+
+  const _CarActionsMenu({required this.car});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<_CarAction>(
+      tooltip: 'Действия',
+      icon: const Icon(Icons.more_vert_rounded, color: Colors.black45),
+      onSelected: (action) {
+        final cubit = context.read<CarsCubit>();
+        switch (action) {
+          case _CarAction.edit:
+            cubit.openFormEditCar(car);
+          case _CarAction.delete:
+            cubit.onClickDeleteCar(car);
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: _CarAction.edit,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: const Row(spacing: 12, children: [Icon(Icons.edit_outlined), Text('Изменить')]),
         ),
-      ),
+        PopupMenuItem(
+          value: _CarAction.delete,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: const Row(
+            spacing: 12,
+            children: [
+              Icon(Icons.delete_outline_rounded, color: Colors.red),
+              Text('Удалить', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dar
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
+import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/car_item_widget.dart';
@@ -54,69 +55,106 @@ class _CarsScreenState extends State<CarsScreen> {
         child: const Icon(Icons.add),
       ),
 
-      body: BlocListener<CarsCubit, CarsState>(
-        listener: (BuildContext context, CarsState state) async {
-          switch (state) {
-            case CarsErrorState():
-              showErrorDialog(context, title: 'Ошибка', message: state.message);
-            case CarActionSelectState():
-              await GroupsScreen.open(context, selectedCar: state.car);
-              if (context.mounted) {
-                context.read<CarsCubit>().getAllCars();
-              }
-            case CarActionShowCreateDialogState():
-              showFullScreenDialog(
-                context,
-                title: 'Добавить новый авто',
-                body: BlocProvider.value(value: context.read<CarsCubit>(), child: const CarCreateDialog()),
-              );
-            case CarActionShowUpdateDialogState():
-              showFullScreenDialog(
-                context,
-                title: 'Изменить авто',
-                body: BlocProvider.value(
-                  value: context.read<CarsCubit>(),
-                  child: CarEditDialog(car: state.car),
+      body: Material(
+        color: ODO24LightThemeColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: BlocListener<CarsCubit, CarsState>(
+          listener: (BuildContext context, CarsState state) async {
+            switch (state) {
+              case CarsErrorState():
+                showErrorDialog(
+                  context,
+                  title: 'Ошибка',
+                  message: state.message,
+                );
+              case CarActionSelectState():
+                await GroupsScreen.open(context, selectedCar: state.car);
+                if (context.mounted) {
+                  context.read<CarsCubit>().getAllCars();
+                }
+              case CarActionShowCreateDialogState():
+                showFullScreenDialog(
+                  context,
+                  title: 'Добавить новый авто',
+                  body: BlocProvider.value(
+                    value: context.read<CarsCubit>(),
+                    child: const CarCreateDialog(),
+                  ),
+                );
+              case CarActionShowUpdateDialogState():
+                showFullScreenDialog(
+                  context,
+                  title: 'Изменить авто',
+                  body: BlocProvider.value(
+                    value: context.read<CarsCubit>(),
+                    child: CarEditDialog(car: state.car),
+                  ),
+                );
+              case CarActionShowUpdateMiliageDialogState():
+                showFullScreenDialog(
+                  context,
+                  title: 'Изменить пробег',
+                  body: BlocProvider.value(
+                    value: context.read<CarsCubit>(),
+                    child: EditMiliageWidget(state.car),
+                  ),
+                );
+              case CarActionShowDeleteDialogState():
+                final isOk = await showConfirmationDialog(
+                  context,
+                  title: 'Удаление авто',
+                  message:
+                      'Вы действительно хотите удалить авто "${state.car.name}" и все записи из неё?',
+                );
+                if ((isOk ?? false) && context.mounted) {
+                  context.read<CarsCubit>().delete(state.car);
+                }
+              case CarCreateSuccessState():
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Новый авто успешно добавлен!')),
+                );
+              case CarUpdateSuccessState():
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Изменения успешно сохранены!')),
+                );
+              case CarDeleteSuccessState():
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Авто успешно удалён')),
+                );
+              default:
+            }
+          },
+          child: RefreshIndicator(
+            onRefresh: context.read<CarsCubit>().getAllCars,
+            child: BlocBuilder<CarsCubit, CarsState>(
+              buildWhen: (previous, current) => current.needBuild,
+              builder: (context, state) => switch (state) {
+                CarsWaitingState() => const Center(
+                  child: CircularProgressIndicator(),
                 ),
-              );
-            case CarActionShowUpdateMiliageDialogState():
-              showFullScreenDialog(
-                context,
-                title: 'Изменить пробег',
-                body: BlocProvider.value(value: context.read<CarsCubit>(), child: EditMiliageWidget(state.car)),
-              );
-            case CarActionShowDeleteDialogState():
-              final isOk = await showConfirmationDialog(
-                context,
-                title: 'Удаление авто',
-                message: 'Вы действительно хотите удалить авто "${state.car.name}" и все записи из неё?',
-              );
-              if ((isOk ?? false) && context.mounted) {
-                context.read<CarsCubit>().delete(state.car);
-              }
-            case CarCreateSuccessState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Новый авто успешно добавлен!')));
-            case CarUpdateSuccessState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Изменения успешно сохранены!')));
-            case CarDeleteSuccessState():
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Авто успешно удалён')));
-            default:
-          }
-        },
-        child: RefreshIndicator(
-          onRefresh: context.read<CarsCubit>().getAllCars,
-          child: BlocBuilder<CarsCubit, CarsState>(
-            buildWhen: (previous, current) => current.needBuild,
-            builder: (context, state) => switch (state) {
-              CarsWaitingState() => const Center(child: CircularProgressIndicator()),
-              CarsLoadedState() when state.cars.isNotEmpty => ListView.separated(
-                separatorBuilder: (context, i) => const SizedBox(height: 20),
-                itemCount: state.cars.length,
-                itemBuilder: (context, i) => CarItemWidget(car: state.cars[i]),
-              ),
-              CarsErrorState() => SingleChildScrollView(child: const CarsFailureWidget()),
-              _ => const SingleChildScrollView(child: CarCreateFormWidget()),
-            },
+                CarsLoadedState() when state.cars.isNotEmpty =>
+                  ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    separatorBuilder: (context, i) =>
+                        const SizedBox(height: 10),
+                    itemCount: state.cars.length,
+                    itemBuilder: (context, i) =>
+                        CarItemWidget(car: state.cars[i]),
+                  ),
+                CarsErrorState() => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(12),
+                  child: const CarsFailureWidget(),
+                ),
+                _ => const SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(12),
+                  child: CarCreateFormWidget(),
+                ),
+              },
+            ),
           ),
         ),
       ),
