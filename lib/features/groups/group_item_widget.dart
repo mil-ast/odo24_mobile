@@ -11,7 +11,12 @@ class GroupItemWidget extends StatelessWidget {
   final int carOdo;
   final int index;
 
-  const GroupItemWidget({required this.group, required this.carOdo, required this.index, super.key});
+  const GroupItemWidget({
+    required this.group,
+    required this.carOdo,
+    required this.index,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +24,23 @@ class GroupItemWidget extends StatelessWidget {
     final groupExtraData = group.groupExtraDataModel;
     final statusColor = groupExtraData == null
         ? null
-        : nextODOColor(carOdo: carOdo, odo: groupExtraData.odo, leftOdo: groupExtraData.leftOdo);
+        : nextODOColor(
+            carOdo: carOdo,
+            odo: groupExtraData.odo,
+            leftOdo: groupExtraData.leftOdo,
+          );
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.white,
@@ -33,7 +48,9 @@ class GroupItemWidget extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => context.read<GroupsCubit>().onSelectGroup(group),
-          overlayColor: WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.03)),
+          overlayColor: WidgetStatePropertyAll(
+            Colors.black.withValues(alpha: 0.03),
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
             child: Row(
@@ -65,11 +82,21 @@ class GroupItemWidget extends StatelessWidget {
                               label: '${groupExtraData.leftOdo.format()} км',
                               color: statusColor,
                             ),
-                            Text('до обслуживания', style: theme.textTheme.bodySmall?.copyWith(color: Colors.black45)),
+                            Text(
+                              'до обслуживания',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.black45,
+                              ),
+                            ),
                           ],
                         )
                       else
-                        Text('Нет данных о пробеге', style: theme.textTheme.bodySmall?.copyWith(color: Colors.black45)),
+                        Text(
+                          'Нет данных о пробеге',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.black45,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -78,7 +105,11 @@ class GroupItemWidget extends StatelessWidget {
                   index: index,
                   child: const Padding(
                     padding: EdgeInsets.all(10),
-                    child: Icon(Icons.drag_indicator_rounded, size: 20, color: Colors.black26),
+                    child: Icon(
+                      Icons.drag_indicator_rounded,
+                      size: 20,
+                      color: Colors.black26,
+                    ),
                   ),
                 ),
               ],
@@ -116,8 +147,13 @@ class _GroupAvatar extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Text(
-              trimmedName.isEmpty ? '?' : trimmedName.substring(0, 1).toUpperCase(),
-              style: theme.textTheme.titleMedium?.copyWith(color: Colors.black45, fontWeight: FontWeight.w600),
+              trimmedName.isEmpty
+                  ? '?'
+                  : trimmedName.substring(0, 1).toUpperCase(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: Colors.black45,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           if (statusColor != null)
@@ -165,7 +201,10 @@ class _GroupActionsMenu extends StatelessWidget {
         PopupMenuItem(
           value: _GroupAction.edit,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: const Row(spacing: 12, children: [Icon(Icons.edit_outlined), Text('Изменить')]),
+          child: const Row(
+            spacing: 12,
+            children: [Icon(Icons.edit_outlined), Text('Изменить')],
+          ),
         ),
         PopupMenuItem(
           value: _GroupAction.delete,

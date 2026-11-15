@@ -98,7 +98,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
           onRefresh: context.read<ServicesCubit>().getAllServices,
           child: BlocConsumer<ServicesCubit, ServicesState>(
             listenWhen: (previous, current) => !current.needBuild,
-            listener: (context, state) {
+            listener: (context, state) async {
               switch (state) {
                 case ServicesCreateSuccessState():
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -121,7 +121,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     message: state.message,
                   );
                 case ServicesActionShowCreateDialogState():
-                  showFullScreenDialog(
+                  await showFullScreenDialog(
                     context,
                     title: 'Новая запись',
                     body: BlocProvider.value(
@@ -132,6 +132,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       ),
                     ),
                   );
+                  if (context.mounted) {
+                    context.read<ServicesCubit>().closeAction();
+                  }
                 case ServicesActionShowUpdateDialogState():
                   showFullScreenDialog(
                     context,
@@ -147,7 +150,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 case ServicesActionShowDeleteConfirmationDialogState():
                   showConfirmationDialog(
                     context,
-                    title: 'Удаление группы',
+                    title: 'Удаление записи',
                     message: 'Вы действительно хотите удалить запись?',
                   ).then((isOk) {
                     if ((isOk ?? false) && context.mounted) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/form_dialog_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/scaffold/app_scaffold.dart';
 import 'package:odo24_mobile/core/theme/color_scheme.dart';
 import 'package:odo24_mobile/features/dependencies_scope.dart';
@@ -44,6 +44,7 @@ class LoginScreenState extends State<LoginWidget> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -85,112 +86,180 @@ class LoginScreenState extends State<LoginWidget> {
         }
       },
       child: AppScaffold(
-        title: 'Сервисная книжка автомобиля',
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: BlocBuilder<LoginCubit, LoginState>(
-                builder: (context, state) {
-                  return Column(
-                    spacing: 10,
-                    children: [
-                      AppCard(
-                        title: const AppCardTitle(title: 'Авторизация'),
-                        child: Center(
-                          child: Column(
-                            spacing: 20,
-                            children: [
-                              Center(child: SvgPicture.asset('assets/logo_dark.svg', width: 60, height: 60)),
-                              Form(
-                                key: _formKey,
-                                child: Column(
-                                  spacing: 20,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    TextFormField(
-                                      enabled: !state.isWaiting,
-                                      decoration: const InputDecoration(hintText: 'E-mail'),
-                                      controller: _loginController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Логин не указан';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    TextFormField(
-                                      enabled: !state.isWaiting,
-                                      decoration: const InputDecoration(hintText: 'Пароль'),
-                                      controller: _passwordController,
-                                      obscureText: true,
-                                      keyboardType: TextInputType.visiblePassword,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Пароль не указан';
-                                        }
-                                        return null;
-                                      },
-                                      onFieldSubmitted: (_) {
-                                        _login(context);
-                                      },
-                                    ),
-                                    Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      alignment: WrapAlignment.spaceBetween,
-                                      children: [
-                                        TextButton(
-                                          onPressed: context.read<LoginCubit>().onClickRegister,
-                                          child: const Text('Регистрация'),
-                                        ),
-                                        TextButton(
-                                          onPressed: context.read<LoginCubit>().onClickPasswordRecovery,
-                                          child: const Wrap(children: [Text('Забыли пароль?')]),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+        //title: 'Сервисная книжка автомобиля',
+        body: Material(
+          color: ODO24LightThemeColors.surfaceMuted,
+          borderRadius: BorderRadius.circular(20),
+          clipBehavior: Clip.antiAlias,
+          child: BlocBuilder<LoginCubit, LoginState>(
+            builder: (context, state) {
+              return LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight - 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 16,
+                      children: [
+                        const _LoginHeroCard(),
+                        _buildLoginForm(context, state),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: () => _openAbout(context),
+                            icon: const Icon(Icons.info_outline_rounded, size: 18),
+                            label: const Text('О приложении'),
+                            style: TextButton.styleFrom(foregroundColor: Colors.black45),
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      FilledButton.icon(
-                        icon: const Icon(Icons.login_outlined),
-                        onPressed: state.isWaiting ? null : () => _login(context),
-                        label: const Text('Войти'),
-                      ),
-                      const Divider(),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(
-                            context,
-                          ).push<void>(MaterialPageRoute(builder: (context) => const AboutScreen()));
-                        },
-                        child: const Text('О приложении'),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildLoginForm(BuildContext context, LoginState state) {
+    final cubit = context.read<LoginCubit>();
+
+    return FormDialogCard(
+      formKey: _formKey,
+      icon: Icons.lock_outline_rounded,
+      title: 'Вход в аккаунт',
+      description: 'Введите e-mail и пароль, чтобы синхронизировать данные.',
+      children: [
+        TextFormField(
+          enabled: !state.isWaiting,
+          controller: _loginController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          autocorrect: false,
+          decoration: const InputDecoration(labelText: 'E-mail', prefixIcon: Icon(Icons.alternate_email_rounded)),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Логин не указан';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          enabled: !state.isWaiting,
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          keyboardType: TextInputType.visiblePassword,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            labelText: 'Пароль',
+            prefixIcon: const Icon(Icons.lock_outline_rounded),
+            suffixIcon: IconButton(
+              tooltip: _obscurePassword ? 'Показать пароль' : 'Скрыть пароль',
+              onPressed: state.isWaiting
+                  ? null
+                  : () => setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    }),
+              icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Пароль не указан';
+            }
+            return null;
+          },
+          onFieldSubmitted: (_) => _login(context),
+        ),
+        const Divider(height: 1, color: Color(0xFFEDEFF2)),
+        FilledButton.icon(
+          onPressed: state.isWaiting ? null : () => _login(context),
+          icon: state.isWaiting
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                )
+              : const Icon(Icons.login_rounded),
+          label: Text(state.isWaiting ? 'Входим…' : 'Войти'),
+        ),
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          children: [
+            TextButton(onPressed: state.isWaiting ? null : cubit.onClickRegister, child: const Text('Регистрация')),
+            TextButton(
+              onPressed: state.isWaiting ? null : cubit.onClickPasswordRecovery,
+              child: const Text('Забыли пароль?'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _openAbout(BuildContext context) {
+    Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) => const AboutScreen()));
+  }
+
   void _login(BuildContext context) {
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неверный логин или пароль')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Укажите e-mail и пароль')));
       return;
     }
 
-    final login = _loginController.text;
+    final login = _loginController.text.trim();
     final password = _passwordController.text;
     context.read<LoginCubit>().signInWithEmailAndPassword(login, password);
+  }
+}
+
+class _LoginHeroCard extends StatelessWidget {
+  const _LoginHeroCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
+      ),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            children: [
+              //SvgPicture.asset('assets/logo_dark.svg', width: 64, height: 64),
+              SvgPicture.asset('assets/logo_v2.svg', width: 72, height: 72),
+              const SizedBox(height: 14),
+              Text(
+                'Сервисная книжка автомобиля',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Войдите, чтобы продолжить вести историю обслуживания автомобиля.',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54, height: 1.35),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

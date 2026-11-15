@@ -8,7 +8,19 @@ import 'package:odo24_mobile/features/cars/data/models/car_update_request_model.
 class CarsCubit extends Cubit<CarsState> {
   final ICarsRepository _carsRepository;
 
+  /// Последнее состояние со списком авто: нужно, чтобы корректно вернуться
+  /// к нему после закрытия диалога без изменений.
+  CarsState _lastLoadedState = CarsState.ready();
+
   CarsCubit({required this._carsRepository}) : super(CarsState.ready());
+
+  @override
+  void emit(CarsState state) {
+    if (state is CarsLoadedState) {
+      _lastLoadedState = state;
+    }
+    super.emit(state);
+  }
 
   Future<void> getAllCars() async {
     try {
@@ -26,6 +38,17 @@ class CarsCubit extends Cubit<CarsState> {
 
   void openFormCreateCar() {
     emit(CarsState.actionCreate());
+  }
+
+  /// Возвращает экран из состояния диалога к последнему списку авто.
+  ///
+  /// Нужно потому, что `CarActionShowCreateDialogState` — const-состояние:
+  /// без сброса повторный `emit` того же состояния игнорируется и FAB
+  /// перестаёт открывать диалог после его закрытия.
+  void closeAction() {
+    if (state is CarActionShowCreateDialogState) {
+      emit(_lastLoadedState);
+    }
   }
 
   void openFormEditCar(CarModel car) {

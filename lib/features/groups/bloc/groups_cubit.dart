@@ -11,7 +11,20 @@ class GroupsCubit extends Cubit<GroupsState> {
   final IGroupsRepository _groupsRepository;
   final CarModel _selectedCar;
 
-  GroupsCubit({required this._groupsRepository, required this._selectedCar}) : super(GroupsState.waiting());
+  /// Последнее состояние со списком групп: нужно, чтобы вернуться к нему
+  /// после закрытия диалога без изменений.
+  GroupsState _lastListState = GroupsState.waiting();
+
+  GroupsCubit({required this._groupsRepository, required this._selectedCar})
+    : super(GroupsState.waiting());
+
+  @override
+  void emit(GroupsState state) {
+    if (state is GroupsLoadedState || state is GroupsEmptyGroupsState) {
+      _lastListState = state;
+    }
+    super.emit(state);
+  }
 
   Future<void> getAllGroups() async {
     try {
@@ -84,5 +97,15 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   void openFormCreateGroup() {
     emit(GroupsState.actionCreate());
+  }
+
+  /// Возвращает экран из состояния диалога к последнему списку групп.
+  ///
+  /// `GroupsActionShowCreateDialogState` — const-состояние, поэтому без сброса
+  /// повторный `emit` игнорируется и FAB перестаёт открывать диалог.
+  void closeAction() {
+    if (state is GroupsActionShowCreateDialogState) {
+      emit(_lastListState);
+    }
   }
 }

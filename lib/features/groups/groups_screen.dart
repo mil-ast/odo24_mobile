@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/confirmation_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/error_dialog.dart';
 import 'package:odo24_mobile/core/shared_widgets/dialogs/fullscreen_dialog.dart';
@@ -87,7 +86,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               selectedGroup: state.group,
             );
           case GroupsActionShowCreateDialogState():
-            showFullScreenDialog(
+            await showFullScreenDialog(
               context,
               title: 'Добавить группу',
               body: BlocProvider.value(
@@ -95,6 +94,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 child: const GroupCreateWidget(),
               ),
             );
+            if (context.mounted) {
+              context.read<GroupsCubit>().closeAction();
+            }
           case GroupsActionShowUpdateDialogState():
             showFullScreenDialog(
               context,
@@ -244,14 +246,15 @@ class CreateFirstGroupWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: selectedCar.name,
-      body: const SingleChildScrollView(
-        child: Column(
-          children: [
-            AppCard(
-              title: AppCardTitle(title: 'Добавить группу'),
-              child: FirstGroupCreateWidget(),
-            ),
-          ],
+      subTitle: 'Группы',
+      body: Material(
+        color: ODO24LightThemeColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(12),
+          child: FirstGroupCreateWidget(),
         ),
       ),
     );

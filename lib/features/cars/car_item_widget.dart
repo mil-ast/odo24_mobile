@@ -23,7 +23,13 @@ class CarItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.white,
@@ -31,7 +37,9 @@ class CarItemWidget extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => context.read<CarsCubit>().onSelectCar(car),
-          overlayColor: WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.03)),
+          overlayColor: WidgetStatePropertyAll(
+            Colors.black.withValues(alpha: 0.03),
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 4, 14),
             child: Column(
@@ -63,9 +71,14 @@ class CarItemWidget extends StatelessWidget {
                                 icon: Icons.edit_rounded,
                                 label: '${car.odo.format()} км',
                                 tooltip: 'Изменить пробег',
-                                onTap: () => context.read<CarsCubit>().openFormEditODO(car),
+                                onTap: () => context
+                                    .read<CarsCubit>()
+                                    .openFormEditODO(car),
                               ),
-                              MetaChip(icon: Icons.menu_book_outlined, label: 'Записей: ${car.servicesTotal}'),
+                              MetaChip(
+                                icon: Icons.menu_book_outlined,
+                                label: 'Записей: ${car.servicesTotal}',
+                              ),
                             ],
                           ),
                         ],
@@ -92,7 +105,9 @@ class CarItemWidget extends StatelessWidget {
       return null;
     }
 
-    final colors = car.carExtraDataModel.map((e) => nextODOColor(carOdo: car.odo, odo: e.odo, leftOdo: e.leftOdo));
+    final colors = car.carExtraDataModel.map(
+      (e) => nextODOColor(carOdo: car.odo, odo: e.odo, leftOdo: e.leftOdo),
+    );
 
     if (colors.contains(ODO24Colors.alarm)) {
       return ODO24Colors.alarm;
@@ -125,7 +140,11 @@ class _CarAvatar extends StatelessWidget {
               color: Colors.black.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.directions_car_filled_rounded, size: 26, color: Colors.black38),
+            child: const Icon(
+              Icons.directions_car_filled_rounded,
+              size: 26,
+              color: Colors.black38,
+            ),
           ),
           if (statusColor != null)
             Positioned(
@@ -163,16 +182,26 @@ class _UpcomingServices extends StatelessWidget {
         Row(
           spacing: 6,
           children: [
-            const Icon(Icons.build_circle_outlined, size: 17, color: Colors.black45),
+            const Icon(
+              Icons.build_circle_outlined,
+              size: 17,
+              color: Colors.black45,
+            ),
             Text(
               'Ближайшее обслуживание',
-              style: theme.textTheme.titleSmall?.copyWith(color: Colors.black87, fontWeight: FontWeight.w600),
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: CarItemWidget._sectionColor, borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(
+            color: CarItemWidget._sectionColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 10,
@@ -192,7 +221,11 @@ class _UpcomingServices extends StatelessWidget {
                     MetaChip(
                       icon: Icons.speed_rounded,
                       label: '${e.leftOdo.format()} км',
-                      color: nextODOColor(carOdo: car.odo, odo: e.odo, leftOdo: e.leftOdo),
+                      color: nextODOColor(
+                        carOdo: car.odo,
+                        odo: e.odo,
+                        leftOdo: e.leftOdo,
+                      ),
                     ),
                     //RemainingOdoBadge(
                     //  leftOdo: e.leftOdo,
@@ -238,7 +271,10 @@ class _CarActionsMenu extends StatelessWidget {
         PopupMenuItem(
           value: _CarAction.edit,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: const Row(spacing: 12, children: [Icon(Icons.edit_outlined), Text('Изменить')]),
+          child: const Row(
+            spacing: 12,
+            children: [Icon(Icons.edit_outlined), Text('Изменить')],
+          ),
         ),
         PopupMenuItem(
           value: _CarAction.delete,

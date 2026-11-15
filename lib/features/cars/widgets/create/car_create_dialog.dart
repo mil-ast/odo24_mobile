@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/shared_widgets/app_card/app_card.dart';
+import 'package:odo24_mobile/core/shared_widgets/dialogs/form_dialog_card.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_cubit.dart';
 import 'package:odo24_mobile/features/cars/bloc/cars_states.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_create_request_model.dart';
@@ -33,74 +33,89 @@ class CarCreateDialogState extends State<CarCreateDialog> {
           Navigator.pop(context);
         }
       },
-      child: AppCard(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            spacing: 20,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                autofocus: true,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(hintText: 'Название авто', icon: Icon(Icons.title)),
-                validator: (String? name) {
-                  if (name == null || name.length < 3) {
-                    return 'Название слишком короткое';
-                  } else if (name.length > 120) {
-                    return 'Название слишком длинное';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _odoController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'Пробег', helperText: 'км', icon: Icon(Icons.speed)),
-                inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                validator: (String? input) {
-                  if (input == null) {
-                    return 'Укажите пробег авто';
-                  }
-
-                  int? odo = int.tryParse(input);
-                  if (odo == null) {
-                    return 'Некорретное значение пробега';
-                  } else if (odo > 9999999) {
-                    return 'Слишком большой пробег';
-                  }
-                  return null;
-                },
-              ),
-              Row(
-                spacing: 20,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(onPressed: Navigator.of(context).pop, child: const Text('Закрыть')),
-                  FilledButton(
-                    child: const Text('Добавить'),
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text('Проверьте правильность заполнения формы')));
-                        return;
-                      }
-
-                      context.read<CarsCubit>().create(
-                        CarCreateRequestModel(
-                          name: _nameController.text.trim(),
-                          odo: int.parse(_odoController.text),
-                          avatar: false,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
+      child: FormDialogCard(
+        formKey: _formKey,
+        icon: Icons.directions_car_filled_rounded,
+        title: 'Новый автомобиль',
+        description:
+            'Укажите название и текущий пробег. Группы обслуживания можно добавить позже.',
+        children: [
+          TextFormField(
+            controller: _nameController,
+            autofocus: true,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(
+              labelText: 'Название автомобиля',
+              hintText: 'Например, Toyota Camry',
+              prefixIcon: Icon(Icons.directions_car_outlined),
+            ),
+            validator: (String? name) {
+              if (name == null || name.trim().length < 3) {
+                return 'Название слишком короткое';
+              } else if (name.trim().length > 120) {
+                return 'Название слишком длинное';
+              }
+              return null;
+            },
           ),
+          TextFormField(
+            controller: _odoController,
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(
+              labelText: 'Текущий пробег',
+              hintText: '0',
+              prefixIcon: Icon(Icons.speed_rounded),
+              suffixText: 'км',
+            ),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            validator: (String? input) {
+              if (input == null || input.isEmpty) {
+                return 'Укажите пробег авто';
+              }
+
+              final odo = int.tryParse(input);
+              if (odo == null) {
+                return 'Некорректное значение пробега';
+              } else if (odo > 9999999) {
+                return 'Слишком большой пробег';
+              }
+              return null;
+            },
+            onFieldSubmitted: (_) => _submit(),
+          ),
+          FormDialogActions(
+            submitLabel: 'Добавить авто',
+            submitIcon: Icons.add_rounded,
+            onCancel: Navigator.of(context).pop,
+            onSubmit: _submit,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submit() {
+    FocusScope.of(context).unfocus();
+
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Проверьте правильность заполнения формы'),
         ),
+      );
+      return;
+    }
+
+    context.read<CarsCubit>().create(
+      CarCreateRequestModel(
+        name: _nameController.text.trim(),
+        odo: int.parse(_odoController.text),
+        avatar: false,
       ),
     );
   }

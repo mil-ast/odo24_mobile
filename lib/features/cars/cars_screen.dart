@@ -74,7 +74,7 @@ class _CarsScreenState extends State<CarsScreen> {
                   context.read<CarsCubit>().getAllCars();
                 }
               case CarActionShowCreateDialogState():
-                showFullScreenDialog(
+                await showFullScreenDialog(
                   context,
                   title: 'Добавить новый авто',
                   body: BlocProvider.value(
@@ -82,6 +82,9 @@ class _CarsScreenState extends State<CarsScreen> {
                     child: const CarCreateDialog(),
                   ),
                 );
+                if (context.mounted) {
+                  context.read<CarsCubit>().closeAction();
+                }
               case CarActionShowUpdateDialogState():
                 showFullScreenDialog(
                   context,

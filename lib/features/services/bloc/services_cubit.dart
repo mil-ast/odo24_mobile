@@ -19,6 +19,10 @@ class ServicesCubit extends Cubit<ServicesState> {
   final CarModel selectedCar;
   final GroupModel selectedGroup;
 
+  /// Последнее состояние со списком записей: нужно, чтобы вернуться к нему
+  /// после закрытия диалога без изменений.
+  ServicesState _lastListState = const ServicesLoadingState();
+
   ServicesCubit({
     required this._servicesRepository,
     required this._carsRepository,
@@ -26,9 +30,20 @@ class ServicesCubit extends Cubit<ServicesState> {
     required this.selectedGroup,
   }) : super(const ServicesLoadingState());
 
+  @override
+  void emit(ServicesState state) {
+    if (state is ServicesShowListState) {
+      _lastListState = state;
+    }
+    super.emit(state);
+  }
+
   Future<void> getAllServices() async {
     try {
-      final services = await _servicesRepository.getByCarAndGroup(selectedCar.carID, selectedGroup.groupID);
+      final services = await _servicesRepository.getByCarAndGroup(
+        selectedCar.carID,
+        selectedGroup.groupID,
+      );
       _prepareServices(services: services);
       //final nextOdoInform = _calcNextODOInformation(services: services, selectedCar: selectedCar);
 
@@ -43,7 +58,20 @@ class ServicesCubit extends Cubit<ServicesState> {
     emit(const ServicesActionShowCreateDialogState());
   }
 
-  Future<void> create(ServiceCreateRequestModel body, {bool confirmed = false}) async {
+  /// Возвращает экран из состояния диалога к последнему списку записей.
+  ///
+  /// `ServicesActionShowCreateDialogState` — const-состояние, поэтому без
+  /// сброса повторный `emit` игнорируется и FAB перестаёт открывать диалог.
+  void closeAction() {
+    if (state is ServicesActionShowCreateDialogState) {
+      emit(_lastListState);
+    }
+  }
+
+  Future<void> create(
+    ServiceCreateRequestModel body, {
+    bool confirmed = false,
+  }) async {
     try {
       final newODO = (body.odo ?? 0);
       final milleage = (newODO - selectedCar.odo).abs();
@@ -53,9 +81,15 @@ class ServicesCubit extends Cubit<ServicesState> {
         return;
       }
 
-      await _servicesRepository.create(selectedCar.carID, selectedGroup.groupID, body);
+      await _servicesRepository.create(
+        selectedCar.carID,
+        selectedGroup.groupID,
+        body,
+      );
 
-      if (milleage > 0 && (milleage < _maxMilleageForAutoUpdateODO || confirmed) && newODO > selectedCar.odo) {
+      if (milleage > 0 &&
+          (milleage < _maxMilleageForAutoUpdateODO || confirmed) &&
+          newODO > selectedCar.odo) {
         // обновить пробег авто
         try {
           await _carsRepository.updateODO(selectedCar.carID, newODO);
@@ -73,7 +107,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     }
   }
 
-  Future<void> update({required int serviceID, required ServiceUpdateRequestModel body}) async {
+  Future<void> update({
+    required int serviceID,
+    required ServiceUpdateRequestModel body,
+  }) async {
     try {
       await _servicesRepository.update(serviceID, body);
       getAllServices();
