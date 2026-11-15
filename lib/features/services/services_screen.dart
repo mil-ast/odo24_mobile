@@ -159,7 +159,7 @@ class _ListServicesWidget extends StatelessWidget {
         itemCount: services.length,
         itemBuilder: (context, index) => ServiceItemWidget(services[index]),
         separatorBuilder: (BuildContext context, int index) =>
-            ServiceItemSeparatorWidget(leftDistance: services[index].leftDistance),
+            ServiceItemSeparatorWidget(serviceDistance: services[index].leftDistance),
       );
     }
 

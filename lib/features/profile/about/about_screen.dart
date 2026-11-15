@@ -55,7 +55,7 @@ class AboutScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Text('Самая актуальная версия на сайте:'),
-                      TextButton(onPressed: () => _openSite(context), child: Text(Configs.siteURL)),
+                      TextButton(onPressed: () => _openSite(context), child: Text(AppConfig.siteURL)),
                     ],
                   ),
                 ),
@@ -75,7 +75,7 @@ class AboutScreen extends StatelessWidget {
                   ],
                 ),
 
-                Text('E-mail: ${Configs.email}', style: bottomTextStyle),
+                Text('E-mail: ${AppConfig.email}', style: bottomTextStyle),
 
                 FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
@@ -98,7 +98,7 @@ class AboutScreen extends StatelessWidget {
   Future<void> _sendEmail(BuildContext context) async {
     final emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: Configs.email,
+      path: AppConfig.email,
       queryParameters: {'subject': 'Сервисная книжка автомобиля', 'body': 'Текст сообщения'},
     );
 
@@ -106,12 +106,12 @@ class AboutScreen extends StatelessWidget {
   }
 
   Future<void> _openGitlab(BuildContext context) async {
-    final url = Uri.parse(Configs.gitlabURL);
+    final url = Uri.parse(AppConfig.gitlabURL);
     await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
   }
 
   Future<void> _openSite(BuildContext context) async {
-    final url = Uri.parse(Configs.siteURL);
+    final url = Uri.parse(AppConfig.siteURL);
     await _launchExternal(context, url, 'Не удалось открыть ссылку', external: true);
   }
 

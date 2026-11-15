@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/groups/data/groups_repository.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_create_request_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
@@ -8,12 +9,13 @@ part 'groups_states.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
   final IGroupsRepository _groupsRepository;
+  final CarModel _selectedCar;
 
-  GroupsCubit({required this._groupsRepository}) : super(GroupsState.waiting());
+  GroupsCubit({required this._groupsRepository, required this._selectedCar}) : super(GroupsState.waiting());
 
   Future<void> getAllGroups() async {
     try {
-      final groups = await _groupsRepository.getAll();
+      final groups = await _groupsRepository.getAll(carId: _selectedCar.carID);
       if (groups.isEmpty) {
         emit(const GroupsEmptyGroupsState());
         return;

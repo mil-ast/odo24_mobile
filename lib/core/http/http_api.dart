@@ -22,8 +22,8 @@ class AppHttpClient extends BaseClient {
     this._inner,
     List<Middleware> middlewares, {
     this._perHostTimeout = const Duration(seconds: 5),
-    Set<String> hosts = Configs.baseHosts,
-  }) : _hosts = hosts.isEmpty ? List.unmodifiable([Configs.baseHost]) : List.unmodifiable(hosts) {
+    Set<String> hosts = AppConfig.baseHosts,
+  }) : _hosts = hosts.isEmpty ? List.unmodifiable([AppConfig.baseHost]) : List.unmodifiable(hosts) {
     // Собираем цепочку вызовов в один пайплайн
     _pipeline = middlewares.reversed.fold(
       (BaseRequest request) => _inner.send(request),

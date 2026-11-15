@@ -22,11 +22,11 @@ class PasswordRecoveryCubit extends Cubit<PasswordRecoveryState> {
 
       final time =
           _sharedPreferences.getInt(_spKeyTimeSendCode) ??
-          DateTime.now().subtract(Configs.sendEmailDuration + const Duration(seconds: 1)).millisecondsSinceEpoch;
+          DateTime.now().subtract(AppConfig.sendEmailDuration + const Duration(seconds: 1)).millisecondsSinceEpoch;
 
       final dt = DateTime.fromMillisecondsSinceEpoch(time);
       final now = DateTime.now();
-      if (dt.add(Configs.sendEmailDuration).isBefore(now)) {
+      if (dt.add(AppConfig.sendEmailDuration).isBefore(now)) {
         await _authService.recoverSendEmailCodeConfirmation(email);
         _sharedPreferences.setInt(_spKeyTimeSendCode, now.millisecondsSinceEpoch);
       }

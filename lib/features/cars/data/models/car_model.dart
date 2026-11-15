@@ -1,9 +1,7 @@
 import 'dart:math';
 
-import 'package:odo24_mobile/core/next_odo_information.dart';
-
 class CarModel implements Comparable<CarModel> {
-  static const _maxExtDataLength = 3;
+  static const _maxExtDataLength = 5;
 
   final int carID;
   final String name;
@@ -39,13 +37,13 @@ class CarModel implements Comparable<CarModel> {
     carExtraDataModel:
         json['car_ext_data'] == null
               ? []
-              : cutCarExtDataList(
+              : _cutCarExtDataList(
                   (json['car_ext_data'] as List<dynamic>).cast<Map<String, dynamic>>(),
                 ).map((e) => CarExtraDataModel.fromJson(e)).toList()
           ..sort(),
   );
 
-  static List<Map<String, dynamic>> cutCarExtDataList(List<Map<String, dynamic>> list) {
+  static List<Map<String, dynamic>> _cutCarExtDataList(List<Map<String, dynamic>> list) {
     return list.sublist(0, [list.length, _maxExtDataLength].reduce(min));
   }
 
@@ -55,21 +53,21 @@ class CarModel implements Comparable<CarModel> {
 
 class CarExtraDataModel implements Comparable<CarExtraDataModel> {
   final int odo;
-  final int nextOdo;
+  final int leftOdo;
   final String groupName;
 
-  const CarExtraDataModel({required this.odo, required this.nextOdo, required this.groupName});
+  const CarExtraDataModel({required this.odo, required this.leftOdo, required this.groupName});
 
   factory CarExtraDataModel.fromJson(Map<String, dynamic> json) => CarExtraDataModel(
-    odo: json['odo'] as int,
-    nextOdo: json['next_odo'] as int,
+    odo: json['service_odo'] as int,
+    leftOdo: json['left_odo'] as int,
     groupName: json['group_name'] as String,
   );
 
-  NextODOInformation calculateLeftODO(int carODO) {
-    return calculateNextODOInformation(carODO: carODO, serviceODO: odo, nextDistance: nextOdo);
-  }
+  //NextODOInformation calculateLeftODO(int carODO) {
+  //  return calculateNextODOInformation(carODO: carODO, serviceODO: odo, nextDistance: leftOdo);
+  //}
 
   @override
-  int compareTo(CarExtraDataModel other) => (odo + nextOdo) - (other.odo + other.nextOdo);
+  int compareTo(CarExtraDataModel other) => (odo + leftOdo) - (other.odo + other.leftOdo);
 }

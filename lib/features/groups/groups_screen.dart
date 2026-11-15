@@ -19,14 +19,22 @@ import 'package:odo24_mobile/features/services/services_screen.dart';
 
 class GroupsScreenScope extends StatelessWidget {
   final Widget child;
+  final CarModel selectedCar;
 
-  const GroupsScreenScope({required this.child, super.key});
+  const GroupsScreenScope({
+    required this.child,
+    required this.selectedCar,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final groupsRepository = DependenciesScope.of(context).groupsRepository;
     return BlocProvider(
-      create: (context) => GroupsCubit(groupsRepository: groupsRepository),
+      create: (context) => GroupsCubit(
+        groupsRepository: groupsRepository,
+        selectedCar: selectedCar,
+      ),
       child: child,
     );
   }
@@ -35,12 +43,18 @@ class GroupsScreenScope extends StatelessWidget {
 class GroupsScreen extends StatefulWidget {
   const GroupsScreen({super.key});
 
-  static Future<void> open(BuildContext context, {required CarModel selectedCar}) => Navigator.push(
+  static Future<void> open(
+    BuildContext context, {
+    required CarModel selectedCar,
+  }) => Navigator.push(
     context,
     MaterialPageRoute(
       builder: (_) => GroupsDependenciesScope(
         dependencies: GroupsDependencies(selectedCar: selectedCar),
-        child: const GroupsScreenScope(child: GroupsScreen()),
+        child: GroupsScreenScope(
+          selectedCar: selectedCar,
+          child: GroupsScreen(),
+        ),
       ),
     ),
   );
@@ -53,6 +67,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     context.read<GroupsCubit>().getAllGroups();
   }
 
@@ -65,34 +80,51 @@ class _GroupsScreenState extends State<GroupsScreen> {
         switch (state) {
           case GroupsOnSelectState():
             final selectedCar = GroupsDependenciesScope.of(context).selectedCar;
-            ServicesScreen.open(context, selectedCar: selectedCar, selectedGroup: state.group);
+            ServicesScreen.open(
+              context,
+              selectedCar: selectedCar,
+              selectedGroup: state.group,
+            );
           case GroupsActionShowCreateDialogState():
             showFullScreenDialog(
               context,
               title: 'Добавить группу',
-              body: BlocProvider.value(value: context.read<GroupsCubit>(), child: const GroupCreateWidget()),
+              body: BlocProvider.value(
+                value: context.read<GroupsCubit>(),
+                child: const GroupCreateWidget(),
+              ),
             );
           case GroupsActionShowUpdateDialogState():
             showFullScreenDialog(
               context,
               title: 'Изменить группу',
-              body: BlocProvider.value(value: context.read<GroupsCubit>(), child: GroupUpdateWidget(state.group)),
+              body: BlocProvider.value(
+                value: context.read<GroupsCubit>(),
+                child: GroupUpdateWidget(state.group),
+              ),
             );
           case GroupsDeleteShowConfirmDialogState():
             final confirm = await showConfirmationDialog(
               context,
               title: 'Удаление группы',
-              message: 'Вы действительно хотите удалить группу ${state.group.name} и все записи в ней?',
+              message:
+                  'Вы действительно хотите удалить группу ${state.group.name} и все записи в ней?',
             );
             if (confirm == true && context.mounted) {
               context.read<GroupsCubit>().delete(state.group);
             }
           case GroupsCreateSuccessState():
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно добавлена!')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Группа успешно добавлена!')),
+            );
           case GroupsUpdateSuccessState():
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно изменена!')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Группа успешно изменена!')),
+            );
           case GroupsDeleteSuccessState():
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Группа успешно удалена!')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Группа успешно удалена!')),
+            );
           case GroupsFailureState():
             showErrorDialog(context, title: 'Ошибка', message: state.message);
           default:
@@ -100,8 +132,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
       },
       buildWhen: (previous, current) => current.needBuild,
       builder: (context, state) => switch (state) {
-        GroupsWaitingState() => const Center(child: CircularProgressIndicator()),
-        GroupsLoadedState() => ListGroupsWidget(selectedCar: selectedCar, groups: state.groups),
+        GroupsWaitingState() => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        GroupsLoadedState() => ListGroupsWidget(
+          selectedCar: selectedCar,
+          groups: state.groups,
+        ),
         _ => CreateFirstGroupWidget(selectedCar: selectedCar),
       },
     );
@@ -111,7 +148,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
 class ListGroupsWidget extends StatefulWidget {
   final CarModel selectedCar;
   final List<GroupModel> groups;
-  const ListGroupsWidget({required this.selectedCar, required this.groups, super.key});
+  const ListGroupsWidget({
+    required this.selectedCar,
+    required this.groups,
+    super.key,
+  });
 
   @override
   State<ListGroupsWidget> createState() => _ListGroupsWidgetState();
@@ -127,9 +168,14 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
         onPressed: context.read<GroupsCubit>().openFormCreateGroup,
         child: const Icon(Icons.add),
       ),
-      body: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
-        child: _ReorderableListGroups(groups: widget.groups),
+      body: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: _ReorderableListGroups(
+          groups: widget.groups,
+          carOdo: widget.selectedCar.odo,
+        ),
       ),
     );
   }
@@ -137,7 +183,8 @@ class _ListGroupsWidgetState extends State<ListGroupsWidget> {
 
 class _ReorderableListGroups extends StatefulWidget {
   final List<GroupModel> groups;
-  const _ReorderableListGroups({required this.groups});
+  final int carOdo;
+  const _ReorderableListGroups({required this.groups, required this.carOdo});
 
   @override
   State<_ReorderableListGroups> createState() => __ListGroupsState();
@@ -156,9 +203,20 @@ class __ListGroupsState extends State<_ReorderableListGroups> {
         setState(() {});
       },
       footer: Column(
-        children: [if (widget.groups.length > 1) const HintForSortingGroups(), const SizedBox(height: 40)],
+        children: [
+          if (widget.groups.length > 1) const HintForSortingGroups(),
+          const SizedBox(height: 40),
+        ],
       ),
-      children: widget.groups.map((group) => GroupItemWidget(key: ValueKey<int>(group.groupID), group: group)).toList(),
+      children: widget.groups
+          .map(
+            (group) => GroupItemWidget(
+              key: ValueKey<int>(group.groupID),
+              group: group,
+              carOdo: widget.carOdo,
+            ),
+          )
+          .toList(),
     );
   }
 }

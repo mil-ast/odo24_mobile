@@ -19,7 +19,7 @@ class CarsDataProvider implements ICarsDataProvider {
 
   @override
   Future<List<CarModel>> getMyCars() async {
-    final api = _httpClient.get(Uri(path: '/api/cars'));
+    final api = _httpClient.get(Uri(path: '/api/cars_v2'));
     final json = await ResponseHandler.parseListJSON(api);
     if (json == null) {
       return [];

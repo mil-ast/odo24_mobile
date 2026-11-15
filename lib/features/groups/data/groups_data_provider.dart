@@ -5,7 +5,7 @@ import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_update_request_model.dart';
 
 abstract interface class IGroupsDataProvider {
-  Future<List<GroupModel>> getAll();
+  Future<List<GroupModel>> getAll({required int carId});
   Future<void> updateSortGroups(List<int> sortedGroupIDs);
   Future<GroupModel?> create(GroupCreateRequestModel group);
   Future<void> update(GroupUpdateRequestModel group);
@@ -18,8 +18,8 @@ class GroupsDataProvider implements IGroupsDataProvider {
   GroupsDataProvider({required this._httpClient});
 
   @override
-  Future<List<GroupModel>> getAll() async {
-    final api = _httpClient.get(Uri(path: '/api/groups'));
+  Future<List<GroupModel>> getAll({required int carId}) async {
+    final api = _httpClient.get(Uri(path: '/api/cars/$carId/groups'));
     final json = await ResponseHandler.parseListJSON(api);
     if (json == null) {
       return [];

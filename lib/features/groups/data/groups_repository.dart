@@ -4,7 +4,7 @@ import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_update_request_model.dart';
 
 abstract interface class IGroupsRepository {
-  Future<List<GroupModel>> getAll();
+  Future<List<GroupModel>> getAll({required int carId});
   Future<void> updateSortGroups(List<int> sortedGroupIDs);
   Future<void> update(GroupUpdateRequestModel group);
   Future<GroupModel> create(GroupCreateRequestModel group);
@@ -17,8 +17,8 @@ class GroupsRepository implements IGroupsRepository {
   GroupsRepository({required this._groupsDataProvider});
 
   @override
-  Future<List<GroupModel>> getAll() {
-    return _groupsDataProvider.getAll();
+  Future<List<GroupModel>> getAll({required int carId}) {
+    return _groupsDataProvider.getAll(carId: carId);
   }
 
   @override

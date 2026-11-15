@@ -97,12 +97,13 @@ class ServiceItemWidget extends StatelessWidget {
 }
 
 class ServiceItemSeparatorWidget extends StatelessWidget {
-  final int? leftDistance;
-  const ServiceItemSeparatorWidget({required this.leftDistance, super.key});
+  /// пройденное расстояние с последнего обслуживания
+  final int? serviceDistance;
+  const ServiceItemSeparatorWidget({required this.serviceDistance, super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (leftDistance == null) {
+    if (serviceDistance == null) {
       return const SizedBox.shrink();
     }
     return Padding(
@@ -110,7 +111,7 @@ class ServiceItemSeparatorWidget extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'Пройдено ${leftDistance!.format()} км',
+            'Пройдено ${serviceDistance!.format()} км',
             textScaler: const TextScaler.linear(0.9),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
           ),

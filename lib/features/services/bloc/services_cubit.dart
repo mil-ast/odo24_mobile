@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:odo24_mobile/core/next_odo_information.dart';
 import 'package:odo24_mobile/features/cars/data/cars_repository.dart';
 import 'package:odo24_mobile/features/cars/data/models/car_model.dart';
 import 'package:odo24_mobile/features/groups/data/models/group_model.dart';
@@ -31,9 +30,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     try {
       final services = await _servicesRepository.getByCarAndGroup(selectedCar.carID, selectedGroup.groupID);
       _prepareServices(services: services);
-      final nextOdoInform = _calcNextODOInformation(services: services, selectedCar: selectedCar);
+      //final nextOdoInform = _calcNextODOInformation(services: services, selectedCar: selectedCar);
 
-      emit(ServicesShowListState(services: services, inform: nextOdoInform));
+      emit(ServicesShowListState(services: services));
     } catch (e, st) {
       super.onError(e, st);
       emit(ServicesFailureState(e));
@@ -119,7 +118,7 @@ class ServicesCubit extends Cubit<ServicesState> {
     }
   }
 
-  NextODOInformation? _calcNextODOInformation({required List<ServiceModel> services, required CarModel selectedCar}) {
+  /*NextODOInformation? _calcNextODOInformation({required List<ServiceModel> services, required CarModel selectedCar}) {
     if (services.isEmpty) {
       return null;
     }
@@ -136,7 +135,7 @@ class ServicesCubit extends Cubit<ServicesState> {
       serviceODO: lastService.odo!,
       nextDistance: lastService.nextDistance!,
     );
-  }
+  }*/
 
   /* void openFormCreateService() {
     emit(ServicesState.actionCreate());

@@ -28,8 +28,8 @@ class ServicesFailureState extends ServicesState {
 
 class ServicesShowListState extends ServicesState {
   final List<ServiceModel> services;
-  final NextODOInformation? inform;
-  const ServicesShowListState({required this.services, required this.inform});
+  //final NextODOInformation? inform;
+  const ServicesShowListState({required this.services});
 }
 
 class ServicesActionShowUpdateDialogState extends ServicesState {
