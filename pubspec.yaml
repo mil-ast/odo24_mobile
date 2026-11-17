@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 4.4.0+26
 
 environment:
-  sdk: ^3.12.1
-  flutter: ^3.44.0
+  sdk: ^3.13.0
+  flutter: ^3.47.0
 
 dependencies:
   flutter:
@@ -16,9 +16,9 @@ dependencies:
   intl: any
   flutter_bloc: ^9.1.1
   package_info_plus: ^10.2.2
-  cronet_http: ^1.10.0
+  cronet_http: ^1.10.1
   shared_preferences: ^2.5.6
-  flutter_svg: ^2.3.0
+  flutter_svg: ^2.4.0
   http: ^1.6.0
   url_launcher: ^6.3.3
 
